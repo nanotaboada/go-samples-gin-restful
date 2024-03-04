@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/models"
 	"github.com/nanotaboada/go-samples-gin-restful/routes"
@@ -18,6 +19,7 @@ import (
 
 func TestMain(main *testing.M) {
 
+	gin.SetMode(gin.TestMode)
 	data.Database, data.Error = gorm.Open(sqlite.Open("../data/players-sqlite3.db"), &gorm.Config{})
 
 	if data.Error != nil {
