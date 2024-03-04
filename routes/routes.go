@@ -5,12 +5,12 @@ import (
 	"github.com/nanotaboada/go-samples-gin-restful/controllers"
 )
 
-func GetEngine() *gin.Engine {
+func Setup() *gin.Engine {
 
-	engine := gin.Default()
+	router := gin.Default()
 
-	engine.GET("/players", controllers.GetPlayers)
-	engine.GET("/players/:id", controllers.GetPlayerByID)
+	router.GET("/players", controllers.GetPlayers)
+	router.GET("/players/:id", controllers.GetPlayerByID)
 
-	return engine
+	return router
 }

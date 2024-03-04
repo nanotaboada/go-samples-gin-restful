@@ -9,17 +9,17 @@ import (
 )
 
 var (
-	Database *gorm.DB
-	Error    error
+	DB *gorm.DB
 )
 
-func ConnectToSqlite() {
+func Connect(path string) {
 
-	Database, Error = gorm.Open(sqlite.Open("./data/players-sqlite3.db"), &gorm.Config{})
-
-	if Error != nil {
-		log.Fatal(Error)
+	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	Database.AutoMigrate(&models.Player{})
+	DB = db
+
+	DB.AutoMigrate(&models.Player{})
 }

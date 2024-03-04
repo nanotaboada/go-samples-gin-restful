@@ -11,19 +11,22 @@ import (
 func GetPlayers(context *gin.Context) {
 
 	var players []models.Player
-	database := data.Database
-	database.Find(&players)
+
+	db := data.DB
+	db.Find(&players)
+
 	context.IndentedJSON(http.StatusOK, players)
 }
 
 func GetPlayerByID(context *gin.Context) {
 
-	id := context.Param("id")
-	database := data.Database
 	var player models.Player
-	database.Find(&player, id)
+	id := context.Param("id")
 
-	if player.ID == id {
+	db := data.DB
+	db.Find(&player, id)
+
+	if player.ID != "" {
 		context.IndentedJSON(http.StatusOK, player)
 		return
 	}
