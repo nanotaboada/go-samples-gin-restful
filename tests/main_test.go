@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,33 +12,25 @@ import (
 	"github.com/nanotaboada/go-samples-gin-restful/models"
 	"github.com/nanotaboada/go-samples-gin-restful/routes"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 func TestMain(main *testing.M) {
 
 	gin.SetMode(gin.TestMode)
-	data.Database, data.Error = gorm.Open(sqlite.Open("../data/players-sqlite3.db"), &gorm.Config{})
-
-	if data.Error != nil {
-		log.Fatal(data.Error)
-	}
-
-	data.Database.AutoMigrate(&models.Player{})
-
+	path := "../data/players-sqlite3.db"
+	data.Connect(path)
 	os.Exit(main.Run())
 }
 
-func TestGetPlayers(test *testing.T) {
+func Test_GivenHTTPGET_WhenRequestHasNoParameter_ThenResponseBodyShouldBeAllPlayers(test *testing.T) {
 
 	// Arrange
-	engine := routes.GetEngine()
+	router := routes.Setup()
 	request, _ := http.NewRequest("GET", "/players", nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
-	engine.ServeHTTP(recorder, request)
+	router.ServeHTTP(recorder, request)
 	var players []models.Player
 	json.Unmarshal(recorder.Body.Bytes(), &players)
 
@@ -48,22 +39,52 @@ func TestGetPlayers(test *testing.T) {
 	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
-func TestGetPlayerByID(test *testing.T) {
+func Test_GivenHTTPGET_WhenRequestParameterIdentifiesExistingPlayer_ThenResponseCodeShouldBeStatusOK(test *testing.T) {
 
 	// Arrange
-	engine := routes.GetEngine()
-	request, _ := http.NewRequest("GET", "/players/10", nil)
+	id := "10"
+	router := routes.Setup()
+	request, _ := http.NewRequest("GET", "/players/"+id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
-	engine.ServeHTTP(recorder, request)
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusOK, recorder.Code)
+}
+
+func Test_GivenHTTPGET_WhenRequestParameterIdentifiesExistingPlayer_ThenResponseBodyShouldBeThePlayer(test *testing.T) {
+
+	// Arrange
+	id := "10"
+	router := routes.Setup()
+	request, _ := http.NewRequest("GET", "/players/"+id, nil)
+	recorder := httptest.NewRecorder()
+
+	// Act
+	router.ServeHTTP(recorder, request)
 	var player models.Player
 	json.Unmarshal(recorder.Body.Bytes(), &player)
 
 	// Assert
 	assert.NotEmpty(test, player)
-	assert.Equal(test, http.StatusOK, recorder.Code)
 	assert.Equal(test, 10, player.SquadNumber)
 	assert.Equal(test, "Lionel", player.FirstName)
 	assert.Equal(test, "Messi", player.LastName)
+}
+
+func Test_GivenHTTPGET_WhenRequestParameterDoesNotIdentifyExistingPlayer_ThenResponseCodeShouldBeStatusNotFound(test *testing.T) {
+
+	// Arrange
+	id := "99"
+	router := routes.Setup()
+	request, _ := http.NewRequest("GET", "/players/"+id, nil)
+	recorder := httptest.NewRecorder()
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusNotFound, recorder.Code)
 }

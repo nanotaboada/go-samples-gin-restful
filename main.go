@@ -7,9 +7,8 @@ import (
 
 func main() {
 
-	data.ConnectToSqlite()
-
-	app := routes.GetEngine()
-
+	path := "./data/players-sqlite3.db"
+	data.Connect(path)
+	app := routes.Setup()
 	app.Run()
 }
