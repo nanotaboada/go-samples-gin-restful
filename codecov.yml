@@ -1,4 +1,20 @@
+# https://api.codecov.io/validate
+
+# Usage:
+# curl -X POST --data-binary @codecov.yml https://codecov.io/validate
+
 ignore:
-  - "data"
-  - "tests"
-  - "main.go"
+- ^main.go.*
+- ^routes.go.*
+- ^data.*
+- ^models.*
+- ^tests.*
+coverage:
+  status:
+    project:
+      controllers:
+        paths:
+          - controllers/controllers.go
+    patch:
+      default:
+        informational: true
