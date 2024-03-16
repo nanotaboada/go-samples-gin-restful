@@ -4,11 +4,12 @@
 # curl -X POST --data-binary @codecov.yml https://codecov.io/validate
 
 ignore:
-- ^main.go.*
-- ^routes.go.*
-- ^data.*
-- ^models.*
-- ^tests.*
+- main.go
+- routes
+- data
+- models
+- tests
+
 coverage:
   status:
     project:
