@@ -22,11 +22,44 @@ func TestMain(main *testing.M) {
 	os.Exit(main.Run())
 }
 
-func Test_GivenHTTPGET_WhenRequestHasNoParameter_ThenResponseBodyShouldBeAllPlayers(test *testing.T) {
+const path = "/players/"
+
+// Given GET, when request to /players (no trailing slash), then response status should be 301 (Moved Permanently)
+func TestGetPlayersNoTrailingSlashResponseRedirect(test *testing.T) {
 
 	// Arrange
 	router := routes.Setup()
 	request, _ := http.NewRequest("GET", "/players", nil)
+	recorder := httptest.NewRecorder()
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusMovedPermanently, recorder.Code)
+}
+
+// Given GET, when request has no parameters, then response status should be 200 (OK).
+func TestRequestGetPlayersResponseStatusOK(test *testing.T) {
+
+	// Arrange
+	router := routes.Setup()
+	request, _ := http.NewRequest("GET", path, nil)
+	recorder := httptest.NewRecorder()
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusOK, recorder.Code)
+}
+
+// Given GET, when request has no parameters, then response body should be the collection of players.
+func TestRequestGetPlayersResponsePlayers(test *testing.T) {
+
+	// Arrange
+	router := routes.Setup()
+	request, _ := http.NewRequest("GET", path, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
@@ -36,15 +69,15 @@ func Test_GivenHTTPGET_WhenRequestHasNoParameter_ThenResponseBodyShouldBeAllPlay
 
 	// Assert
 	assert.NotEmpty(test, players)
-	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
-func Test_GivenHTTPGET_WhenRequestParameterIdentifiesExistingPlayer_ThenResponseCodeShouldBeStatusOK(test *testing.T) {
+// Given GET, when request parameter identifies existing player, then response status should be 200 (OK).
+func TestRequestGetPlayersIdResponseStatusOK(test *testing.T) {
 
 	// Arrange
 	id := "10"
 	router := routes.Setup()
-	request, _ := http.NewRequest("GET", "/players/"+id, nil)
+	request, _ := http.NewRequest("GET", path + id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
@@ -54,12 +87,13 @@ func Test_GivenHTTPGET_WhenRequestParameterIdentifiesExistingPlayer_ThenResponse
 	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
-func Test_GivenHTTPGET_WhenRequestParameterIdentifiesExistingPlayer_ThenResponseBodyShouldBeThePlayer(test *testing.T) {
+// Given GET, when request parameter identifies existing player, then response body should be matching Player.
+func TestRequestGetPlayersIdResponsePlayer(test *testing.T) {
 
 	// Arrange
 	id := "10"
 	router := routes.Setup()
-	request, _ := http.NewRequest("GET", "/players/"+id, nil)
+	request, _ := http.NewRequest("GET", path + id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
@@ -74,12 +108,13 @@ func Test_GivenHTTPGET_WhenRequestParameterIdentifiesExistingPlayer_ThenResponse
 	assert.Equal(test, "Messi", player.LastName)
 }
 
-func Test_GivenHTTPGET_WhenRequestParameterDoesNotIdentifyExistingPlayer_ThenResponseCodeShouldBeStatusNotFound(test *testing.T) {
+// Given GET, when request parameter does not identify a player, then response status should be 404 (Not Found).
+func TestRequestGetPlayersIdResponseStatusNotFound(test *testing.T) {
 
 	// Arrange
 	id := "99"
 	router := routes.Setup()
-	request, _ := http.NewRequest("GET", "/players/"+id, nil)
+	request, _ := http.NewRequest("GET", path + id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
