@@ -3,7 +3,7 @@ package models
 // https://go.dev/tour/basics/11
 // https://go.dev/ref/spec#Exported_identifiers
 type Player struct {
-	ID           string `json:"id" gorm:"primaryKey"`
+	ID           int    `json:"id" gorm:"primaryKey"`
 	FirstName    string `json:"firstName" gorm:"column:firstName"`
 	MiddleName   string `json:"middleName" gorm:"column:middleName"`
 	LastName     string `json:"lastName" gorm:"column:lastName"`

@@ -25,7 +25,7 @@ func TestMain(main *testing.M) {
 const path = "/players/"
 
 // Given GET, when request to /players (no trailing slash), then response status should be 301 (Moved Permanently)
-func TestGetPlayersNoTrailingSlashResponseRedirect(test *testing.T) {
+func TestGetPlayersNoTrailingSlashStatusMovedPermanently(test *testing.T) {
 
 	// Arrange
 	router := routes.Setup()
@@ -77,7 +77,7 @@ func TestRequestGetPlayersIdResponseStatusOK(test *testing.T) {
 	// Arrange
 	id := "10"
 	router := routes.Setup()
-	request, _ := http.NewRequest("GET", path + id, nil)
+	request, _ := http.NewRequest("GET", path+id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
@@ -93,7 +93,7 @@ func TestRequestGetPlayersIdResponsePlayer(test *testing.T) {
 	// Arrange
 	id := "10"
 	router := routes.Setup()
-	request, _ := http.NewRequest("GET", path + id, nil)
+	request, _ := http.NewRequest("GET", path+id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
@@ -114,7 +114,7 @@ func TestRequestGetPlayersIdResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "99"
 	router := routes.Setup()
-	request, _ := http.NewRequest("GET", path + id, nil)
+	request, _ := http.NewRequest("GET", path+id, nil)
 	recorder := httptest.NewRecorder()
 
 	// Act
