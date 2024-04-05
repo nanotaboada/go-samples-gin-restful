@@ -11,6 +11,9 @@ func Setup() *gin.Engine {
 
 	router.GET("/players/", controllers.GetPlayers)
 	router.GET("/players/:id", controllers.GetPlayerByID)
+	router.POST("/players/", controllers.CreatePlayer)
+	router.PUT("/players/:id", controllers.UpdatePlayer)
+	router.DELETE("/players/:id", controllers.DeletePlayer)
 
 	return router
 }

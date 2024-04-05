@@ -13,6 +13,7 @@ coverage:
   status:
     project:
       controllers:
+        informational: true
         paths:
           - controllers/controllers.go
     patch:

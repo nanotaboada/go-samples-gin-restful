@@ -10,5 +10,5 @@ func main() {
 	path := "./data/players-sqlite3.db"
 	data.Connect(path)
 	app := routes.Setup()
-	app.Run()
+	app.Run(":9000")
 }
