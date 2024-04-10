@@ -17,7 +17,6 @@ var (
 )
 
 func Connect(path string) {
-
 	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)

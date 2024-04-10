@@ -20,7 +20,6 @@ import (
 )
 
 func TestMain(main *testing.M) {
-
 	gin.SetMode(gin.TestMode)
 	data.Connect("../data/players-sqlite3.db")
 	os.Exit(main.Run())
@@ -34,7 +33,6 @@ const (
 
 // Given GET, when request to /players (no trailing slash), then response status should be 301 (Moved Permanently)
 func TestRequestGetNoTrailingSlashResponseStatusMovedPermanently(test *testing.T) {
-
 	// Arrange
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
@@ -49,7 +47,6 @@ func TestRequestGetNoTrailingSlashResponseStatusMovedPermanently(test *testing.T
 
 // Given GET, when request has no parameters, then response status should be 200 (OK).
 func TestRequestGetNoParamResponseStatusOK(test *testing.T) {
-
 	// Arrange
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
@@ -64,7 +61,6 @@ func TestRequestGetNoParamResponseStatusOK(test *testing.T) {
 
 // Given GET, when request has no parameters, then response body should be the collection of Players.
 func TestRequestGetNoParamResponsePlayers(test *testing.T) {
-
 	// Arrange
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
@@ -81,7 +77,6 @@ func TestRequestGetNoParamResponsePlayers(test *testing.T) {
 
 // Given GET, when request parameter identifies existing Player, then response status should be 200 (OK).
 func TestRequestGETIdExistingPlayerResponseStatusOK(test *testing.T) {
-
 	// Arrange
 	id := "10"
 	router := routes.Setup()
@@ -97,7 +92,6 @@ func TestRequestGETIdExistingPlayerResponseStatusOK(test *testing.T) {
 
 // Given GET, when request parameter identifies existing Player, then response body should be matching Player.
 func TestRequestGETIdExistingPlayerResponsePlayer(test *testing.T) {
-
 	// Arrange
 	id := "10"
 	router := routes.Setup()
@@ -118,7 +112,6 @@ func TestRequestGETIdExistingPlayerResponsePlayer(test *testing.T) {
 
 // Given GET, when request parameter does not identify a Player, then response status should be 404 (Not Found).
 func TestRequestGETIdNonExistingPlayerResponseStatusNotFound(test *testing.T) {
-
 	// Arrange
 	id := "999"
 	router := routes.Setup()
@@ -134,7 +127,6 @@ func TestRequestGETIdNonExistingPlayerResponseStatusNotFound(test *testing.T) {
 
 // Given POST, when request body is empty, then response status should be 400 (Bad Request)
 func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
-
 	// Arrange
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
@@ -150,7 +142,6 @@ func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 
 // Given POST, when request is existing Player, then response status should be 409 (Conflict)
 func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
-
 	// Arrange
 	player := GetExistingPlayer()
 	body, _ := json.Marshal(player)
@@ -168,7 +159,6 @@ func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
 
 // Given POST, when request is non-existing Player, then response status should be 201 (Created)
 func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) {
-
 	// Arrange
 	player := GetNonExistingPlayer()
 	body, _ := json.Marshal(player)
@@ -186,7 +176,6 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 
 // Given PUT, when request body is empty, then response status should be 400 (Bad Request)
 func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
-
 	// Arrange
 	id := "10"
 	router := routes.Setup()
@@ -203,7 +192,6 @@ func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 
 // Given PUT, when request is non-existing Player, then response status should be 404 (Not Found)
 func TestRequestPUTBodyNonExistingPlayerResponseStatusNotFound(test *testing.T) {
-
 	// Arrange
 	id := "999"
 	player := models.Player{
@@ -225,7 +213,6 @@ func TestRequestPUTBodyNonExistingPlayerResponseStatusNotFound(test *testing.T) 
 
 // Given PUT, when request is existing Player, then response status should be 204 (No Content)
 func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
-
 	// Arrange
 	id := "1"
 	player := GetExistingPlayer()
@@ -246,7 +233,6 @@ func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 
 // Given DELETE, when request is non-existing Player, then response status should be 404 (Not Found)
 func TestRequestDELETEIdNonExistingPlayerResponseStatusNotFound(test *testing.T) {
-
 	// Arrange
 	id := "999"
 	router := routes.Setup()
@@ -260,9 +246,8 @@ func TestRequestDELETEIdNonExistingPlayerResponseStatusNotFound(test *testing.T)
 	assert.Equal(test, http.StatusNotFound, recorder.Code)
 }
 
-// Given DELETE, when request is non-existing Player, then response status should be 404 (Not Found)
+// Given DELETE, when request is existing Player, then response status should be 204 (No Content)
 func TestRequestDELETEIdExistingPlayerResponseStatusNoContent(test *testing.T) {
-
 	// Arrange
 	id := "12"
 	router := routes.Setup()

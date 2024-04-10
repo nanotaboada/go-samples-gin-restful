@@ -10,7 +10,6 @@ import (
 )
 
 func Setup() *gin.Engine {
-
 	router := gin.Default()
 
 	router.GET("/players/", controllers.GetPlayers)
