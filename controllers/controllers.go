@@ -1,3 +1,7 @@
+/* -----------------------------------------------------------------------------
+ * Controllers
+ * -------------------------------------------------------------------------- */
+
 package controllers
 
 import (
@@ -63,6 +67,7 @@ func UpdatePlayer(context *gin.Context) {
 		return
 	}
 	db := data.DB
+	// https://gorm.io/docs/query.html
 	result := db.First(&player, id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -79,13 +84,15 @@ func DeletePlayer(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
 	db := data.DB
-	// https://gorm.io/docs/delete.html
-	result := db.Delete(&player, id)
+	// https://gorm.io/docs/query.html
+	result := db.First(&player, id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			context.Status(http.StatusNotFound)
 			return
 		}
 	}
+	// https://gorm.io/docs/delete.html
+	db.Delete(&models.Player{}, id)
 	context.Status(http.StatusNoContent)
 }
