@@ -1,5 +1,3 @@
-// player_stub.go
-
 package tests
 
 import "github.com/nanotaboada/go-samples-gin-restful/models"
