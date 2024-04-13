@@ -1,4 +1,9 @@
 {
+    "editor.rulers": [
+        {
+            "column": 127
+        }
+    ],
     "[go]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "golang.go"
