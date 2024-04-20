@@ -8,31 +8,54 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
 jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
-
     - name: Checkout repository
       uses: actions/checkout@v4
-
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
         go-version: '1.22.0'
         cache-dependency-path: go.sum
-
     - name: Install dependencies
       run: go get .
-
     - name: Compile packages and dependencies
       run: go build -v ./...
 
-    - name: Run tests and create coverage report
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Go environment
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22.0'
+        cache-dependency-path: go.sum
+    - name: Run tests and generate coverage report
       run: go run gotest.tools/gotestsum@latest --format github-actions ./... -coverprofile=coverage.out --covermode=atomic
+    - name: Upload coverage report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage.out
+        path: ./coverage.out
 
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Download coverage report artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage.out
     - name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        files: coverage.out
