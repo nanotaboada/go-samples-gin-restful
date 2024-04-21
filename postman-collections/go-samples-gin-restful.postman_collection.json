@@ -31,7 +31,8 @@
 					"path": [
 						"players"
 					]
-				}
+				},
+				"description": "Creates a new Player"
 			},
 			"response": []
 		},
@@ -62,7 +63,8 @@
 					"path": [
 						"players"
 					]
-				}
+				},
+				"description": "Retrieves all the Players"
 			},
 			"response": []
 		},
@@ -94,7 +96,8 @@
 						"players",
 						"1"
 					]
-				}
+				},
+				"description": "Retrieves one Player by Id"
 			},
 			"response": []
 		},
@@ -123,7 +126,8 @@
 						"players",
 						"12"
 					]
-				}
+				},
+				"description": "Updates an existing Player"
 			},
 			"response": []
 		},
@@ -143,7 +147,8 @@
 						"players",
 						"12"
 					]
-				}
+				},
+				"description": "Deletes an existing Player"
 			},
 			"response": []
 		}
