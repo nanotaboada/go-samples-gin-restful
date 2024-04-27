@@ -14,29 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetPlayers(context *gin.Context) {
-	var players []models.Player
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	db.Find(&players)
-	context.IndentedJSON(http.StatusOK, players)
-}
-
-func GetPlayerByID(context *gin.Context) {
-	id := context.Param("id")
-	var player models.Player
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	result := db.First(&player, id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			context.Status(http.StatusNotFound)
-			return
-		}
-	}
-	context.IndentedJSON(http.StatusOK, player)
-}
-
+// Creates a new Player
 func CreatePlayer(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
@@ -58,6 +36,32 @@ func CreatePlayer(context *gin.Context) {
 	context.Status(http.StatusConflict)
 }
 
+// Retrieves all Players
+func GetPlayers(context *gin.Context) {
+	var players []models.Player
+	db := data.DB
+	// https://gorm.io/docs/query.html
+	db.Find(&players)
+	context.IndentedJSON(http.StatusOK, players)
+}
+
+// Retrieves a Player by Id
+func GetPlayerByID(context *gin.Context) {
+	id := context.Param("id")
+	var player models.Player
+	db := data.DB
+	// https://gorm.io/docs/query.html
+	result := db.First(&player, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			context.Status(http.StatusNotFound)
+			return
+		}
+	}
+	context.IndentedJSON(http.StatusOK, player)
+}
+
+// Updates a Player by Id
 func UpdatePlayer(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
@@ -80,6 +84,7 @@ func UpdatePlayer(context *gin.Context) {
 	context.Status(http.StatusNoContent)
 }
 
+// Deletes a Player by Id
 func DeletePlayer(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player

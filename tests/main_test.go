@@ -26,10 +26,67 @@ func TestMain(main *testing.M) {
 }
 
 const (
-	Url             = "/players/"
+	URL             = "/players/"
 	ContentType     = "Content-Type"
 	ApplicationJSON = "application/json"
 )
+
+/* POST /players/ ----------------------------------------------------------- */
+
+// Given POST
+// When request body is empty
+// Then response status should be 400 (Bad Request)
+func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
+	// Arrange
+	router := routes.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, URL, nil)
+	request.Header.Set(ContentType, ApplicationJSON)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusBadRequest, recorder.Code)
+}
+
+// Given POST
+// When request body is existing Player
+// Then response status should be 409 (Conflict)
+func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
+	// Arrange
+	player := GetExistingPlayer()
+	body, _ := json.Marshal(player)
+	router := routes.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, URL, bytes.NewBuffer(body))
+	request.Header.Set(ContentType, ApplicationJSON)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusConflict, recorder.Code)
+}
+
+// Given POST
+// when request body is non-existing Player
+// Then response status should be 201 (Created)
+func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) {
+	// Arrange
+	player := GetNonExistingPlayer()
+	body, _ := json.Marshal(player)
+	router := routes.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, URL, bytes.NewBuffer(body))
+	request.Header.Set(ContentType, ApplicationJSON)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusCreated, recorder.Code)
+}
 
 /* GET /players/ ------------------------------------------------------------ */
 
@@ -56,7 +113,7 @@ func TestRequestGETNoParamResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, Url, nil)
+	request, _ := http.NewRequest(http.MethodGet, URL, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -72,7 +129,7 @@ func TestRequestGETNoParamResponsePlayers(test *testing.T) {
 	// Arrange
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, Url, nil)
+	request, _ := http.NewRequest(http.MethodGet, URL, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -93,7 +150,7 @@ func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {
 	id := "999"
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, Url+id, nil)
+	request, _ := http.NewRequest(http.MethodGet, URL+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -110,7 +167,7 @@ func TestRequestGETIdExistingResponseStatusOK(test *testing.T) {
 	id := "10"
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, Url+id, nil)
+	request, _ := http.NewRequest(http.MethodGet, URL+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -127,7 +184,7 @@ func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
 	id := "10"
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, Url+id, nil)
+	request, _ := http.NewRequest(http.MethodGet, URL+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -141,63 +198,6 @@ func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
 	assert.Equal(test, "Messi", player.LastName)
 }
 
-/* POST /players/ ----------------------------------------------------------- */
-
-// Given POST
-// When request body is empty
-// Then response status should be 400 (Bad Request)
-func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
-	// Arrange
-	router := routes.Setup()
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, Url, nil)
-	request.Header.Set(ContentType, ApplicationJSON)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusBadRequest, recorder.Code)
-}
-
-// Given POST
-// When request body is existing Player
-// Then response status should be 409 (Conflict)
-func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
-	// Arrange
-	player := GetExistingPlayer()
-	body, _ := json.Marshal(player)
-	router := routes.Setup()
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, Url, bytes.NewBuffer(body))
-	request.Header.Set(ContentType, ApplicationJSON)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusConflict, recorder.Code)
-}
-
-// Given POST
-// when request body is non-existing Player
-// Then response status should be 201 (Created)
-func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) {
-	// Arrange
-	player := GetNonExistingPlayer()
-	body, _ := json.Marshal(player)
-	router := routes.Setup()
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, Url, bytes.NewBuffer(body))
-	request.Header.Set(ContentType, ApplicationJSON)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusCreated, recorder.Code)
-}
-
 /* PUT /players/:id --------------------------------------------------------- */
 
 // Given PUT
@@ -208,7 +208,7 @@ func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	id := "10"
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, Url+id, nil)
+	request, _ := http.NewRequest(http.MethodPut, URL+id, nil)
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -231,7 +231,7 @@ func TestRequestPUTBodyUnknownPlayerResponseStatusNotFound(test *testing.T) {
 	body, _ := json.Marshal(player)
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, Url+id, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(http.MethodPut, URL+id, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -253,7 +253,7 @@ func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 	body, _ := json.Marshal(player)
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, Url+id, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(http.MethodPut, URL+id, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -273,7 +273,7 @@ func TestRequestDELETEIdNonExistingIdResponseStatusNotFound(test *testing.T) {
 	id := "999"
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodDelete, Url+id, nil)
+	request, _ := http.NewRequest(http.MethodDelete, URL+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -290,7 +290,7 @@ func TestRequestDELETEIdExistingIdResponseStatusNoContent(test *testing.T) {
 	id := "12"
 	router := routes.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodDelete, Url+id, nil)
+	request, _ := http.NewRequest(http.MethodDelete, URL+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)

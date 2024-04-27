@@ -4,8 +4,7 @@
 
 package models
 
-// https://go.dev/tour/basics/11
-// https://go.dev/ref/spec#Exported_identifiers
+// Player is a footballer, a sportsperson who plays football
 type Player struct {
 	ID           int    `json:"id" gorm:"primaryKey"`
 	FirstName    string `json:"firstName" gorm:"column:firstName"`
