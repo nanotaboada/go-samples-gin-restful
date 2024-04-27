@@ -9,6 +9,7 @@ import (
 	"github.com/nanotaboada/go-samples-gin-restful/controllers"
 )
 
+// Setup configures the router Engine connecting URL paths with controller handlers
 func Setup() *gin.Engine {
 	router := gin.Default()
 

@@ -2,6 +2,7 @@ package tests
 
 import "github.com/nanotaboada/go-samples-gin-restful/models"
 
+// Gets a Player that already exists in the original collection
 func GetExistingPlayer() models.Player {
 	return models.Player{
 		ID:           1,
@@ -18,6 +19,7 @@ func GetExistingPlayer() models.Player {
 	}
 }
 
+// Gets a Player that does not exist in the original collection
 func GetNonExistingPlayer() models.Player {
 	return models.Player{
 		ID:           12,
