@@ -15,7 +15,7 @@ import (
 )
 
 // Creates a new Player
-func CreatePlayer(context *gin.Context) {
+func Post(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
 	if err := context.BindJSON(&player); err != nil {
@@ -37,7 +37,7 @@ func CreatePlayer(context *gin.Context) {
 }
 
 // Retrieves all Players
-func GetPlayers(context *gin.Context) {
+func GetAll(context *gin.Context) {
 	var players []models.Player
 	db := data.DB
 	// https://gorm.io/docs/query.html
@@ -46,7 +46,7 @@ func GetPlayers(context *gin.Context) {
 }
 
 // Retrieves a Player by Id
-func GetPlayerByID(context *gin.Context) {
+func GetByID(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
 	db := data.DB
@@ -62,7 +62,7 @@ func GetPlayerByID(context *gin.Context) {
 }
 
 // Updates a Player by Id
-func UpdatePlayer(context *gin.Context) {
+func Put(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
 	var update models.Player
@@ -85,7 +85,7 @@ func UpdatePlayer(context *gin.Context) {
 }
 
 // Deletes a Player by Id
-func DeletePlayer(context *gin.Context) {
+func Delete(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
 	db := data.DB
