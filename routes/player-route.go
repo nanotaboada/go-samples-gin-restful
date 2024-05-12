@@ -13,11 +13,11 @@ import (
 func Setup() *gin.Engine {
 	router := gin.Default()
 
-	router.GET("/players/", controllers.GetPlayers)
-	router.GET("/players/:id", controllers.GetPlayerByID)
-	router.POST("/players/", controllers.CreatePlayer)
-	router.PUT("/players/:id", controllers.UpdatePlayer)
-	router.DELETE("/players/:id", controllers.DeletePlayer)
+	router.GET("/players/", controllers.GetAll)
+	router.GET("/players/:id", controllers.GetByID)
+	router.POST("/players/", controllers.Post)
+	router.PUT("/players/:id", controllers.Put)
+	router.DELETE("/players/:id", controllers.Delete)
 
 	return router
 }

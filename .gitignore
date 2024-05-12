@@ -11,6 +11,9 @@
 # Test binary, built with `go test -c`
 *.test
 
+# Compiled binary, built with `go build .`
+go-samples-gin-restful
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
