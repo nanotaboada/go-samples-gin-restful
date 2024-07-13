@@ -14,9 +14,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// Creates a new Player
+// Post creates a new Player
 func Post(context *gin.Context) {
-	id := context.Param("id")
 	var player models.Player
 	if err := context.BindJSON(&player); err != nil {
 		context.Status(http.StatusBadRequest)
@@ -24,7 +23,7 @@ func Post(context *gin.Context) {
 	}
 	db := data.DB
 	// https://gorm.io/docs/query.html
-	result := db.First(&player, id)
+	result := db.First(&player, player.ID)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			// https://gorm.io/docs/create.html
@@ -36,7 +35,7 @@ func Post(context *gin.Context) {
 	context.Status(http.StatusConflict)
 }
 
-// Retrieves all Players
+// GetAll retrieves all players
 func GetAll(context *gin.Context) {
 	var players []models.Player
 	db := data.DB
@@ -45,7 +44,7 @@ func GetAll(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, players)
 }
 
-// Retrieves a Player by Id
+// GetByID retrieves a Player by ID
 func GetByID(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
@@ -61,7 +60,7 @@ func GetByID(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, player)
 }
 
-// Updates a Player by Id
+// Put updates (entirely) a Player by ID
 func Put(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
@@ -84,7 +83,7 @@ func Put(context *gin.Context) {
 	context.Status(http.StatusNoContent)
 }
 
-// Deletes a Player by Id
+// Delete removes a Player by ID
 func Delete(context *gin.Context) {
 	id := context.Param("id")
 	var player models.Player
