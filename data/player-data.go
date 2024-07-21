@@ -19,7 +19,7 @@ var (
 )
 
 // Connect initializes and returns a global DB connection
-func Connect(path string) {
+func Connect(dataSourceName string) {
 	// https://gorm.io/docs/logger.html
 	newLogger := logger.New(
 		log.New(log.Writer(), "\r\n", log.LstdFlags),
@@ -31,7 +31,7 @@ func Connect(path string) {
 	)
 
 	// https://gorm.io/docs/connecting_to_the_database.html
-	db, err := gorm.Open(sqlite.Open(path), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open(dataSourceName), &gorm.Config{
 		Logger: newLogger,
 	})
 
