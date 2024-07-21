@@ -1,0 +1,126 @@
+definitions:
+  models.Player:
+    properties:
+      abbrPosition:
+        type: string
+      dateOfBirth:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      league:
+        type: string
+      middleName:
+        type: string
+      position:
+        type: string
+      squadNumber:
+        type: integer
+      starting11:
+        type: boolean
+      team:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /players:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Player'
+            type: array
+      summary: Retrieves all players
+      tags:
+      - players
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Player
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/models.Player'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Player'
+        "400":
+          description: Bad Request
+        "409":
+          description: Conflict
+      summary: Creates a Player
+      tags:
+      - players
+  /players/{id}:
+    delete:
+      parameters:
+      - description: Player.ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+      summary: Deletes a Player by its ID
+      tags:
+      - players
+    get:
+      parameters:
+      - description: Player.ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Player'
+        "404":
+          description: Not Found
+      summary: Retrieves a Player by its ID
+      tags:
+      - players
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Player.ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Player
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/models.Player'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+      summary: Updates (entirely) a Player by its ID
+      tags:
+      - players
+swagger: "2.0"

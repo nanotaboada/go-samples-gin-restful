@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-
-	path := "./data/players-sqlite3.db"
-	data.Connect(path)
+	dsn := "./data/players-sqlite3.db"
+	data.Connect(dsn)
 	app := routes.Setup()
+	routes.SetSwaggerInfo()
 	app.Run(":9000")
 }
