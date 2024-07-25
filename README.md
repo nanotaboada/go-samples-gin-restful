@@ -20,9 +20,17 @@ The following is a simplified dependency diagram of modules and main libraries:
 
 ## Start
 
-```shell
+```console
 go run .
 ```
+
+## Documentation
+
+```console
+http://localhost:9000/swagger/index.html
+```
+
+![API Documentation](go-samples-gin-restful-swagger.png)
 
 ## Credits
 
