@@ -5,13 +5,12 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/models"
-	"gorm.io/gorm"
+	"github.com/nanotaboada/go-samples-gin-restful/services"
 )
 
 // Post creates a Player
@@ -30,18 +29,15 @@ func Post(context *gin.Context) {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	result := db.First(&player, player.ID)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			// https://gorm.io/docs/create.html
-			db.Create(&player)
-			context.Status(http.StatusCreated)
-			return
-		}
+	_, err := services.RetrieveByID(player.ID)
+	if err == nil {
+		context.Status(http.StatusConflict)
+		return
 	}
-	context.Status(http.StatusConflict)
+	if err := services.Create(&player); err == nil {
+		context.Status(http.StatusCreated)
+		return
+	}
 }
 
 // GetAll retrieves all players
@@ -52,10 +48,7 @@ func Post(context *gin.Context) {
 // @Success 200 {array} models.Player "OK"
 // @Router /players [get]
 func GetAll(context *gin.Context) {
-	var players []models.Player
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	db.Find(&players)
+	players, _ := services.RetrieveAll()
 	context.IndentedJSON(http.StatusOK, players)
 }
 
@@ -69,16 +62,11 @@ func GetAll(context *gin.Context) {
 // @Failure 404 "Not Found"
 // @Router /players/{id} [get]
 func GetByID(context *gin.Context) {
-	id := context.Param("id")
-	var player models.Player
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	result := db.First(&player, id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			context.Status(http.StatusNotFound)
-			return
-		}
+	id, _ := strconv.Atoi(context.Param("id"))
+	player, err := services.RetrieveByID(id)
+	if err != nil {
+		context.Status(http.StatusNotFound)
+		return
 	}
 	context.IndentedJSON(http.StatusOK, player)
 }
@@ -95,25 +83,21 @@ func GetByID(context *gin.Context) {
 // @Failure 404 "Not Found"
 // @Router /players/{id} [put]
 func Put(context *gin.Context) {
-	id := context.Param("id")
+	id, _ := strconv.Atoi(context.Param("id"))
+	_, err := services.RetrieveByID(id)
+	if err != nil {
+		context.Status(http.StatusNotFound)
+		return
+	}
 	var player models.Player
-	var update models.Player
-	if err := context.BindJSON(&update); err != nil {
+	if err := context.BindJSON(&player); err != nil || player.ID != id {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	result := db.First(&player, id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			context.Status(http.StatusNotFound)
-			return
-		}
+	if err := services.Update(&player); err == nil {
+		context.Status(http.StatusNoContent)
+		return
 	}
-	// https://gorm.io/docs/update.html
-	db.Save(&update)
-	context.Status(http.StatusNoContent)
 }
 
 // Delete deletes a Player by its ID
@@ -125,18 +109,14 @@ func Put(context *gin.Context) {
 // @Failure 404 "Not Found"
 // @Router /players/{id} [delete]
 func Delete(context *gin.Context) {
-	id := context.Param("id")
-	var player models.Player
-	db := data.DB
-	// https://gorm.io/docs/query.html
-	result := db.First(&player, id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			context.Status(http.StatusNotFound)
-			return
-		}
+	id, _ := strconv.Atoi(context.Param("id"))
+	_, err := services.RetrieveByID(id)
+	if err != nil {
+		context.Status(http.StatusNotFound)
+		return
 	}
-	// https://gorm.io/docs/delete.html
-	db.Delete(&models.Player{}, id)
-	context.Status(http.StatusNoContent)
+	if err := services.Delete(id); err == nil {
+		context.Status(http.StatusNoContent)
+		return
+	}
 }
