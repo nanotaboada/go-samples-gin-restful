@@ -5,7 +5,7 @@ import (
 	"github.com/nanotaboada/go-samples-gin-restful/models"
 )
 
-// Create adds a new player in the database
+// Create adds a new Player in the database
 func Create(player *models.Player) error {
 	// https://gorm.io/docs/create.html
 	return data.DB.Create(player).Error
@@ -19,7 +19,7 @@ func RetrieveAll() ([]models.Player, error) {
 	return players, result.Error
 }
 
-// RetrieveByID gets a player by ID from the database
+// RetrieveByID gets a Player by ID from the database
 func RetrieveByID(id int) (models.Player, error) {
 	var player models.Player
 	// https://gorm.io/docs/query.html
@@ -27,13 +27,21 @@ func RetrieveByID(id int) (models.Player, error) {
 	return player, result.Error
 }
 
-// Update replaces (completely) an existing player in the database
+// RetrieveBySquadNumber gets a Player by its Squad Number from the database
+func RetrieveBySquadNumber(squadNumber int) (models.Player, error) {
+	var player models.Player
+	// https://gorm.io/docs/query.html
+	result := data.DB.Where("squadNumber = ?", squadNumber).First(&player)
+	return player, result.Error
+}
+
+// Update replaces (completely) a Player in the database
 func Update(player *models.Player) error {
 	// https://gorm.io/docs/update.html
 	return data.DB.Save(player).Error
 }
 
-// Delete removes a player by its ID from the database
+// Delete removes a Player by its ID from the database
 func Delete(id int) error {
 	// https://gorm.io/docs/delete.html
 	return data.DB.Delete(&models.Player{}, id).Error

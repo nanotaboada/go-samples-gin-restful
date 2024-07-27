@@ -123,4 +123,24 @@ paths:
       summary: Updates (entirely) a Player by its ID
       tags:
       - players
+  /players/squadnumber/{squadnumber}:
+    get:
+      parameters:
+      - description: Player.SquadNumber
+        in: path
+        name: squadnumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Player'
+        "404":
+          description: Not Found
+      summary: Retrieves a Player by its Squad Number
+      tags:
+      - players
 swagger: "2.0"

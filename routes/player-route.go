@@ -20,6 +20,7 @@ func Setup() *gin.Engine {
 
 	router.GET("/players/", controllers.GetAll)
 	router.GET("/players/:id", controllers.GetByID)
+	router.GET("/players/squadnumber/:squadnumber", controllers.GetBySquadNumber)
 	router.POST("/players/", controllers.Post)
 	router.PUT("/players/:id", controllers.Put)
 	router.DELETE("/players/:id", controllers.Delete)
