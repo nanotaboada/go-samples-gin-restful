@@ -71,6 +71,25 @@ func GetByID(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, player)
 }
 
+// GetByID retrieves a Player by its Squad Number
+//
+// @Summary Retrieves a Player by its Squad Number
+// @Tags players
+// @Produce application/json
+// @Param squadnumber path string true "Player.SquadNumber"
+// @Success 200 {object} models.Player "OK"
+// @Failure 404 "Not Found"
+// @Router /players/squadnumber/{squadnumber} [get]
+func GetBySquadNumber(context *gin.Context) {
+	squadNumber, _ := strconv.Atoi(context.Param("squadnumber"))
+	player, err := services.RetrieveBySquadNumber(squadNumber)
+	if err != nil {
+		context.Status(http.StatusNotFound)
+		return
+	}
+	context.IndentedJSON(http.StatusOK, player)
+}
+
 // Put updates (entirely) a Player by its ID
 //
 // @Summary Updates (entirely) a Player by its ID

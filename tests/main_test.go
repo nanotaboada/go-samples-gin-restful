@@ -143,6 +143,64 @@ func TestRequestGETNoParamResponsePlayers(test *testing.T) {
 /* GET /players/:id --------------------------------------------------------- */
 
 // Given GET
+// When request path is non-existing Squad Number
+// Then response status should be 404 (Not Found)
+func TestRequestGETSquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
+	// Arrange
+	squadNumber := "999"
+	router := routes.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, URL+"squadnumber/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusNotFound, recorder.Code)
+}
+
+// Given GET
+// When request path is existing Squad Number
+// Then response status should be 200 (OK)
+func TestRequestGETSquadNumberExistingResponseStatusOK(test *testing.T) {
+	// Arrange
+	squadNumber := "11"
+	router := routes.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, URL+"squadnumber/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusOK, recorder.Code)
+}
+
+// Given GET
+// When request path is existing Squad Number
+// Then response body should be matching Player
+func TestRequestGETSquadNumberExistingResponsePlayer(test *testing.T) {
+	// Arrange
+	squadNumber := "11"
+	router := routes.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, URL+"squadnumber/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+	var player models.Player
+	json.Unmarshal(recorder.Body.Bytes(), &player)
+
+	// Assert
+	assert.NotEmpty(test, player)
+	assert.Equal(test, 11, player.SquadNumber)
+	assert.Equal(test, "Ángel", player.FirstName)
+	assert.Equal(test, "Di María", player.LastName)
+}
+
+/* GET /players/:id --------------------------------------------------------- */
+
+// Given GET
 // When request path is non-existing Id
 // Then response status should be 404 (Not Found)
 func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {

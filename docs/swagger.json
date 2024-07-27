@@ -60,6 +60,37 @@
                 }
             }
         },
+        "/players/squadnumber/{squadnumber}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "players"
+                ],
+                "summary": "Retrieves a Player by its Squad Number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Player.SquadNumber",
+                        "name": "squadnumber",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Player"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/players/{id}": {
             "get": {
                 "produces": [
