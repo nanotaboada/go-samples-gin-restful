@@ -18,7 +18,7 @@ jobs:
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.0'
+        go-version: '1.22.4'
         cache-dependency-path: go.sum
     - name: Install dependencies
       run: go get .
@@ -34,7 +34,7 @@ jobs:
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.0'
+        go-version: '1.22.4'
         cache-dependency-path: go.sum
     - name: Run tests and generate coverage report
       run: go run gotest.tools/gotestsum@latest --format github-actions ./... -coverprofile=coverage.out --covermode=atomic
