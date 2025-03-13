@@ -1,6 +1,7 @@
 # Building and testing Go
 # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
+# Building and testing Go
 name: Go CI
 
 on:
@@ -8,20 +9,28 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-jobs:
 
+env:
+  GO_VERSION: 1.24.1  # Define it once
+
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.4'
+        go-version: ${{ env.GO_VERSION }}
         cache-dependency-path: go.sum
+
     - name: Install dependencies
-      run: go get .
+      run: |
+        go mod tidy
+        go get .
+
     - name: Compile packages and dependencies
       run: go build -v ./...
 
@@ -31,13 +40,16 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22.4'
+        go-version: ${{ env.GO_VERSION }}
         cache-dependency-path: go.sum
+
     - name: Run tests and generate coverage report
       run: go run gotest.tools/gotestsum@latest --format github-actions ./... -coverprofile=coverage.out --covermode=atomic
+
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
       with:
@@ -50,10 +62,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Download coverage report artifact
       uses: actions/download-artifact@v4
       with:
         name: coverage.out
+
     - name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v5
       with:
