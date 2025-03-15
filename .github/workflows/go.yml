@@ -1,7 +1,6 @@
 # Building and testing Go
 # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-# Building and testing Go
 name: Go CI
 
 on:
@@ -48,16 +47,16 @@ jobs:
         cache-dependency-path: go.sum
 
     - name: Run tests and generate coverage report
-      run: go test -v ./... -coverprofile=coverage.txt
+      run: go test -v ./... -covermode=atomic -coverprofile=coverage.out
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
       with:
-        name: coverage.txt
-        path: ./coverage.txt
+        name: coverage.out
+        path: ./coverage.out
         overwrite: true
 
-  coverage:
+  coverage-codecov:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -67,10 +66,29 @@ jobs:
     - name: Download coverage report artifact
       uses: actions/download-artifact@v4
       with:
-        name: coverage.txt
+        name: coverage.out
 
     - name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: coverage.txt
+        files: coverage.out
+
+  coverage-codacy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download coverage report artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage.out
+
+    - name: Upload coverage report to Codacy
+      uses: codacy/codacy-coverage-reporter-action@v1.3.0
+      with:
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        language: go
+        force-coverage-parser: go -r coverage.out
