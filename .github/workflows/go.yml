@@ -11,7 +11,7 @@ on:
     branches: [ "master" ]
 
 env:
-  GO_VERSION: 1.24.1  # Define it once
+  GO_VERSION: 1.24.1
 
 jobs:
   build:
@@ -48,13 +48,14 @@ jobs:
         cache-dependency-path: go.sum
 
     - name: Run tests and generate coverage report
-      run: go run gotest.tools/gotestsum@latest --format github-actions ./... -coverprofile=coverage.out --covermode=atomic
+      run: go test -v ./... -coverprofile=coverage.txt
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
       with:
-        name: coverage.out
-        path: ./coverage.out
+        name: coverage.txt
+        path: ./coverage.txt
+        overwrite: true
 
   coverage:
     needs: test
@@ -66,10 +67,10 @@ jobs:
     - name: Download coverage report artifact
       uses: actions/download-artifact@v4
       with:
-        name: coverage.out
+        name: coverage.txt
 
     - name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: coverage.out
+        files: coverage.txt
