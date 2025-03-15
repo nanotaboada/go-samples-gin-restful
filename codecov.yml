@@ -4,21 +4,30 @@
 
 # Ignoring Paths
 # https://docs.codecov.com/docs/ignoring-paths
-# The pattern folder/* will not match recursively in the folder.
-# Please use this folder/**/*, which will exclude all files within the given folder.
+
 ignore:
+  - ".github"
+  - ".vscode"
+  - "controllers"
   - "data"
+  - "docs"
   - "models"
-  - "routes"
-  - "tests"
   - "postman_collections"
+  - "routes"
+  - "services"
+  - ".gitignore"
+  - "codecov.yml"
+  - "go.mod"
+  - "go.sum"
+  - "LICENSE"
   - "main.go"
+  - "README.md"
 coverage:
   status:
     project:
-      controllers:
+      tests:
         paths:
-          - "controllers"
+          - "tests"
     patch:
       default:
         informational: true
