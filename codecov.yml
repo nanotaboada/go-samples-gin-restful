@@ -1,9 +1,4 @@
-# Validate your repository YAML
-# https://docs.codecov.com/docs/codecov-yaml#validate-your-repository-yaml
-# curl -X POST --data-binary @codecov.yml https://codecov.io/validate
-
-# Ignoring Paths
-# https://docs.codecov.com/docs/ignoring-paths
+# https://docs.codecov.com/docs/codecov-yaml
 
 ignore:
   - ".github"
