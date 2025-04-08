@@ -22,7 +22,7 @@ Proof of Concept for a REST API made with [Go](https://go.dev/) and [Gin](https:
 
 The following is a simplified dependency diagram of modules and main libraries:
 
-![Dependency Diagram](go-samples-gin-restful.svg)
+![Dependency Diagram](assets/images/go-samples-gin-restful.svg)
 
 ## Start
 
@@ -36,7 +36,7 @@ go run .
 http://localhost:9000/swagger/index.html
 ```
 
-![API Documentation](go-samples-gin-restful-swagger.png)
+![API Documentation](assets/images/go-samples-gin-restful-swagger.png)
 
 ## Credits
 
