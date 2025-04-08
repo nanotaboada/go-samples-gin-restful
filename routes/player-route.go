@@ -12,7 +12,6 @@ import (
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/controllers"
-	"github.com/nanotaboada/go-samples-gin-restful/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -32,14 +31,6 @@ func Setup() *gin.Engine {
 	router.DELETE("/players/:id", ClearCache(store, controllers.Delete))
 
 	return router
-}
-
-// SetSwaggerInfo configures basic Swagger details
-func SetSwaggerInfo() {
-	docs.SwaggerInfo.Title = "go-samples-gin-restful"
-	docs.SwaggerInfo.Version = "1.0.0"
-	docs.SwaggerInfo.Description = "🧪 Proof of Concept for a RESTful API made with Go and Gin"
-	docs.SwaggerInfo.Schemes = []string{"http"}
 }
 
 // ClearCache resets the cache when the collection is modified (POST, PUT, DELETE)
