@@ -11,6 +11,9 @@ on:
 
 env:
   GO_VERSION: 1.24.1
+  PKG_SERVICES: "github.com/nanotaboada/go-samples-gin-restful/services"
+  PKG_CONTROLLERS: "github.com/nanotaboada/go-samples-gin-restful/controllers"
+  PKG_ROUTES: "github.com/nanotaboada/go-samples-gin-restful/routes"
 
 jobs:
   build:
@@ -31,7 +34,8 @@ jobs:
         go get .
 
     - name: Compile packages and dependencies
-      run: go build -v ./...
+      run: |
+        go build -v ./...
 
   test:
     needs: build
@@ -47,7 +51,11 @@ jobs:
         cache-dependency-path: go.sum
 
     - name: Run tests and generate coverage report
-      run: go test -v ./... -covermode=atomic -coverprofile=coverage.out
+      run: |
+        go test -v ./... \
+          -coverpkg=${{ env.PKG_SERVICES }},${{ env.PKG_CONTROLLERS }},${{ env.PKG_ROUTES }} \
+          -covermode=atomic \
+          -coverprofile=coverage.out
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4

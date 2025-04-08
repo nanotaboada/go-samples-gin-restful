@@ -1,28 +1,69 @@
 # https://docs.codecov.com/docs/codecov-yaml
 
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 10%
+        if_not_found: success
+        if_ci_failed: error
+
+    patch:
+      default:
+        target: 80%
+        threshold: 10%
+
+flags:
+  unit:
+    paths:
+      - "services/"
+      - "controllers/"
+      - "routes/"
+    carryforward: true
+
+component_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: auto
+        branches:
+          - "!main"
+
+  individual_components:
+    - component_id: services
+      name: Services
+      paths:
+        - "services/"
+    - component_id: controllers
+      name: Controllers
+      paths:
+        - "controllers/"
+    - component_id: routes
+      name: Routes
+      paths:
+        - "routes/"
+
+comment:
+  layout: "header, diff, flags, components"
+
 ignore:
   - ".github"
   - ".vscode"
-  - "controllers"
-  - "data"
-  - "docs"
-  - "models"
-  - "postman_collections"
-  - "routes"
-  - "services"
+  - "assets/**/*"
+  - "data/**/*"
+  - "docs/**/*"
+  - "models/**/*"
+  - "postman_collections/**/*"
+  - "swagger/**/*"
+  - "tests/**/*"
   - ".gitignore"
-  - "codecov.yml"
+  - "**/*.yml"
+  - "**/*.json"
+  - "**/*.png"
+  - "**/*.svg"
   - "go.mod"
   - "go.sum"
   - "LICENSE"
   - "main.go"
   - "README.md"
-coverage:
-  status:
-    project:
-      tests:
-        paths:
-          - "tests"
-    patch:
-      default:
-        informational: true
