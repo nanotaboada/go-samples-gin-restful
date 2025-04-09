@@ -1,16 +1,13 @@
-/* -----------------------------------------------------------------------------
- * Controllers
- * -------------------------------------------------------------------------- */
-
-package controllers
+// Package controller defines the HTTP handlers for Player-related endpoints.
+package controller
 
 import (
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nanotaboada/go-samples-gin-restful/models"
-	"github.com/nanotaboada/go-samples-gin-restful/services"
+	"github.com/nanotaboada/go-samples-gin-restful/model"
+	"github.com/nanotaboada/go-samples-gin-restful/service"
 )
 
 // Post creates a Player
@@ -24,17 +21,17 @@ import (
 // @Failure 409 "Conflict"
 // @Router /players [post]
 func Post(context *gin.Context) {
-	var player models.Player
+	var player model.Player
 	if err := context.BindJSON(&player); err != nil {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	_, err := services.RetrieveByID(player.ID)
+	_, err := service.RetrieveByID(player.ID)
 	if err == nil {
 		context.Status(http.StatusConflict)
 		return
 	}
-	if err := services.Create(&player); err == nil {
+	if err := service.Create(&player); err == nil {
 		context.Status(http.StatusCreated)
 		return
 	}
@@ -48,7 +45,7 @@ func Post(context *gin.Context) {
 // @Success 200 {array} models.Player "OK"
 // @Router /players [get]
 func GetAll(context *gin.Context) {
-	players, _ := services.RetrieveAll()
+	players, _ := service.RetrieveAll()
 	context.IndentedJSON(http.StatusOK, players)
 }
 
@@ -63,7 +60,7 @@ func GetAll(context *gin.Context) {
 // @Router /players/{id} [get]
 func GetByID(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	player, err := services.RetrieveByID(id)
+	player, err := service.RetrieveByID(id)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
@@ -82,7 +79,7 @@ func GetByID(context *gin.Context) {
 // @Router /players/squadnumber/{squadnumber} [get]
 func GetBySquadNumber(context *gin.Context) {
 	squadNumber, _ := strconv.Atoi(context.Param("squadnumber"))
-	player, err := services.RetrieveBySquadNumber(squadNumber)
+	player, err := service.RetrieveBySquadNumber(squadNumber)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
@@ -103,17 +100,17 @@ func GetBySquadNumber(context *gin.Context) {
 // @Router /players/{id} [put]
 func Put(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	_, err := services.RetrieveByID(id)
+	_, err := service.RetrieveByID(id)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
 	}
-	var player models.Player
+	var player model.Player
 	if err := context.BindJSON(&player); err != nil || player.ID != id {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	if err := services.Update(&player); err == nil {
+	if err := service.Update(&player); err == nil {
 		context.Status(http.StatusNoContent)
 		return
 	}
@@ -129,12 +126,12 @@ func Put(context *gin.Context) {
 // @Router /players/{id} [delete]
 func Delete(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	_, err := services.RetrieveByID(id)
+	_, err := service.RetrieveByID(id)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
 	}
-	if err := services.Delete(id); err == nil {
+	if err := service.Delete(id); err == nil {
 		context.Status(http.StatusNoContent)
 		return
 	}

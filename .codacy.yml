@@ -6,7 +6,7 @@ exclude_paths:
   - "assets/**/*"
   - "data/**/*"
   - "docs/**/*"
-  - "models/**/*"
+  - "model/**/*"
   - "postman_collections/**/*"
   - "swagger/**/*"
   - "tests/**/*"

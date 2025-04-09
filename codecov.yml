@@ -17,9 +17,9 @@ coverage:
 flags:
   unit:
     paths:
-      - "services/"
-      - "controllers/"
-      - "routes/"
+      - "service/"
+      - "controller/"
+      - "route/"
     carryforward: true
 
 component_management:
@@ -32,17 +32,17 @@ component_management:
 
   individual_components:
     - component_id: services
-      name: Services
+      name: Service
       paths:
-        - "services/"
+        - "service/"
     - component_id: controllers
-      name: Controllers
+      name: Controller
       paths:
-        - "controllers/"
+        - "controller/"
     - component_id: routes
-      name: Routes
+      name: Route
       paths:
-        - "routes/"
+        - "route/"
 
 comment:
   layout: "header, diff, flags, components"
@@ -53,7 +53,7 @@ ignore:
   - "assets/**/*"
   - "data/**/*"
   - "docs/**/*"
-  - "models/**/*"
+  - "model/**/*"
   - "postman_collections/**/*"
   - "swagger/**/*"
   - "tests/**/*"

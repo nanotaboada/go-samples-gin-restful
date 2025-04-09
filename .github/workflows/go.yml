@@ -11,9 +11,9 @@ on:
 
 env:
   GO_VERSION: 1.24.1
-  PKG_SERVICES: "github.com/nanotaboada/go-samples-gin-restful/services"
-  PKG_CONTROLLERS: "github.com/nanotaboada/go-samples-gin-restful/controllers"
-  PKG_ROUTES: "github.com/nanotaboada/go-samples-gin-restful/routes"
+  PKG_SERVICE: "github.com/nanotaboada/go-samples-gin-restful/service"
+  PKG_CONTROLLER: "github.com/nanotaboada/go-samples-gin-restful/controller"
+  PKG_ROUTE: "github.com/nanotaboada/go-samples-gin-restful/route"
 
 jobs:
   build:
@@ -53,7 +53,7 @@ jobs:
     - name: Run tests and generate coverage report
       run: |
         go test -v ./... \
-          -coverpkg=${{ env.PKG_SERVICES }},${{ env.PKG_CONTROLLERS }},${{ env.PKG_ROUTES }} \
+          -coverpkg=${{ env.PKG_SERVICE }},${{ env.PKG_CONTROLLER }},${{ env.PKG_ROUTE }} \
           -covermode=atomic \
           -coverprofile=coverage.out
 

@@ -1,8 +1,6 @@
-/* -----------------------------------------------------------------------------
- * Models
- * -------------------------------------------------------------------------- */
-
-package models
+// Package model defines the data structures used throughout the application,
+// including Player.
+package model
 
 // Player is a footballer, a sportsperson who plays football
 type Player struct {
