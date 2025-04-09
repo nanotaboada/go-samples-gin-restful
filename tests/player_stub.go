@@ -1,10 +1,12 @@
+// Package tests provides integration and utility code to support automated
+// testing of the application.
 package tests
 
-import "github.com/nanotaboada/go-samples-gin-restful/models"
+import "github.com/nanotaboada/go-samples-gin-restful/model"
 
 // Gets a Player that already exists in the original collection
-func GetExistingPlayer() models.Player {
-	return models.Player{
+func GetExistingPlayer() model.Player {
+	return model.Player{
 		ID:           1,
 		FirstName:    "Damián",
 		MiddleName:   "Emiliano",
@@ -20,8 +22,8 @@ func GetExistingPlayer() models.Player {
 }
 
 // Gets a Player that does not exist in the original collection
-func GetNonExistingPlayer() models.Player {
-	return models.Player{
+func GetNonExistingPlayer() model.Player {
+	return model.Player{
 		ID:           12,
 		FirstName:    "Leandro",
 		MiddleName:   "Daniel",

@@ -1,8 +1,5 @@
-/* -----------------------------------------------------------------------------
- * Routes
- * -------------------------------------------------------------------------- */
-
-package routes
+// Package route sets up the routing and middleware for Player-related endpoints.
+package route
 
 import (
 	"fmt"
@@ -11,7 +8,7 @@ import (
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
-	"github.com/nanotaboada/go-samples-gin-restful/controllers"
+	"github.com/nanotaboada/go-samples-gin-restful/controller"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -23,12 +20,12 @@ func Setup() *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.GET("/players/", cache.CachePage(store, time.Hour, controllers.GetAll))
-	router.GET("/players/:id", cache.CachePage(store, time.Hour, controllers.GetByID))
-	router.GET("/players/squadnumber/:squadnumber", cache.CachePage(store, time.Hour, controllers.GetBySquadNumber))
-	router.POST("/players/", ClearCache(store, controllers.Post))
-	router.PUT("/players/:id", ClearCache(store, controllers.Put))
-	router.DELETE("/players/:id", ClearCache(store, controllers.Delete))
+	router.GET("/players/", cache.CachePage(store, time.Hour, controller.GetAll))
+	router.GET("/players/:id", cache.CachePage(store, time.Hour, controller.GetByID))
+	router.GET("/players/squadnumber/:squadnumber", cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
+	router.POST("/players/", ClearCache(store, controller.Post))
+	router.PUT("/players/:id", ClearCache(store, controller.Put))
+	router.DELETE("/players/:id", ClearCache(store, controller.Delete))
 
 	return router
 }

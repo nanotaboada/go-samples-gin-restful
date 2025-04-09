@@ -1,14 +1,12 @@
-/* -----------------------------------------------------------------------------
- * Data
- * -------------------------------------------------------------------------- */
-
+// Package data provides database connectivity and data access functions for
+// Player entities.
 package data
 
 import (
 	"log"
 	"time"
 
-	"github.com/nanotaboada/go-samples-gin-restful/models"
+	"github.com/nanotaboada/go-samples-gin-restful/model"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -41,5 +39,7 @@ func Connect(dataSourceName string) {
 
 	DB = db
 
-	DB.AutoMigrate(&models.Player{})
+	if err := DB.AutoMigrate(&model.Player{}); err != nil {
+		log.Fatal(err)
+	}
 }

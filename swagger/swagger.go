@@ -1,3 +1,4 @@
+// Package swagger registers Swagger UI and routes for API documentation.
 package swagger
 
 import "github.com/nanotaboada/go-samples-gin-restful/docs"
