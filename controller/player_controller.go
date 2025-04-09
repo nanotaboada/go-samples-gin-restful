@@ -15,8 +15,8 @@ import (
 // @Summary Creates a Player
 // @Tags players
 // @Accept application/json
-// @Param player body models.Player true "Player"
-// @Success 201 {object} models.Player "Created"
+// @Param player body model.Player true "Player"
+// @Success 201 {object} model.Player "Created"
 // @Failure 400 "Bad Request"
 // @Failure 409 "Conflict"
 // @Router /players [post]
@@ -42,7 +42,7 @@ func Post(context *gin.Context) {
 // @Summary Retrieves all players
 // @Tags players
 // @Produce application/json
-// @Success 200 {array} models.Player "OK"
+// @Success 200 {array} model.Player "OK"
 // @Router /players [get]
 func GetAll(context *gin.Context) {
 	players, _ := service.RetrieveAll()
@@ -55,7 +55,7 @@ func GetAll(context *gin.Context) {
 // @Tags players
 // @Produce application/json
 // @Param id path string true "Player.ID"
-// @Success 200 {object} models.Player "OK"
+// @Success 200 {object} model.Player "OK"
 // @Failure 404 "Not Found"
 // @Router /players/{id} [get]
 func GetByID(context *gin.Context) {
@@ -74,7 +74,7 @@ func GetByID(context *gin.Context) {
 // @Tags players
 // @Produce application/json
 // @Param squadnumber path string true "Player.SquadNumber"
-// @Success 200 {object} models.Player "OK"
+// @Success 200 {object} model.Player "OK"
 // @Failure 404 "Not Found"
 // @Router /players/squadnumber/{squadnumber} [get]
 func GetBySquadNumber(context *gin.Context) {
@@ -93,7 +93,7 @@ func GetBySquadNumber(context *gin.Context) {
 // @Tags players
 // @Accept application/json
 // @Param id path string true "Player.ID"
-// @Param player body models.Player true "Player"
+// @Param player body model.Player true "Player"
 // @Success 204 "No Content"
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"

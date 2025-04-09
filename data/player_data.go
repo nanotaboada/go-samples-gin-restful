@@ -39,5 +39,7 @@ func Connect(dataSourceName string) {
 
 	DB = db
 
-	DB.AutoMigrate(&model.Player{})
+	if err := DB.AutoMigrate(&model.Player{}); err != nil {
+		log.Fatal(err)
+	}
 }
