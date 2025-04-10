@@ -9,6 +9,11 @@
       "mode": "debug",
       "env": {
         "GIN_MODE": "debug"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Listening and serving HTTP on :([0-9]+)",
+        "uriFormat": "http://localhost:%s/swagger/index.html"
       }
     }
   ]
