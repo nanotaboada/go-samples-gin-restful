@@ -44,6 +44,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Lint commit messages
+      uses: wagoid/commitlint-github-action@v6
+
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
