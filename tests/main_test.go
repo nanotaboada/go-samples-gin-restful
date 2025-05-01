@@ -5,6 +5,7 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -19,7 +20,17 @@ import (
 
 func TestMain(main *testing.M) {
 	gin.SetMode(gin.TestMode)
-	data.Connect("../data/players_sqlite3.db")
+	data.Connect("file::memory:?cache=shared")
+	if err := data.DB.AutoMigrate(&model.Player{}); err != nil {
+		log.Fatal(err)
+	}
+	players, err := MakePlayersFromJSON()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := data.DB.Create(&players).Error; err != nil {
+		log.Fatal(err)
+	}
 	os.Exit(main.Run())
 }
 
@@ -53,7 +64,7 @@ func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 // Then response status should be 409 (Conflict)
 func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
 	// Arrange
-	player := GetExistingPlayer()
+	player := MakeExistingPlayer()
 	body, _ := json.Marshal(player)
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
@@ -72,7 +83,7 @@ func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
 // Then response status should be 201 (Created)
 func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) {
 	// Arrange
-	player := GetNonExistingPlayer()
+	player := MakeNonExistingPlayer()
 	body, _ := json.Marshal(player)
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
@@ -303,7 +314,7 @@ func TestRequestPUTBodyUnknownPlayerResponseStatusNotFound(test *testing.T) {
 func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	id := "1"
-	player := GetExistingPlayer()
+	player := MakeExistingPlayer()
 	player.FirstName = "Emiliano"
 	player.MiddleName = ""
 	body, _ := json.Marshal(player)
