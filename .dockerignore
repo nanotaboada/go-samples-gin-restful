@@ -1,0 +1,16 @@
+.codacy.yml
+.dockerignore
+.DS_Store
+.git/
+.github/
+.gitignore
+.vscode/
+CODE_OF_CONDUCT.md
+codecov.yml
+commitlint.config.mjs
+CONTRIBUTING.md
+coverage.out
+LICENSE
+postman-collections/
+
+/tests/
