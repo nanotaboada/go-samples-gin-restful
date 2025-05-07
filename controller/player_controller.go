@@ -68,7 +68,7 @@ func GetByID(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, player)
 }
 
-// GetByID retrieves a Player by its Squad Number
+// GetBySquadNumber retrieves a Player by its Squad Number
 //
 // @Summary Retrieves a Player by its Squad Number
 // @Tags players
