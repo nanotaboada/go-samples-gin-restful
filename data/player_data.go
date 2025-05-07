@@ -13,6 +13,7 @@ import (
 )
 
 var (
+	// DB is a global database connection
 	DB *gorm.DB
 )
 
