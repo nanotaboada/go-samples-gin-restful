@@ -20,12 +20,17 @@ func Setup() *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	router.GET("/players/", cache.CachePage(store, time.Hour, controller.GetAll))
 	router.GET("/players/:id", cache.CachePage(store, time.Hour, controller.GetByID))
 	router.GET("/players/squadnumber/:squadnumber", cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
 	router.POST("/players/", ClearCache(store, controller.Post))
 	router.PUT("/players/:id", ClearCache(store, controller.Put))
 	router.DELETE("/players/:id", ClearCache(store, controller.Delete))
+
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
 
 	return router
 }

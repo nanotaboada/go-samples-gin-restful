@@ -5,13 +5,20 @@
 package main
 
 import (
+	"os"
+
 	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/route"
 	"github.com/nanotaboada/go-samples-gin-restful/swagger"
 )
 
 func main() {
-	dsn := "./data/players_sqlite3.db"
+	dsn := os.Getenv("STORAGE_PATH")
+	// If STORAGE_PATH is not set by Docker Compose,
+	if dsn == "" {
+		// then the app is running locally in Debug mode.
+		dsn = "./storage/players-sqlite3.db"
+	}
 	data.Connect(dsn)
 	app := route.Setup()
 	swagger.Setup()
