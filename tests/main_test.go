@@ -40,6 +40,24 @@ const (
 	ApplicationJSON = "application/json"
 )
 
+/* GET /health -------------------------------------------------------------- */
+
+// Given GET
+// When request
+// Then response status should be 200 (OK)
+func TestRequestGETHealthResponseStatusOK(test *testing.T) {
+	// Arrange
+	router := route.Setup()
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, "/health", nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusOK, recorder.Code)
+}
+
 /* POST /players/ ----------------------------------------------------------- */
 
 // Given POST
