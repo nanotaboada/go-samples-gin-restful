@@ -65,8 +65,9 @@ COPY --chmod=555        scripts/healthcheck.sh      ./healthcheck.sh
 # Copy pre-seeded SQLite database as init bundle
 COPY --chmod=555        storage/                    ./docker-compose/
 
-# Add non-root user and prepare volume mount point
-RUN adduser --disabled-password --gecos "" gin && \
+# Add system user and prepare volume mount point
+RUN addgroup -S gin && \
+    adduser -S -G gin gin && \
     mkdir -p /storage && \
     chown -R gin:gin /storage
 
