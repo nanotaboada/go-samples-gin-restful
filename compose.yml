@@ -16,3 +16,4 @@ services:
 
 volumes:
   storage:
+    name: go-samples-gin-restful_storage
