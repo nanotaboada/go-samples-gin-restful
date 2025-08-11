@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
 
     - name: Set up Go environment
       uses: actions/setup-go@v5.5.0
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
 
     - name: Lint commit messages
       uses: wagoid/commitlint-github-action@v6.2.1
@@ -78,7 +78,7 @@ jobs:
         service: [codecov, codacy]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
 
       - name: Download coverage report artifact
         uses: actions/download-artifact@v5.0.0
@@ -111,7 +111,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3.5.0
