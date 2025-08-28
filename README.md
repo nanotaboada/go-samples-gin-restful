@@ -8,7 +8,6 @@
 [![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nanotaboada/go-samples-gin-restful)](https://goreportcard.com/report/github.com/nanotaboada/go-samples-gin-restful)
 [![CodeFactor](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful/badge)](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful)
-[![codebeat badge](https://codebeat.co/badges/d09d49d6-1fb4-4c7d-8009-aaef12c6b02b)](https://codebeat.co/projects/github-com-nanotaboada-go-samples-gin-restful-master)
 
 ## About
 
