@@ -19,16 +19,16 @@ func Setup() *gin.Engine {
 
 	router := gin.Default()
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET(SwaggerPath, ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	router.GET("/players/", cache.CachePage(store, time.Hour, controller.GetAll))
-	router.GET("/players/:id", cache.CachePage(store, time.Hour, controller.GetByID))
-	router.GET("/players/squadnumber/:squadnumber", cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
-	router.POST("/players/", ClearCache(store, controller.Post))
-	router.PUT("/players/:id", ClearCache(store, controller.Put))
-	router.DELETE("/players/:id", ClearCache(store, controller.Delete))
+	router.GET(GetAllPath, cache.CachePage(store, time.Hour, controller.GetAll))
+	router.GET(GetByIDPath, cache.CachePage(store, time.Hour, controller.GetByID))
+	router.GET(GetBySquadNumberPath, cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
+	router.POST(GetAllPath, ClearCache(store, controller.Post))
+	router.PUT(GetByIDPath, ClearCache(store, controller.Put))
+	router.DELETE(GetByIDPath, ClearCache(store, controller.Delete))
 
-	router.GET("/health", func(c *gin.Context) {
+	router.GET(HealthPath, func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
@@ -39,9 +39,9 @@ func Setup() *gin.Engine {
 func ClearCache(store *persistence.InMemoryStore, handler gin.HandlerFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		keys := []string{
-			"players",
-			fmt.Sprintf("players/%s", context.Param("id")),
-			fmt.Sprintf("players/squadnumber/%s", context.Param("squadnumber")),
+			CacheKey,
+			fmt.Sprintf("%s/%s", CacheKey, context.Param("id")),
+			fmt.Sprintf("%s/squadnumber/%s", CacheKey, context.Param("squadnumber")),
 		}
 		for _, key := range keys {
 			store.Delete(key)
