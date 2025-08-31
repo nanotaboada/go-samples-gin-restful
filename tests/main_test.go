@@ -35,7 +35,6 @@ func TestMain(main *testing.M) {
 }
 
 const (
-	URL             = "/players/"
 	ContentType     = "Content-Type"
 	ApplicationJSON = "application/json"
 )
@@ -67,7 +66,7 @@ func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, URL, nil)
+	request, _ := http.NewRequest(http.MethodPost, route.GetAllPath, nil)
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -86,7 +85,7 @@ func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
 	body, _ := json.Marshal(player)
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, URL, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -105,7 +104,7 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 	body, _ := json.Marshal(player)
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, URL, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -118,13 +117,13 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 /* GET /players/ ------------------------------------------------------------ */
 
 // Given GET
-// When request to /players (no trailing slash)
-// Then response status should be 301 (Moved Permanently)
-func TestRequestGETNoTrailingSlashResponseStatusMovedPermanently(test *testing.T) {
+// When request to /players/ (with trailing slash)
+// Then response status should be 301 (Moved Permanently) - redirects to /players
+func TestRequestGETTrailingSlashResponseStatusMovedPermanently(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, "/players", nil)
+	request, _ := http.NewRequest(http.MethodGet, "/players/", nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -140,7 +139,7 @@ func TestRequestGETNoParamResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -156,7 +155,7 @@ func TestRequestGETNoParamResponsePlayers(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -177,7 +176,7 @@ func TestRequestGETSquadNumberNonExistingResponseStatusNotFound(test *testing.T)
 	squadNumber := "999"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL+"squadnumber/"+squadNumber, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -194,7 +193,7 @@ func TestRequestGETSquadNumberExistingResponseStatusOK(test *testing.T) {
 	squadNumber := "11"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL+"squadnumber/"+squadNumber, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -211,7 +210,7 @@ func TestRequestGETSquadNumberExistingResponsePlayer(test *testing.T) {
 	squadNumber := "11"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL+"squadnumber/"+squadNumber, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -235,7 +234,7 @@ func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {
 	id := "999"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL+id, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -252,7 +251,7 @@ func TestRequestGETIdExistingResponseStatusOK(test *testing.T) {
 	id := "10"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL+id, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -269,7 +268,7 @@ func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
 	id := "10"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, URL+id, nil)
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -293,7 +292,7 @@ func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	id := "10"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, URL+id, nil)
+	request, _ := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, nil)
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -316,7 +315,7 @@ func TestRequestPUTBodyUnknownPlayerResponseStatusNotFound(test *testing.T) {
 	body, _ := json.Marshal(player)
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, URL+id, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -338,7 +337,7 @@ func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 	body, _ := json.Marshal(player)
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPut, URL+id, bytes.NewBuffer(body))
+	request, _ := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -358,7 +357,7 @@ func TestRequestDELETEIdNonExistingIdResponseStatusNotFound(test *testing.T) {
 	id := "999"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodDelete, URL+id, nil)
+	request, _ := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -375,7 +374,7 @@ func TestRequestDELETEIdExistingIdResponseStatusNoContent(test *testing.T) {
 	id := "12"
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodDelete, URL+id, nil)
+	request, _ := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
