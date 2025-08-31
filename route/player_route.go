@@ -39,16 +39,12 @@ func Setup() *gin.Engine {
 func ClearCache(store persistence.CacheStore, handler gin.HandlerFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		id := context.Param(IDParam)
-		squadNumber := context.Param(SquadNumberParam)
 
 		keys := []string{
 			cache.CreateKey(PlayersPath),
 		}
 		if id != "" {
 			keys = append(keys, cache.CreateKey(fmt.Sprintf("%s/%s", PlayersPath, id)))
-		}
-		if squadNumber != "" {
-			keys = append(keys, cache.CreateKey(fmt.Sprintf("%s/squadnumber/%s", PlayersPath, squadNumber)))
 		}
 		for _, key := range keys {
 			_ = store.Delete(key)
