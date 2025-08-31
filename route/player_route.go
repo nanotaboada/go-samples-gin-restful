@@ -39,9 +39,9 @@ func Setup() *gin.Engine {
 func ClearCache(store *persistence.InMemoryStore, handler gin.HandlerFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		keys := []string{
-			CacheKey,
-			fmt.Sprintf("%s/%s", CacheKey, context.Param("id")),
-			fmt.Sprintf("%s/squadnumber/%s", CacheKey, context.Param("squadnumber")),
+			PlayersPathSegment,
+			fmt.Sprintf("%s/%s", PlayersPathSegment, context.Param("id")),
+			fmt.Sprintf("%s/squadnumber/%s", PlayersPathSegment, context.Param("squadnumber")),
 		}
 		for _, key := range keys {
 			store.Delete(key)
