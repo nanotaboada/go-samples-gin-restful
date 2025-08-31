@@ -36,15 +36,18 @@ func Setup() *gin.Engine {
 }
 
 // ClearCache resets the cache when the collection is modified (POST, PUT, DELETE)
-func ClearCache(store *persistence.InMemoryStore, handler gin.HandlerFunc) gin.HandlerFunc {
+func ClearCache(store persistence.CacheStore, handler gin.HandlerFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
+		id := context.Param(IDParam)
+
 		keys := []string{
-			CacheKey,
-			fmt.Sprintf("%s/%s", CacheKey, context.Param("id")),
-			fmt.Sprintf("%s/squadnumber/%s", CacheKey, context.Param("squadnumber")),
+			cache.CreateKey(PlayersPath),
+		}
+		if id != "" {
+			keys = append(keys, cache.CreateKey(fmt.Sprintf("%s/%s", PlayersPath, id)))
 		}
 		for _, key := range keys {
-			store.Delete(key)
+			_ = store.Delete(key)
 		}
 		handler(context)
 	}
