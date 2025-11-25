@@ -19,23 +19,22 @@ A proof-of-concept RESTful API built with [Go](https://go.dev/) and [Gin](https:
 - [Getting Started](#getting-started)
   - [Local Development](#local-development)
   - [Docker Deployment](#docker-deployment)
-- [API Endpoints](#api-endpoints)
+- [Environment Variables](#environment-variables)
+- [API Reference](#api-reference)
 - [Testing](#testing)
-- [Documentation](#documentation)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Features
 
-- ✅ **RESTful API** with full CRUD operations for player management
-- 📊 **SQLite Database** with pre-seeded data and persistent storage
-- 📝 **Swagger/OpenAPI Documentation** with interactive UI
-- 🚀 **In-memory Caching** for improved performance (1-hour TTL)
-- 🧪 **Comprehensive Testing** with 80%+ code coverage
-- 🐳 **Docker Support** with multi-stage builds and health checks
+- 🔌 **RESTful API** with full CRUD operations for player management
+- 📚 **Interactive API Documentation** with Swagger UI and Postman collection
+- ⚡ **In-memory Caching** for improved performance (1-hour TTL)
+- ✅ **Comprehensive Testing** with 80%+ code coverage requirements
+- 🐳 **Docker Ready** with multi-stage builds and health checks
 - 🔄 **CI/CD Pipeline** with automated testing and deployment
-- ⚡ **GORM ORM** for type-safe database operations
-- 🎯 **Layered Architecture** with clear separation of concerns
+- 🏗️ **Layered Architecture** with clear separation of concerns
+- 💾 **Pre-seeded Database** for immediate testing and exploration
 
 ## Tech Stack
 
@@ -56,13 +55,13 @@ A proof-of-concept RESTful API built with [Go](https://go.dev/) and [Gin](https:
 
 The application follows a **layered architecture pattern** with clear separation of concerns:
 
+- **Route Layer** (`route/`) - URL routing and middleware configuration
 - **Controller Layer** (`controller/`) - HTTP request/response handling and input validation
 - **Service Layer** (`service/`) - Business logic and data operations
 - **Data Layer** (`data/`) - Database connectivity and ORM configuration
-- **Model Layer** (`model/`) - Data structures and entity definitions
-- **Route Layer** (`route/`) - URL routing and middleware configuration
+- **Model Layer** (`model/`) - Data structures and entity definitions (shared across layers)
 
-**Data Flow:** HTTP Request → Controller → Service → Data/ORM → Database → Response
+**Data Flow:** HTTP Request → Route → Controller → Service → Data/ORM → Database → Response
 
 ## Prerequisites
 
@@ -145,7 +144,9 @@ This removes the volume and reinitializes the database on the next startup.
 | `STORAGE_PATH` | Path to SQLite database file | `./storage/players-sqlite3.db` |
 | `GIN_MODE` | Gin framework mode (`debug`, `release`, `test`) | `debug` |
 
-## API Endpoints
+## API Reference
+
+### Available Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -157,7 +158,7 @@ This removes the volume and reinitializes the database on the next startup.
 | `PUT` | `/players/:id` | Update an existing player |
 | `DELETE` | `/players/:id` | Delete a player |
 
-### Example Request
+### Usage Examples
 
 ```bash
 # Get all players
@@ -177,6 +178,20 @@ curl -X POST http://localhost:9000/players \
     "position": "Forward",
     "team": "AS Roma"
   }'
+```
+
+### Swagger UI & Postman
+
+**Interactive Documentation:** [http://localhost:9000/swagger/index.html](http://localhost:9000/swagger/index.html)
+
+**Postman Collection:** [`postman-collections/go-samples-gin-restful.postman_collection.json`](postman-collections/go-samples-gin-restful.postman_collection.json)
+
+![Swagger UI](assets/images/swagger.png)
+
+The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes:
+
+```bash
+swag init
 ```
 
 ## Testing
@@ -201,19 +216,6 @@ go tool cover -html=coverage.out
 ```
 
 **Coverage targets:** 80% minimum for service, controller, and route packages.
-
-## Documentation
-
-- **Interactive API Documentation:** [http://localhost:9000/swagger/index.html](http://localhost:9000/swagger/index.html)
-- **Postman Collection:** Available in [`postman-collections/`](postman-collections/go-samples-gin-restful.postman_collection.json)
-
-![API Documentation](assets/images/swagger.png)
-
-The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes:
-
-```bash
-swag init
-```
 
 ## Contributing
 
