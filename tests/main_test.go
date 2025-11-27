@@ -140,7 +140,7 @@ func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, "/players/", nil)
+	request, _ := http.NewRequest(http.MethodGet, route.GetAllPathTrailingSlash, nil)
 
 	// Act
 	router.ServeHTTP(recorder, request)
