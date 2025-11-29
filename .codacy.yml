@@ -3,7 +3,6 @@
 exclude_paths:
   - ".github"
   - ".vscode"
-  - "assets/**/*"
   - "data/**/*"
   - "docs/**/*"
   - "model/**/*"

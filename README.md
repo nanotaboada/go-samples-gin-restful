@@ -8,191 +8,190 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful/badge)](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A proof-of-concept RESTful API built with [Go](https://go.dev/) and [Gin](https://gin-gonic.com/) demonstrating best practices for building production-ready web services with full CRUD operations, automated testing, and containerized deployment.
+Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go) and [Gin](https://github.com/gin-gonic/gin). Manage football player data with SQLite, GORM, Swagger documentation, and in-memory caching.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
 - [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-  - [Local Development](#local-development)
-  - [Docker Deployment](#docker-deployment)
-- [Environment Variables](#environment-variables)
 - [API Reference](#api-reference)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
 - [Testing](#testing)
+- [Docker](#docker)
+- [Environment Variables](#environment-variables)
+- [Command Summary](#command-summary)
 - [Contributing](#contributing)
-- [License](#license)
+- [Legal](#legal)
 
 ## Features
 
-- 🔌 **RESTful API** with full CRUD operations for player management
-- 📚 **Interactive API Documentation** with Swagger UI and Postman collection
-- ⚡ **In-memory Caching** for improved performance (1-hour TTL)
-- ✅ **Comprehensive Testing** with 80%+ code coverage requirements
-- 🐳 **Docker Ready** with multi-stage builds and health checks
-- 🔄 **CI/CD Pipeline** with automated testing and deployment
-- 🏗️ **Layered Architecture** with clear separation of concerns
-- 💾 **Pre-seeded Database** for immediate testing and exploration
+- 🔌 **RESTful CRUD operations** for football player data
+- 📚 **Interactive API documentation** with Swagger UI and Postman collection
+- ⚡ **In-memory caching** (1-hour TTL)
+- 🩺 **Health check endpoint** for monitoring
+- 🐳 **Full containerization support**
+- 💿 **Relational database with ORM**
+- ✅ **Comprehensive integration tests**
+- 🔄 **CI/CD pipeline** with automated testing and deployment
 
 ## Tech Stack
 
-| Category | Technology | Description |
-|----------|------------|-------------|
-| **Language** | [Go 1.24.1](https://go.dev/) | Primary programming language |
-| **Web Framework** | [Gin](https://gin-gonic.com/) | High-performance HTTP web framework |
-| **ORM** | [GORM](https://gorm.io/) | Developer-friendly ORM library |
-| **Database** | SQLite | Lightweight embedded database |
-| **API Documentation** | [Swagger/OpenAPI](https://swagger.io/) | Interactive API documentation via swaggo |
-| **Caching** | [gin-contrib/cache](https://github.com/gin-contrib/cache) | In-memory caching middleware |
-| **Testing** | [testify](https://github.com/stretchr/testify) | Assertion and mocking framework |
-| **Containerization** | [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) | Container platform and orchestration |
+| Category | Technology |
+|----------|------------|
+| **Language** | [Go 1.24.1](https://github.com/golang/go) |
+| **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
+| **ORM** | [GORM](https://github.com/go-gorm/gorm) |
+| **Database** | [SQLite](https://github.com/sqlite/sqlite) |
+| **API Documentation** | [Swagger/OpenAPI](https://github.com/swaggo/swag) |
+| **Caching** | [gin-contrib/cache](https://github.com/gin-contrib/cache) |
+| **Testing** | [testify](https://github.com/stretchr/testify) |
+| **Containerization** | [Docker](https://github.com/docker) & [Docker Compose](https://github.com/docker/compose) |
+
+## Project Structure
+
+```text
+/
+├── main.go                 # Entry point: DB connection, route setup, server start
+├── controller/             # HTTP handlers (request/response logic)
+│   └── player_controller.go
+├── service/                # Business logic (ORM interactions)
+│   └── player_service.go
+├── route/                  # Route configuration and middleware
+│   ├── player_route.go     # Route setup with caching middleware
+│   └── path.go             # Path constants
+├── model/                  # Data structures
+│   └── player_model.go
+├── data/                   # Database connection
+│   └── player_data.go
+├── swagger/                # Swagger configuration
+│   └── swagger.go
+├── docs/                   # Auto-generated Swagger docs (DO NOT EDIT)
+│   ├── docs.go
+│   ├── swagger.json
+│   └── swagger.yaml
+├── tests/                  # Integration tests
+│   ├── main_test.go
+│   ├── player_fake.go
+│   └── players.json
+├── storage/                # SQLite database file (pre-seeded)
+├── scripts/                # Container entrypoint & healthcheck
+└── .github/workflows/      # CI/CD pipelines
+```
 
 ## Architecture
 
-![Simplified, conceptual project structure and main application flow](assets/images/structure.svg)
+Layered architecture with clear separation of concerns. Dependencies flow from data layer through services and controllers to routes. External dependencies (Gin and GORM) integrate at their respective layers. Integration tests (dotted lines) validate the complete application.
 
-The application follows a **layered architecture pattern** with clear separation of concerns:
+```mermaid
+%%{init: {'theme':'base'}}%%
+graph LR
+    %% Core Application Flow
+    main[main.go]
+    route[route]
+    controller[controller]
+    service[service]
+    data[data]
+    model[model]
 
-- **Route Layer** (`route/`) - URL routing and middleware configuration
-- **Controller Layer** (`controller/`) - HTTP request/response handling and input validation
-- **Service Layer** (`service/`) - Business logic and data operations
-- **Data Layer** (`data/`) - Database connectivity and ORM configuration
-- **Model Layer** (`model/`) - Data structures and entity definitions (shared across layers)
+    %% External Dependencies
+    Gin[Gin]
+    GORM[GORM]
 
-**Data Flow:** HTTP Request → Route → Controller → Service → Data/ORM → Database → Response
+    %% Tests and Documentation
+    tests[tests]
+    docs[docs]
+
+    %% Main Application Flow
+    data --> service
+    service --> controller
+    controller --> route
+    route --> main
+
+    %% Model connections
+    model --> data
+    model --> controller
+
+    %% External Dependencies connections
+    GORM --> data
+    Gin --> controller
+    Gin --> route
+
+    %% Tests and Documentation connections
+    main -.-> tests
+    docs --> route
+
+    %% Styling
+    classDef coreModule fill:#b3d9ff,stroke:#333333,stroke-width:2px
+    classDef dependency fill:#ffcccc,stroke:#333333,stroke-width:2px
+    classDef testModule fill:#ccffcc,stroke:#333333,stroke-width:2px
+    classDef docsModule fill:#ffffcc,stroke:#333333,stroke-width:2px
+
+    class main,route,controller,service,data,model coreModule
+    class Gin,GORM dependency
+    class tests testModule
+    class docs docsModule
+```
+
+## API Reference
+
+Interactive API documentation is available via Swagger UI at `http://localhost:9000/swagger/index.html` when the server is running.
+
+> 💡 **Note:** The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes, run `swag init`.
+
+**Quick Reference:**
+
+- `GET /players` - List all players
+- `GET /players/:id` - Get player by ID
+- `GET /players/squadnumber/:squadnumber` - Get player by squad number
+- `POST /players` - Create new player
+- `PUT /players/:id` - Update player
+- `DELETE /players/:id` - Remove player
+- `GET /health` - Health check
+
+For complete endpoint documentation with request/response schemas, explore the [interactive Swagger UI](http://localhost:9000/swagger/index.html). You can also access the OpenAPI JSON specification at `http://localhost:9000/swagger.json`.
+
+### Postman Collection
+
+A pre-configured Postman collection is available at [`postman-collections/go-samples-gin-restful.postman_collection.json`](postman-collections/go-samples-gin-restful.postman_collection.json).
 
 ## Prerequisites
 
-Before running this application, ensure you have:
+Before you begin, ensure you have the following installed:
 
-- **Go 1.24.0 or higher** - [Download](https://go.dev/dl/)
-- **Docker & Docker Compose** (optional, for containerized deployment) - [Download](https://docs.docker.com/get-docker/)
-- **Git** - For cloning the repository
+- **Go 1.24.0 or higher**
+- **Docker & Docker Compose** (optional, for containerized deployment)
 
-## Getting Started
+## Quick Start
 
-### Local Development
-
-1. **Clone the repository**
+### Clone the repository
 
 ```bash
 git clone https://github.com/nanotaboada/go-samples-gin-restful.git
 cd go-samples-gin-restful
 ```
 
-2. **Install dependencies**
+### Install dependencies
 
 ```bash
 go mod download
 ```
 
-3. **Run the application**
+### Start the development server
 
 ```bash
 go run .
 ```
 
-The API will be available at `http://localhost:9000`
+The server will start on `http://localhost:9000`.
 
-4. **Access Swagger documentation**
+### Access the application
 
-Open your browser and navigate to:
-
-- **Swagger UI:** [http://localhost:9000/swagger/index.html](http://localhost:9000/swagger/index.html)
-- **Health Check:** [http://localhost:9000/health](http://localhost:9000/health)
-
-### Docker Deployment
-
-This setup uses Docker Compose to build and run the app with a persistent SQLite database in a Docker volume.
-
-1. **Build the Docker image**
-
-```bash
-docker compose build
-```
-
-2. **Start the application**
-
-```bash
-docker compose up
-```
-
-The API will be available at `http://localhost:9000`
-
-> **Note:** On first run, the container initializes a pre-seeded SQLite database in a persistent volume. On subsequent runs, the existing data is preserved.
-
-3. **Stop the application**
-
-```bash
-docker compose down
-```
-
-4. **Reset the database** (optional)
-
-```bash
-docker compose down -v
-```
-
-This removes the volume and reinitializes the database on the next startup.
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `STORAGE_PATH` | Path to SQLite database file | `./storage/players-sqlite3.db` |
-| `GIN_MODE` | Gin framework mode (`debug`, `release`, `test`) | `debug` |
-
-## API Reference
-
-### Available Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check endpoint |
-| `GET` | `/players` | Retrieve all players |
-| `GET` | `/players/:id` | Retrieve a player by ID |
-| `GET` | `/players/squadnumber/:squadnumber` | Retrieve a player by squad number |
-| `POST` | `/players` | Create a new player |
-| `PUT` | `/players/:id` | Update an existing player |
-| `DELETE` | `/players/:id` | Delete a player |
-
-### Usage Examples
-
-```bash
-# Get all players
-curl http://localhost:9000/players
-
-# Get a specific player
-curl http://localhost:9000/players/10
-
-# Create a new player
-curl -X POST http://localhost:9000/players \
-  -H "Content-Type: application/json" \
-  -d '{
-    "id": 27,
-    "firstName": "Paulo",
-    "lastName": "Dybala",
-    "squadNumber": 21,
-    "position": "Forward",
-    "team": "AS Roma"
-  }'
-```
-
-### Swagger UI & Postman
-
-**Interactive Documentation:** [http://localhost:9000/swagger/index.html](http://localhost:9000/swagger/index.html)
-
-**Postman Collection:** [`postman-collections/go-samples-gin-restful.postman_collection.json`](postman-collections/go-samples-gin-restful.postman_collection.json)
-
-![Swagger UI](assets/images/swagger.png)
-
-The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes:
-
-```bash
-swag init
-```
+- **API:** `http://localhost:9000`
+- **Swagger Documentation:** `http://localhost:9000/swagger/index.html`
+- **Health Check:** `http://localhost:9000/health`
 
 ## Testing
 
@@ -215,21 +214,85 @@ go test -v ./... \
 go tool cover -html=coverage.out
 ```
 
+Tests are located in the `tests/` directory and use testify for integration testing. Coverage reports are generated for controllers, services, and routes only.
+
 **Coverage targets:** 80% minimum for service, controller, and route packages.
+
+## Docker
+
+This project includes full Docker support with multi-stage builds and Docker Compose for easy deployment.
+
+### Build the Docker image
+
+```bash
+docker compose build
+```
+
+### Start the application
+
+```bash
+docker compose up
+```
+
+> 💡 **Note:** On first run, the container copies a pre-seeded SQLite database into a persistent volume. On subsequent runs, that volume is reused and the data is preserved.
+
+### Stop the application
+
+```bash
+docker compose down
+```
+
+### Reset the database
+
+To remove the volume and reinitialize the database from the built-in seed file:
+
+```bash
+docker compose down -v
+```
+
+The containerized application runs on port 9000 and includes health checks that monitor the `/health` endpoint every 30 seconds.
+
+## Environment Variables
+
+The application can be configured using the following environment variables (declared in [`compose.yaml`](https://github.com/nanotaboada/go-samples-gin-restful/blob/master/compose.yaml)):
+
+```bash
+# Database storage path (default: ./storage/players-sqlite3.db)
+# In Docker: /storage/players-sqlite3.db
+STORAGE_PATH=./storage/players-sqlite3.db
+
+# Gin framework mode: debug, release, or test (default: debug)
+# In Docker: release
+GIN_MODE=release
+```
+
+## Command Summary
+
+| Command | Description |
+|---------|-------------|
+| `go run .` | Start development server |
+| `go build` | Build the application |
+| `go test ./...` | Run all tests |
+| `go test -v ./... -coverprofile=coverage.out` | Run tests with coverage report |
+| `go fmt ./...` | Format code |
+| `go mod tidy` | Clean up dependencies |
+| `swag init` | Regenerate Swagger documentation |
+| `docker compose build` | Build Docker image |
+| `docker compose up` | Start Docker container |
+| `docker compose down` | Stop Docker container |
+| `docker compose down -v` | Stop and remove Docker volume |
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduct and the process for submitting pull requests.
+
+**Key guidelines:**
 
 - Follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages
-- Ensure all tests pass and maintain code coverage above 80%
+- Ensure all tests pass (`go test ./...`)
 - Run `go fmt` before committing
-- See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community guidelines
+- Keep changes small and focused
 
-## License
+## Legal
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Note:** This is a proof-of-concept project intended for educational and demonstration purposes.
+This is a proof-of-concept project intended for educational and demonstration purposes. All trademarks, registered trademarks, service marks, product names, company names, or logos mentioned are the property of their respective owners and are used for identification purposes only.
