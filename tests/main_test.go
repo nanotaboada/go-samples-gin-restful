@@ -121,7 +121,10 @@ func TestRequestPOSTTrailingSlashBodyEmptyResponseStatusBadRequest(test *testing
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodPost, route.GetAllPathTrailingSlash, nil)
+	request, err := http.NewRequest(http.MethodPost, route.GetAllPathTrailingSlash, nil)
+	if err != nil {
+		test.Fatalf("failed to create POST request: %v", err)
+	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
@@ -140,7 +143,10 @@ func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.GetAllPathTrailingSlash, nil)
+	request, err := http.NewRequest(http.MethodGet, route.GetAllPathTrailingSlash, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
