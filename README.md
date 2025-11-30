@@ -30,11 +30,11 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 
 - 🔌 **RESTful CRUD operations** for football player data
 - 📚 **Interactive API documentation** with Swagger UI and Postman collection
-- ⚡ **In-memory caching** (1-hour TTL)
 - 🩺 **Health check endpoint** for monitoring
-- 🐳 **Full containerization support**
+- ⚡ **In-memory caching** (1-hour TTL)
 - 💿 **Relational database with ORM**
 - ✅ **Comprehensive integration tests**
+- 🐳 **Full containerization support**
 - 🔄 **CI/CD pipeline** with automated testing and deployment
 
 ## Tech Stack
@@ -45,8 +45,8 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 | **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
 | **ORM** | [GORM](https://github.com/go-gorm/gorm) |
 | **Database** | [SQLite](https://github.com/sqlite/sqlite) |
-| **API Documentation** | [Swagger/OpenAPI](https://github.com/swaggo/swag) |
 | **Caching** | [gin-contrib/cache](https://github.com/gin-contrib/cache) |
+| **API Documentation** | [Swagger/OpenAPI](https://github.com/swaggo/swag) |
 | **Testing** | [testify](https://github.com/stretchr/testify) |
 | **Containerization** | [Docker](https://github.com/docker) & [Docker Compose](https://github.com/docker/compose) |
 
@@ -83,22 +83,29 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 
 ## Architecture
 
-Layered architecture with clear separation of concerns. Dependencies flow from data layer through services and controllers to routes. External dependencies (Gin and GORM) integrate at their respective layers. Integration tests (dotted lines) validate the complete application.
-
 ```mermaid
-%%{init: {'theme':'base'}}%%
+%%{init: {
+  "theme": "default",
+  "themeVariables": {
+    "fontFamily": "Fira Code, Consolas, monospace",
+    "textColor": "#555",
+    "lineColor": "#555",
+    "lineWidth": 2
+  }
+}}%%
+
 graph LR
-    %% Core Application Flow
-    main[main.go]
-    route[route]
-    controller[controller]
-    service[service]
-    data[data]
+    %% Packages
     model[model]
+    data[data]
+    service[service]
+    controller[controller]
+    route[route]
+    main[main]
 
     %% External Dependencies
-    Gin[Gin]
-    GORM[GORM]
+    gin[Gin]
+    gorm[GORM]
 
     %% Tests and Documentation
     tests[tests]
@@ -110,30 +117,31 @@ graph LR
     controller --> route
     route --> main
 
-    %% Model connections
     model --> data
     model --> controller
 
     %% External Dependencies connections
-    GORM --> data
-    Gin --> controller
-    Gin --> route
+    gorm --> data
+    gin --> controller
+    gin --> route
 
     %% Tests and Documentation connections
     main -.-> tests
     docs --> route
 
-    %% Styling
-    classDef coreModule fill:#b3d9ff,stroke:#333333,stroke-width:2px
-    classDef dependency fill:#ffcccc,stroke:#333333,stroke-width:2px
-    classDef testModule fill:#ccffcc,stroke:#333333,stroke-width:2px
-    classDef docsModule fill:#ffffcc,stroke:#333333,stroke-width:2px
+    %% Node styling (fallbacks)
+    classDef core fill:#b3d9ff,stroke:#6db1ff,stroke-width:2px,color:#555,font-family:monospace;
+    classDef deps fill:#ffcccc,stroke:#ff8f8f,stroke-width:2px,color:#555,font-family:monospace;
+    classDef test fill:#ccffcc,stroke:#53c45e,stroke-width:2px,color:#555,font-family:monospace;
+    classDef swag fill:#ffffcc,stroke:#fdce15,stroke-width:2px,color:#555,font-family:monospace;
 
-    class main,route,controller,service,data,model coreModule
-    class Gin,GORM dependency
-    class tests testModule
-    class docs docsModule
+    class main,route,controller,service,data,model core
+    class gin,gorm deps
+    class tests test
+    class docs swag
 ```
+
+Layered architecture with clear separation of concerns. Dependencies flow from data layer through services and controllers to routes. External dependencies (Gin and GORM) integrate at their respective layers. Integration tests (dotted lines) validate the complete application.
 
 ## API Reference
 
@@ -295,4 +303,4 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for de
 
 ## Legal
 
-This is a proof-of-concept project intended for educational and demonstration purposes. All trademarks, registered trademarks, service marks, product names, company names, or logos mentioned are the property of their respective owners and are used for identification purposes only.
+This project is provided for educational and demonstration purposes and may be used in production environments at your discretion. All referenced trademarks, service marks, product names, company names, and logos are the property of their respective owners and are used solely for identification or illustrative purposes.
