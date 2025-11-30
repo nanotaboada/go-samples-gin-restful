@@ -21,10 +21,16 @@ func Setup() *gin.Engine {
 
 	router.GET(SwaggerPath, ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// Register routes for /players (without trailing slash)
 	router.GET(GetAllPath, cache.CachePage(store, time.Hour, controller.GetAll))
+	router.POST(GetAllPath, ClearCache(store, controller.Post))
+
+	// Register alias routes for /players/ (with trailing slash)
+	router.GET(GetAllPathTrailingSlash, cache.CachePage(store, time.Hour, controller.GetAll))
+	router.POST(GetAllPathTrailingSlash, ClearCache(store, controller.Post))
+
 	router.GET(GetByIDPath, cache.CachePage(store, time.Hour, controller.GetByID))
 	router.GET(GetBySquadNumberPath, cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
-	router.POST(GetAllPath, ClearCache(store, controller.Post))
 	router.PUT(GetByIDPath, ClearCache(store, controller.Put))
 	router.DELETE(GetByIDPath, ClearCache(store, controller.Delete))
 
@@ -42,6 +48,7 @@ func ClearCache(store persistence.CacheStore, handler gin.HandlerFunc) gin.Handl
 
 		keys := []string{
 			cache.CreateKey(PlayersPath),
+			cache.CreateKey(PlayersPathTrailingSlash),
 		}
 		if id != "" {
 			keys = append(keys, cache.CreateKey(fmt.Sprintf("%s/%s", PlayersPath, id)))

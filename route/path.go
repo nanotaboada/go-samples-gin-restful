@@ -7,12 +7,18 @@ const (
 	// PlayersPath is the base path for all player endpoints
 	PlayersPath = "/" + PlayersPathSegment
 
+	// PlayersPathTrailingSlash is the base path with trailing slash for alias routes
+	PlayersPathTrailingSlash = PlayersPath + "/"
+
 	// Common path params
 	IDParam          = "id"
 	SquadNumberParam = "squadnumber"
 
 	// GetAllPath is the route path for retrieving all players
 	GetAllPath = PlayersPath
+
+	// GetAllPathTrailingSlash is the alias route path with trailing slash
+	GetAllPathTrailingSlash = PlayersPathTrailingSlash
 
 	// GetByIDPath is the route path for retrieving a player by ID
 	GetByIDPath = PlayersPath + "/:" + IDParam

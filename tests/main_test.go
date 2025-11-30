@@ -114,22 +114,45 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 	assert.Equal(test, http.StatusCreated, recorder.Code)
 }
 
-/* GET /players/ ------------------------------------------------------------ */
-
-// Given GET
-// When request to /players/ (with trailing slash)
-// Then response status should be 301 (Moved Permanently) - redirects to /players
-func TestRequestGETTrailingSlashResponseStatusMovedPermanently(test *testing.T) {
+// Given POST
+// When request to /players/ (with trailing slash) and body is empty
+// Then response status should be 400 (Bad Request)
+func TestRequestPOSTTrailingSlashBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	router := route.Setup()
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, "/players/", nil)
+	request, err := http.NewRequest(http.MethodPost, route.GetAllPathTrailingSlash, nil)
+	if err != nil {
+		test.Fatalf("failed to create POST request: %v", err)
+	}
+	request.Header.Set(ContentType, ApplicationJSON)
 
 	// Act
 	router.ServeHTTP(recorder, request)
 
 	// Assert
-	assert.Equal(test, http.StatusMovedPermanently, recorder.Code)
+	assert.Equal(test, http.StatusBadRequest, recorder.Code)
+}
+
+/* GET /players/ ------------------------------------------------------------ */
+
+// Given GET
+// When request to /players/ (with trailing slash)
+// Then response status should be 200 (OK) - both routes are handled directly
+func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
+	// Arrange
+	router := route.Setup()
+	recorder := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodGet, route.GetAllPathTrailingSlash, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
 // Given GET
