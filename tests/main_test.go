@@ -10,7 +10,9 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/model"
@@ -34,6 +36,20 @@ func TestMain(main *testing.M) {
 	os.Exit(main.Run())
 }
 
+// setupRouter creates a router with all routes for testing
+func setupRouter() *gin.Engine {
+	store := persistence.NewInMemoryStore(time.Hour)
+	router := gin.Default()
+
+	route.RegisterPlayerRoutes(router, store)
+
+	router.GET(route.HealthPath, func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
+	return router
+}
+
 const (
 	ContentType     = "Content-Type"
 	ApplicationJSON = "application/json"
@@ -46,7 +62,7 @@ const (
 // Then response status should be 200 (OK)
 func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 	// Arrange
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, "/health", nil)
 
@@ -64,7 +80,7 @@ func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 // Then response status should be 400 (Bad Request)
 func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPost, route.GetAllPath, nil)
 	request.Header.Set(ContentType, ApplicationJSON)
@@ -83,7 +99,7 @@ func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
 	// Arrange
 	player := MakeExistingPlayer()
 	body, _ := json.Marshal(player)
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
@@ -102,7 +118,7 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 	// Arrange
 	player := MakeNonExistingPlayer()
 	body, _ := json.Marshal(player)
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
@@ -119,7 +135,7 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 // Then response status should be 400 (Bad Request)
 func TestRequestPOSTTrailingSlashBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPathTrailingSlash, nil)
 	if err != nil {
@@ -141,7 +157,7 @@ func TestRequestPOSTTrailingSlashBodyEmptyResponseStatusBadRequest(test *testing
 // Then response status should be 200 (OK) - both routes are handled directly
 func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
 	// Arrange
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.GetAllPathTrailingSlash, nil)
 	if err != nil {
@@ -160,7 +176,7 @@ func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
 // Then response status should be 200 (OK)
 func TestRequestGETNoParamResponseStatusOK(test *testing.T) {
 	// Arrange
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 
@@ -176,7 +192,7 @@ func TestRequestGETNoParamResponseStatusOK(test *testing.T) {
 // Then response body should be collection of Players
 func TestRequestGETNoParamResponsePlayers(test *testing.T) {
 	// Arrange
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 
@@ -197,7 +213,7 @@ func TestRequestGETNoParamResponsePlayers(test *testing.T) {
 func TestRequestGETSquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	squadNumber := "999"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 
@@ -214,7 +230,7 @@ func TestRequestGETSquadNumberNonExistingResponseStatusNotFound(test *testing.T)
 func TestRequestGETSquadNumberExistingResponseStatusOK(test *testing.T) {
 	// Arrange
 	squadNumber := "11"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 
@@ -231,7 +247,7 @@ func TestRequestGETSquadNumberExistingResponseStatusOK(test *testing.T) {
 func TestRequestGETSquadNumberExistingResponsePlayer(test *testing.T) {
 	// Arrange
 	squadNumber := "11"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 
@@ -255,7 +271,7 @@ func TestRequestGETSquadNumberExistingResponsePlayer(test *testing.T) {
 func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 
@@ -272,7 +288,7 @@ func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {
 func TestRequestGETIdExistingResponseStatusOK(test *testing.T) {
 	// Arrange
 	id := "10"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 
@@ -289,7 +305,7 @@ func TestRequestGETIdExistingResponseStatusOK(test *testing.T) {
 func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
 	// Arrange
 	id := "10"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 
@@ -313,7 +329,7 @@ func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
 func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	id := "10"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, nil)
 	request.Header.Set(ContentType, ApplicationJSON)
@@ -336,7 +352,7 @@ func TestRequestPUTBodyUnknownPlayerResponseStatusNotFound(test *testing.T) {
 		LastName:  "Doe",
 	}
 	body, _ := json.Marshal(player)
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
@@ -358,7 +374,7 @@ func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 	player.FirstName = "Emiliano"
 	player.MiddleName = ""
 	body, _ := json.Marshal(player)
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	request.Header.Set(ContentType, ApplicationJSON)
@@ -378,7 +394,7 @@ func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 func TestRequestDELETEIdNonExistingIdResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 
@@ -395,7 +411,7 @@ func TestRequestDELETEIdNonExistingIdResponseStatusNotFound(test *testing.T) {
 func TestRequestDELETEIdExistingIdResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	id := "12"
-	router := route.Setup()
+	router := setupRouter()
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 

@@ -6,10 +6,15 @@ package main
 
 import (
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cache/persistence"
+	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/route"
 	"github.com/nanotaboada/go-samples-gin-restful/swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -20,7 +25,17 @@ func main() {
 		dsn = "./storage/players-sqlite3.db"
 	}
 	data.Connect(dsn)
-	app := route.Setup()
+
+	store := persistence.NewInMemoryStore(time.Hour)
+	router := gin.Default()
+
+	route.RegisterPlayerRoutes(router, store)
+
+	router.GET(route.SwaggerPath, ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.GET(route.HealthPath, func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
 	swagger.Setup()
-	app.Run(":9000")
+	router.Run(":9000")
 }
