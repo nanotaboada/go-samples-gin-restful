@@ -3,7 +3,9 @@ set -e
 
 # Helper function for formatted logging
 log() {
-    echo "[ENTRYPOINT] $(date '+%Y/%m/%d - %H:%M:%S') | $1"
+    local message="$1"
+    echo "[ENTRYPOINT] $(date '+%Y/%m/%d - %H:%M:%S') | $message"
+    return 0
 }
 
 IMAGE_STORAGE_PATH="/app/hold/players-sqlite3.db"
