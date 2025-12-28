@@ -16,7 +16,8 @@ WORKDIR /app
 COPY go.mod go.sum      ./
 
 # Download modules
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 # Copy application sources (packages)
 COPY main.go            ./
@@ -29,7 +30,9 @@ COPY service/           ./service/
 COPY swagger/           ./swagger/
 
 # Build the application binary
-RUN go build -o app .
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    go build -trimpath -ldflags="-s -w" -o app .
 
 # ------------------------------------------------------------------------------
 # Stage 2: Runtime
