@@ -1,25 +1,34 @@
 #!/bin/sh
 set -e
 
+# Helper function for formatted logging
+log() {
+    local message="$1"
+    echo "[ENTRYPOINT] $(date '+%Y/%m/%d - %H:%M:%S') | $message"
+    return 0
+}
+
 IMAGE_STORAGE_PATH="/app/hold/players-sqlite3.db"
 VOLUME_STORAGE_PATH="/storage/players-sqlite3.db"
 
-echo "✔ Starting container..."
+log "✔ Starting container..."
 
 if [ ! -f "$VOLUME_STORAGE_PATH" ]; then
-    echo "⚠️ No existing database file found in volume."
+    log "⚠️ No existing database file found in volume."
     if [ -f "$IMAGE_STORAGE_PATH" ]; then
-        echo "Copying database file to writable volume..."
+        log "Copying database file to writable volume..."
         cp "$IMAGE_STORAGE_PATH" "$VOLUME_STORAGE_PATH"
-        echo "✔ Database initialized at $VOLUME_STORAGE_PATH"
+        log "✔ Database initialized at $VOLUME_STORAGE_PATH"
     else
-        echo "⚠️ Database file missing at $IMAGE_STORAGE_PATH"
+        log "⚠️ Database file missing at $IMAGE_STORAGE_PATH"
         exit 1
     fi
 else
-    echo "✔ Existing database file found. Skipping seed copy."
+    log "✔ Existing database file found. Skipping seed copy."
 fi
 
-echo "✔ Ready!"
-echo "🚀 Launching app..."
+log "✔ Ready!"
+log "🚀 Launching app..."
+log "🔌 API endpoints | http://localhost:9000"
+log "📚 Swagger UI    | http://localhost:9000/swagger/index.html"
 exec "$@"

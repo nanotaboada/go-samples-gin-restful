@@ -3,9 +3,6 @@
 
 name: Go CI
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: [ "master" ]
@@ -13,7 +10,7 @@ on:
     branches: [ "master" ]
 
 env:
-  GO_VERSION: 1.24.1
+  GO_VERSION: 1.25.0
   PKG_SERVICE: "github.com/nanotaboada/go-samples-gin-restful/service"
   PKG_CONTROLLER: "github.com/nanotaboada/go-samples-gin-restful/controller"
   PKG_ROUTE: "github.com/nanotaboada/go-samples-gin-restful/route"
@@ -21,6 +18,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6.0.1
@@ -43,6 +42,8 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6.0.1
@@ -73,6 +74,8 @@ jobs:
   coverage:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         service: [codecov, codacy]

@@ -2,7 +2,7 @@
 # Stage 1: Builder
 # This stage builds the application and its dependencies.
 # ------------------------------------------------------------------------------
-FROM golang:1.24-alpine3.21 AS builder
+FROM golang:1.25-alpine3.23 AS builder
 
 # Enable CGO for SQLite support
 ENV CGO_ENABLED=1
@@ -16,7 +16,8 @@ WORKDIR /app
 COPY go.mod go.sum      ./
 
 # Download modules
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 # Copy application sources (packages)
 COPY main.go            ./
@@ -29,13 +30,15 @@ COPY service/           ./service/
 COPY swagger/           ./swagger/
 
 # Build the application binary
-RUN go build -o app .
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    go build -trimpath -ldflags="-s -w" -o app .
 
 # ------------------------------------------------------------------------------
 # Stage 2: Runtime
 # This stage creates the final, minimal image to run the application.
 # ------------------------------------------------------------------------------
-FROM alpine:3.21 AS runtime
+FROM alpine:3.23 AS runtime
 
 # Install curl for health check
 RUN apk add --no-cache curl
