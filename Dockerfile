@@ -2,7 +2,7 @@
 # Stage 1: Builder
 # This stage builds the application and its dependencies.
 # ------------------------------------------------------------------------------
-FROM golang:1.24-alpine3.21 AS builder
+FROM golang:1.25-alpine3.23 AS builder
 
 # Enable CGO for SQLite support
 ENV CGO_ENABLED=1
@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 # Stage 2: Runtime
 # This stage creates the final, minimal image to run the application.
 # ------------------------------------------------------------------------------
-FROM alpine:3.21 AS runtime
+FROM alpine:3.23 AS runtime
 
 # Install curl for health check
 RUN apk add --no-cache curl

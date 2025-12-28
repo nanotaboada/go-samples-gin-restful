@@ -41,7 +41,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 
 | Category | Technology |
 |----------|------------|
-| **Language** | [Go 1.24.1](https://github.com/golang/go) |
+| **Language** | [Go 1.25](https://github.com/golang/go) |
 | **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
 | **ORM** | [GORM](https://github.com/go-gorm/gorm) |
 | **Database** | [SQLite](https://github.com/sqlite/sqlite) |
@@ -169,7 +169,7 @@ A pre-configured Postman collection is available at [`postman-collections/go-sam
 
 Before you begin, ensure you have the following installed:
 
-- **Go 1.24.0 or higher**
+- **Go 1.25 or higher**
 - **Docker & Docker Compose** (optional, for containerized deployment)
 
 ## Quick Start

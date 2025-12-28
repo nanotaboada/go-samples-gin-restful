@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-This is a **RESTful API proof-of-concept** built with **Go 1.24** and the **Gin web framework**. The application manages a collection of football players with full CRUD operations, Swagger documentation, and in-memory caching. It uses **SQLite** for data persistence and is designed for containerized deployment with **Docker**.
+This is a **RESTful API proof-of-concept** built with **Go 1.25** and the **Gin web framework**. The application manages a collection of football players with full CRUD operations, Swagger documentation, and in-memory caching. It uses **SQLite** for data persistence and is designed for containerized deployment with **Docker**.
 
 ## Tech Stack
 
-- **Language**: Go 1.24.1
+- **Language**: Go 1.25
 - **Web Framework**: Gin (`github.com/gin-gonic/gin`)
 - **ORM**: GORM v1.31.1 (`gorm.io/gorm`)
 - **Database**: SQLite (`gorm.io/driver/sqlite`)
@@ -182,7 +182,7 @@ The GitHub Actions workflow (`.github/workflows/go.yml`) runs on every push/PR:
 3. **Container**: On `master` branch pushes, builds and pushes Docker image to GitHub Container Registry.
 
 **Environment Variables Used**:
-- `GO_VERSION`: 1.24.1
+- `GO_VERSION`: 1.25.0
 - `PKG_SERVICE`, `PKG_CONTROLLER`, `PKG_ROUTE`: Coverage target packages
 
 ## Key Files & Configurations
