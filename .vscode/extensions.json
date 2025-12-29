@@ -1,14 +1,25 @@
 {
   "recommendations": [
-    "golang.go",
-    "codezombiech.gitignore",
-    "conventionalcommits.extension",
-    "foxundermoon.shell-format",
-    "github.vscode-github-actions",
-    "github.vscode-pull-request-github",
-    "ms-azuretools.vscode-containers",
-    "redhat.vscode-yaml",
-    "sonarsource.sonarlint-vscode",
-    "yy0931.vscode-sqlite3-editor"
+    // Go Development
+    "golang.go",                         // Go - Official Go language support and tooling
+
+    // Infrastructure & Workflow
+    "ms-azuretools.vscode-containers",   // Container Tools - Docker and container management
+    "github.copilot-chat",               // GitHub Copilot Chat - AI coding assistant
+    "github.vscode-pull-request-github", // GitHub Pull Requests and Issues - PR management
+    "github.vscode-github-actions",      // GitHub Actions - CI/CD workflow support
+    "redhat.vscode-yaml",                // YAML - Language support for YAML files
+    "foxundermoon.shell-format",         // Shell Format - Shell script formatter
+    "codezombiech.gitignore",            // Gitignore - .gitignore file support
+    "sonarsource.sonarlint-vscode",      // SonarLint - Code quality and security analysis
+    "davidanson.vscode-markdownlint",    // MarkdownLint - Markdown linting
+    "ryanluker.vscode-coverage-gutters", // Coverage Gutters - Test coverage visualization
+    "yy0931.vscode-sqlite3-editor",      // SQLite3 Editor - Database viewer
+  ],
+
+  "unwantedRecommendations": [
+    "ms-azuretools.vscode-docker",       // Docker (legacy) - Use vscode-containers instead
+    "docker.docker",                     // Docker DX - Use ms-azuretools.vscode-containers
+    "github.copilot"                     // Copilot (base) - Unified into copilot-chat
   ]
 }
