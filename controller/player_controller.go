@@ -44,6 +44,10 @@ func (c *PlayerController) Post(context *gin.Context) {
 		context.Status(http.StatusConflict)
 		return
 	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		context.Status(http.StatusInternalServerError)
+		return
+	}
 	if err := c.service.Create(&player); err != nil {
 		context.Status(http.StatusInternalServerError)
 		return
