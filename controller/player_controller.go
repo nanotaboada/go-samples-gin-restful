@@ -2,12 +2,14 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/model"
 	"github.com/nanotaboada/go-samples-gin-restful/service"
+	"gorm.io/gorm"
 )
 
 // PlayerController holds dependencies for player handlers
@@ -26,9 +28,10 @@ func NewPlayerController(service service.PlayerService) *PlayerController {
 // @Tags players
 // @Accept application/json
 // @Param player body model.Player true "Player"
-// @Success 201 {object} model.Player "Created"
+// @Success 201 "Created"
 // @Failure 400 "Bad Request"
 // @Failure 409 "Conflict"
+// @Failure 500 "Internal Server Error"
 // @Router /players [post]
 func (c *PlayerController) Post(context *gin.Context) {
 	var player model.Player
@@ -41,10 +44,11 @@ func (c *PlayerController) Post(context *gin.Context) {
 		context.Status(http.StatusConflict)
 		return
 	}
-	if err := c.service.Create(&player); err == nil {
-		context.Status(http.StatusCreated)
+	if err := c.service.Create(&player); err != nil {
+		context.Status(http.StatusInternalServerError)
 		return
 	}
+	context.Status(http.StatusCreated)
 }
 
 // GetAll retrieves all players
@@ -53,9 +57,14 @@ func (c *PlayerController) Post(context *gin.Context) {
 // @Tags players
 // @Produce application/json
 // @Success 200 {array} model.Player "OK"
+// @Failure 500 "Internal Server Error"
 // @Router /players [get]
 func (c *PlayerController) GetAll(context *gin.Context) {
-	players, _ := c.service.RetrieveAll()
+	players, err := c.service.RetrieveAll()
+	if err != nil {
+		context.Status(http.StatusInternalServerError)
+		return
+	}
 	context.IndentedJSON(http.StatusOK, players)
 }
 
@@ -66,13 +75,23 @@ func (c *PlayerController) GetAll(context *gin.Context) {
 // @Produce application/json
 // @Param id path string true "Player.ID"
 // @Success 200 {object} model.Player "OK"
+// @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
+// @Failure 500 "Internal Server Error"
 // @Router /players/{id} [get]
 func (c *PlayerController) GetByID(context *gin.Context) {
-	id, _ := strconv.Atoi(context.Param("id"))
+	id, err := strconv.Atoi(context.Param("id"))
+	if err != nil {
+		context.Status(http.StatusBadRequest)
+		return
+	}
 	player, err := c.service.RetrieveByID(id)
 	if err != nil {
-		context.Status(http.StatusNotFound)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.Status(http.StatusNotFound)
+		} else {
+			context.Status(http.StatusInternalServerError)
+		}
 		return
 	}
 	context.IndentedJSON(http.StatusOK, player)
@@ -85,13 +104,23 @@ func (c *PlayerController) GetByID(context *gin.Context) {
 // @Produce application/json
 // @Param squadnumber path string true "Player.SquadNumber"
 // @Success 200 {object} model.Player "OK"
+// @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
+// @Failure 500 "Internal Server Error"
 // @Router /players/squadnumber/{squadnumber} [get]
 func (c *PlayerController) GetBySquadNumber(context *gin.Context) {
-	squadNumber, _ := strconv.Atoi(context.Param("squadnumber"))
+	squadNumber, err := strconv.Atoi(context.Param("squadnumber"))
+	if err != nil {
+		context.Status(http.StatusBadRequest)
+		return
+	}
 	player, err := c.service.RetrieveBySquadNumber(squadNumber)
 	if err != nil {
-		context.Status(http.StatusNotFound)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.Status(http.StatusNotFound)
+		} else {
+			context.Status(http.StatusInternalServerError)
+		}
 		return
 	}
 	context.IndentedJSON(http.StatusOK, player)
@@ -107,12 +136,21 @@ func (c *PlayerController) GetBySquadNumber(context *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
+// @Failure 500 "Internal Server Error"
 // @Router /players/{id} [put]
 func (c *PlayerController) Put(context *gin.Context) {
-	id, _ := strconv.Atoi(context.Param("id"))
-	_, err := c.service.RetrieveByID(id)
+	id, err := strconv.Atoi(context.Param("id"))
 	if err != nil {
-		context.Status(http.StatusNotFound)
+		context.Status(http.StatusBadRequest)
+		return
+	}
+	_, err = c.service.RetrieveByID(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.Status(http.StatusNotFound)
+		} else {
+			context.Status(http.StatusInternalServerError)
+		}
 		return
 	}
 	var player model.Player
@@ -120,10 +158,11 @@ func (c *PlayerController) Put(context *gin.Context) {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	if err := c.service.Update(&player); err == nil {
-		context.Status(http.StatusNoContent)
+	if err := c.service.Update(&player); err != nil {
+		context.Status(http.StatusInternalServerError)
 		return
 	}
+	context.Status(http.StatusNoContent)
 }
 
 // Delete deletes a Player by its ID
@@ -132,17 +171,28 @@ func (c *PlayerController) Put(context *gin.Context) {
 // @Tags players
 // @Param id path string true "Player.ID"
 // @Success 204 "No Content"
+// @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
+// @Failure 500 "Internal Server Error"
 // @Router /players/{id} [delete]
 func (c *PlayerController) Delete(context *gin.Context) {
-	id, _ := strconv.Atoi(context.Param("id"))
-	_, err := c.service.RetrieveByID(id)
+	id, err := strconv.Atoi(context.Param("id"))
 	if err != nil {
-		context.Status(http.StatusNotFound)
+		context.Status(http.StatusBadRequest)
 		return
 	}
-	if err := c.service.Delete(id); err == nil {
-		context.Status(http.StatusNoContent)
+	_, err = c.service.RetrieveByID(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.Status(http.StatusNotFound)
+		} else {
+			context.Status(http.StatusInternalServerError)
+		}
 		return
 	}
+	if err := c.service.Delete(id); err != nil {
+		context.Status(http.StatusInternalServerError)
+		return
+	}
+	context.Status(http.StatusNoContent)
 }

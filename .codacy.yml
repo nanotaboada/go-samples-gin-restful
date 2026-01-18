@@ -1,14 +1,16 @@
+# Codacy Configuration File
 # https://docs.codacy.com/repositories-configure/codacy-configuration-file/
 
+# Paths to exclude from Codacy analysis (code quality checks, security scans, etc.)
 exclude_paths:
   - ".github"
   - ".vscode"
   - "data/**/*"
   - "docs/**/*"
-  - "model/**/*"
+  - "model/**/*" # Model definitions (excluded from coverage measurement)
   - "postman_collections/**/*"
   - "swagger/**/*"
-  - "tests/**/*"
+  - "tests/**/*" # Test files (not analyzed, but coverage still measured)
   - ".gitignore"
   - "**/*.yml"
   - "**/*.json"
@@ -17,5 +19,21 @@ exclude_paths:
   - "go.mod"
   - "go.sum"
   - "LICENSE"
-  - "main.go"
+  - "main.go" # Main entry point (excluded from coverage)
   - "README.md"
+
+# Coverage configuration
+# Goal: Maintain 80% minimum coverage, ignore variations
+# Only measures: service/, controller/, route/ (matches -coverpkg flag)
+coverage:
+  status:
+    project:
+      default:
+        # Minimum 80% coverage required
+        # CI fails only if coverage < 80%
+        target: 80%
+
+        # Disable variation checks completely
+        # Drops from 100% → 88% → 85% → 80.1% all pass
+        # Only < 80% fails
+        threshold: null

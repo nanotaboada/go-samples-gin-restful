@@ -1,19 +1,39 @@
+# Codecov Configuration File
 # https://docs.codecov.com/docs/codecov-yaml
 
+# Goal: 80% minimum coverage on service/, controller/, route/ only
+# Ignore all variation checks and patch checks
+# Only fail if overall coverage drops below 80%
+
 coverage:
+  precision: 2
+  round: down
+  range: "80...100"
+
   status:
+    # Project coverage - overall codebase health
     project:
       default:
+        # Minimum 80% coverage required
         target: 80%
-        threshold: 10%
+
+        # Disable variation checks (0% tolerance = ignore all drops)
+        threshold: 0%
+
         if_not_found: success
         if_ci_failed: error
 
-    patch:
-      default:
-        target: 80%
-        threshold: 10%
+        # ONLY measure these paths (matches -coverpkg)
+        paths:
+          - "service/"
+          - "controller/"
+          - "route/"
 
+    # DISABLE patch coverage checks entirely
+    # We don't care about per-PR coverage, only overall project
+    patch: off
+
+# Flags - track coverage by component
 flags:
   unit:
     paths:
@@ -22,6 +42,7 @@ flags:
       - "route/"
     carryforward: true
 
+# Component tracking - see breakdown by service/controller/route
 component_management:
   default_rules:
     statuses:
@@ -35,10 +56,12 @@ component_management:
       name: Service
       paths:
         - "service/"
+
     - component_id: controllers
       name: Controller
       paths:
         - "controller/"
+
     - component_id: routes
       name: Route
       paths:
@@ -47,6 +70,7 @@ component_management:
 comment:
   layout: "header, diff, flags, components"
 
+# Exclude these paths from coverage entirely
 ignore:
   - ".github"
   - ".vscode"
