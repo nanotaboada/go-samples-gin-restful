@@ -52,9 +52,8 @@ func MakePlayersFromJSON() ([]model.Player, error) {
 		return nil, err
 	}
 	log.Println("Current directory:", wd)
-	// Important: tests are run from the project root, so the path is relative
-	// to the root (not the tests folder).
-	name := filepath.Join(wd, "players.json")
+	// Load test fixture from the tests directory
+	name := filepath.Join(wd, "tests", "players.json")
 	file, err := os.ReadFile(name)
 	if err != nil {
 		return nil, err
