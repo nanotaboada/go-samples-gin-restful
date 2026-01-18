@@ -33,6 +33,9 @@ const docTemplate = `{
                                 "$ref": "#/definitions/model.Player"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             },
@@ -57,16 +60,16 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/model.Player"
-                        }
+                        "description": "Created"
                     },
                     "400": {
                         "description": "Bad Request"
                     },
                     "409": {
                         "description": "Conflict"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -96,8 +99,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Player"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request"
+                    },
                     "404": {
                         "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -127,8 +136,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Player"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request"
+                    },
                     "404": {
                         "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             },
@@ -167,6 +182,9 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             },
@@ -188,8 +206,14 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content"
                     },
+                    "400": {
+                        "description": "Bad Request"
+                    },
                     "404": {
                         "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }

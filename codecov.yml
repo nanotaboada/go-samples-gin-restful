@@ -1,68 +1,33 @@
-# https://docs.codecov.com/docs/codecov-yaml
+# Codecov Configuration
+# Goal: 80% minimum coverage on service/, controller/, route/ only
 
 coverage:
   status:
     project:
       default:
         target: 80%
-        threshold: 10%
-        if_not_found: success
-        if_ci_failed: error
+        paths:
+          - "service/"
+          - "controller/"
+          - "route/"
 
     patch:
       default:
         target: 80%
-        threshold: 10%
-
-flags:
-  unit:
-    paths:
-      - "service/"
-      - "controller/"
-      - "route/"
-    carryforward: true
-
-component_management:
-  default_rules:
-    statuses:
-      - type: project
-        target: auto
-        branches:
-          - "!main"
-
-  individual_components:
-    - component_id: services
-      name: Service
-      paths:
-        - "service/"
-    - component_id: controllers
-      name: Controller
-      paths:
-        - "controller/"
-    - component_id: routes
-      name: Route
-      paths:
-        - "route/"
-
-comment:
-  layout: "header, diff, flags, components"
 
 ignore:
-  - ".github"
-  - ".vscode"
+  - ".github/**/*"
+  - ".vscode/**/*"
   - "data/**/*"
   - "docs/**/*"
   - "model/**/*"
-  - "postman_collections/**/*"
+  - "postman-collections/**/*"
+  - "scripts/**/*"
+  - "storage/**/*"
   - "swagger/**/*"
   - "tests/**/*"
-  - ".gitignore"
-  - "**/*.yml"
-  - "**/*.json"
-  - "**/*.png"
-  - "**/*.svg"
-  - "go.mod"
-  - "go.sum"
-  - "LICENSE"
   - "main.go"
-  - "README.md"
+  - "**/*.json"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/*.md"

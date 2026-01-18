@@ -38,6 +38,8 @@ paths:
             items:
               $ref: '#/definitions/model.Player'
             type: array
+        "500":
+          description: Internal Server Error
       summary: Retrieves all players
       tags:
       - players
@@ -54,12 +56,12 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            $ref: '#/definitions/model.Player'
         "400":
           description: Bad Request
         "409":
           description: Conflict
+        "500":
+          description: Internal Server Error
       summary: Creates a Player
       tags:
       - players
@@ -74,8 +76,12 @@ paths:
       responses:
         "204":
           description: No Content
+        "400":
+          description: Bad Request
         "404":
           description: Not Found
+        "500":
+          description: Internal Server Error
       summary: Deletes a Player by its ID
       tags:
       - players
@@ -93,8 +99,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Player'
+        "400":
+          description: Bad Request
         "404":
           description: Not Found
+        "500":
+          description: Internal Server Error
       summary: Retrieves a Player by its ID
       tags:
       - players
@@ -120,6 +130,8 @@ paths:
           description: Bad Request
         "404":
           description: Not Found
+        "500":
+          description: Internal Server Error
       summary: Updates (entirely) a Player by its ID
       tags:
       - players
@@ -138,8 +150,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Player'
+        "400":
+          description: Bad Request
         "404":
           description: Not Found
+        "500":
+          description: Internal Server Error
       summary: Retrieves a Player by its Squad Number
       tags:
       - players

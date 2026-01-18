@@ -333,7 +333,8 @@ GIN_MODE=release
 | `go run .` | Start development server |
 | `go build` | Build the application |
 | `go test ./...` | Run all tests |
-| `go test -v ./... -coverprofile=coverage.out` | Run tests with coverage report |
+| `go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out` | Run tests with coverage |
+| `go tool cover -html=coverage.out` | View coverage report |
 | `go fmt ./...` | Format code |
 | `go mod tidy` | Clean up dependencies |
 | `swag init` | Regenerate Swagger documentation |

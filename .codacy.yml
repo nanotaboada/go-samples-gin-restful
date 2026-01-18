@@ -1,21 +1,25 @@
-# https://docs.codacy.com/repositories-configure/codacy-configuration-file/
+# Codacy Configuration
+# Goal: 80% minimum coverage on service/, controller/, route/ only
 
 exclude_paths:
-  - ".github"
-  - ".vscode"
+  - ".github/**/*"
+  - ".vscode/**/*"
   - "data/**/*"
   - "docs/**/*"
   - "model/**/*"
-  - "postman_collections/**/*"
+  - "postman-collections/**/*"
+  - "scripts/**/*"
+  - "storage/**/*"
   - "swagger/**/*"
   - "tests/**/*"
-  - ".gitignore"
-  - "**/*.yml"
-  - "**/*.json"
-  - "**/*.png"
-  - "**/*.svg"
-  - "go.mod"
-  - "go.sum"
-  - "LICENSE"
   - "main.go"
-  - "README.md"
+  - "**/*.json"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/*.md"
+
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
