@@ -30,7 +30,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Player"
+                                "$ref": "#/definitions/model.Player"
                             }
                         }
                     }
@@ -51,7 +51,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     }
                 ],
@@ -59,7 +59,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     },
                     "400": {
@@ -93,7 +93,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     },
                     "404": {
@@ -124,7 +124,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     },
                     "404": {
@@ -154,7 +154,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     }
                 ],
@@ -196,7 +196,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Player": {
+        "model.Player": {
             "type": "object",
             "properties": {
                 "abbrPosition": {

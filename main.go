@@ -7,8 +7,10 @@ package main
 import (
 	"os"
 
+	"github.com/nanotaboada/go-samples-gin-restful/controller"
 	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/route"
+	"github.com/nanotaboada/go-samples-gin-restful/service"
 	"github.com/nanotaboada/go-samples-gin-restful/swagger"
 )
 
@@ -19,8 +21,10 @@ func main() {
 		// then the app is running locally in Debug mode.
 		dsn = "./storage/players-sqlite3.db"
 	}
-	data.Connect(dsn)
-	app := route.Setup()
+	db := data.Connect(dsn)
+	playerService := service.NewPlayerService(db)
+	playerController := controller.NewPlayerController(playerService)
+	app := route.Setup(playerController)
 	swagger.Setup()
 	app.Run(":9000")
 }

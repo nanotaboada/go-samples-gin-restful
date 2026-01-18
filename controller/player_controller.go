@@ -10,6 +10,16 @@ import (
 	"github.com/nanotaboada/go-samples-gin-restful/service"
 )
 
+// PlayerController holds dependencies for player handlers
+type PlayerController struct {
+	service service.PlayerService
+}
+
+// NewPlayerController creates a controller with the given service
+func NewPlayerController(service service.PlayerService) *PlayerController {
+	return &PlayerController{service: service}
+}
+
 // Post creates a Player
 //
 // @Summary Creates a Player
@@ -20,18 +30,18 @@ import (
 // @Failure 400 "Bad Request"
 // @Failure 409 "Conflict"
 // @Router /players [post]
-func Post(context *gin.Context) {
+func (c *PlayerController) Post(context *gin.Context) {
 	var player model.Player
 	if err := context.BindJSON(&player); err != nil {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	_, err := service.RetrieveByID(player.ID)
+	_, err := c.service.RetrieveByID(player.ID)
 	if err == nil {
 		context.Status(http.StatusConflict)
 		return
 	}
-	if err := service.Create(&player); err == nil {
+	if err := c.service.Create(&player); err == nil {
 		context.Status(http.StatusCreated)
 		return
 	}
@@ -44,8 +54,8 @@ func Post(context *gin.Context) {
 // @Produce application/json
 // @Success 200 {array} model.Player "OK"
 // @Router /players [get]
-func GetAll(context *gin.Context) {
-	players, _ := service.RetrieveAll()
+func (c *PlayerController) GetAll(context *gin.Context) {
+	players, _ := c.service.RetrieveAll()
 	context.IndentedJSON(http.StatusOK, players)
 }
 
@@ -58,9 +68,9 @@ func GetAll(context *gin.Context) {
 // @Success 200 {object} model.Player "OK"
 // @Failure 404 "Not Found"
 // @Router /players/{id} [get]
-func GetByID(context *gin.Context) {
+func (c *PlayerController) GetByID(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	player, err := service.RetrieveByID(id)
+	player, err := c.service.RetrieveByID(id)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
@@ -77,9 +87,9 @@ func GetByID(context *gin.Context) {
 // @Success 200 {object} model.Player "OK"
 // @Failure 404 "Not Found"
 // @Router /players/squadnumber/{squadnumber} [get]
-func GetBySquadNumber(context *gin.Context) {
+func (c *PlayerController) GetBySquadNumber(context *gin.Context) {
 	squadNumber, _ := strconv.Atoi(context.Param("squadnumber"))
-	player, err := service.RetrieveBySquadNumber(squadNumber)
+	player, err := c.service.RetrieveBySquadNumber(squadNumber)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
@@ -98,9 +108,9 @@ func GetBySquadNumber(context *gin.Context) {
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
 // @Router /players/{id} [put]
-func Put(context *gin.Context) {
+func (c *PlayerController) Put(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	_, err := service.RetrieveByID(id)
+	_, err := c.service.RetrieveByID(id)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
@@ -110,7 +120,7 @@ func Put(context *gin.Context) {
 		context.Status(http.StatusBadRequest)
 		return
 	}
-	if err := service.Update(&player); err == nil {
+	if err := c.service.Update(&player); err == nil {
 		context.Status(http.StatusNoContent)
 		return
 	}
@@ -124,14 +134,14 @@ func Put(context *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 404 "Not Found"
 // @Router /players/{id} [delete]
-func Delete(context *gin.Context) {
+func (c *PlayerController) Delete(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	_, err := service.RetrieveByID(id)
+	_, err := c.service.RetrieveByID(id)
 	if err != nil {
 		context.Status(http.StatusNotFound)
 		return
 	}
-	if err := service.Delete(id); err == nil {
+	if err := c.service.Delete(id); err == nil {
 		context.Status(http.StatusNoContent)
 		return
 	}

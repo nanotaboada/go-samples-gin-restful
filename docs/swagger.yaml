@@ -1,5 +1,5 @@
 definitions:
-  models.Player:
+  model.Player:
     properties:
       abbrPosition:
         type: string
@@ -36,7 +36,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Player'
+              $ref: '#/definitions/model.Player'
             type: array
       summary: Retrieves all players
       tags:
@@ -50,12 +50,12 @@ paths:
         name: player
         required: true
         schema:
-          $ref: '#/definitions/models.Player'
+          $ref: '#/definitions/model.Player'
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: '#/definitions/model.Player'
         "400":
           description: Bad Request
         "409":
@@ -92,7 +92,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: '#/definitions/model.Player'
         "404":
           description: Not Found
       summary: Retrieves a Player by its ID
@@ -112,7 +112,7 @@ paths:
         name: player
         required: true
         schema:
-          $ref: '#/definitions/models.Player'
+          $ref: '#/definitions/model.Player'
       responses:
         "204":
           description: No Content
@@ -137,7 +137,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Player'
+            $ref: '#/definitions/model.Player'
         "404":
           description: Not Found
       summary: Retrieves a Player by its Squad Number

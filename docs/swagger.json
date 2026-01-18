@@ -19,7 +19,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Player"
+                                "$ref": "#/definitions/model.Player"
                             }
                         }
                     }
@@ -40,7 +40,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     }
                 ],
@@ -48,7 +48,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     },
                     "400": {
@@ -82,7 +82,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     },
                     "404": {
@@ -113,7 +113,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     },
                     "404": {
@@ -143,7 +143,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Player"
+                            "$ref": "#/definitions/model.Player"
                         }
                     }
                 ],
@@ -185,7 +185,7 @@
         }
     },
     "definitions": {
-        "models.Player": {
+        "model.Player": {
             "type": "object",
             "properties": {
                 "abbrPosition": {
