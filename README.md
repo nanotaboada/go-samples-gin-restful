@@ -94,60 +94,112 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
   }
 }}%%
 
-graph BT
-    %% Packages
-    model[model]
-    data[data]
-    service[service]
-    controller[controller]
-    route[route]
+graph LR
+    %% Core application packages
     main[main]
+    route[route]
+    controller[controller]
+    service[service]
+    data[data]
+    model[model]
 
-    %% External Dependencies
+    %% Supporting features
+    docs[docs]
+    swagger[swagger]
+
+    %% External dependencies
     gin[Gin]
     gorm[GORM]
 
-    %% Tests and Documentation
+    %% Test coverage
     tests[tests]
-    docs[docs]
 
-    %% Main Application Flow
-    data --> service
-    service --> controller
-    controller --> route
-    route --> main
+    %% Core application flow
+    main --> route
+    route --> controller
+    controller --> service
+    service --> data
+    data --> model
 
-    model --> data
-    model --> controller
+    %% Dependency injection relationships
+    main --> data
+    main --> service
+    main --> controller
 
-    %% External Dependencies connections
-    gorm --> data
-    gin --> controller
-    gin --> route
+    %% Supporting features connections
+    route --> docs
+    main --> swagger
 
-    %% Tests and Documentation connections
-    main -.-> tests
-    docs --> route
+    %% External dependencies
+    controller --> gin
+    data --> gorm
 
-    %% Node styling (fallbacks)
+    %% Test coverage
+    tests -.-> main
+
+    %% Node styling
     classDef core fill:#b3d9ff,stroke:#6db1ff,stroke-width:2px,color:#555,font-family:monospace;
+    classDef support fill:#ffffcc,stroke:#fdce15,stroke-width:2px,color:#555,font-family:monospace;
     classDef deps fill:#ffcccc,stroke:#ff8f8f,stroke-width:2px,color:#555,font-family:monospace;
     classDef test fill:#ccffcc,stroke:#53c45e,stroke-width:2px,color:#555,font-family:monospace;
-    classDef swag fill:#ffffcc,stroke:#fdce15,stroke-width:2px,color:#555,font-family:monospace;
 
     class main,route,controller,service,data,model core
+    class docs,swagger support
     class gin,gorm deps
     class tests test
-    class docs swag
 ```
 
-Layered architecture with clear separation of concerns. Dependencies flow from data layer through services and controllers to routes. External dependencies (Gin and GORM) integrate at their respective layers. Integration tests (dotted lines) validate the complete application.
+Layered architecture: Core application flow (blue), supporting features (yellow), external dependencies (red), and test coverage (green). Dependencies are injected at startup, enabling better testability and separation of concerns.
 
 ## API Reference
 
 Interactive API documentation is available via Swagger UI at `http://localhost:9000/swagger/index.html` when the server is running.
 
 > 💡 **Note:** The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes, run `swag init`.
+
+### Request Flow
+
+```mermaid
+%%{init: {
+  "theme": "default",
+  "themeVariables": {
+    "fontFamily": "Fira Code, Consolas, monospace",
+    "textColor": "#555",
+    "lineColor": "#555",
+    "lineWidth": 2
+  }
+}}%%
+
+graph LR
+    %% HTTP Request Flow
+    Client[Client] -->|"HTTP Request"| Route[route]
+    Route --> Controller[controller]
+    Controller --> Service[service]
+    Service --> Data[data]
+    Data --> DB[(SQLite)]
+
+    %% Response Flow
+    DB --> Data
+    Data --> Service
+    Service --> Controller
+    Controller --> Route
+    Route -->|"HTTP Response"| Client
+
+    %% Middleware
+    Route -.->|"cache check"| Cache[(In-Memory<br/>Cache)]
+    Cache -.->|"cached response"| Route
+
+    %% Node styling
+    classDef core fill:#e6ccff,stroke:#9966ff,stroke-width:2px,color:#555,font-family:monospace;
+    classDef client fill:#ffe6cc,stroke:#ff9933,stroke-width:2px,color:#555,font-family:monospace;
+    classDef storage fill:#f5f5f5,stroke:#cccccc,stroke-width:2px,color:#555,font-family:monospace;
+
+    class Route,Controller,Service,Data core
+    class Client client
+    class DB,Cache storage
+```
+
+HTTP request-response cycle: Client → Route → Controller → Service → Data → Database. Responses flow back through the same layers. GET requests are cached for 1 hour to improve performance.
 
 **Quick Reference:**
 
