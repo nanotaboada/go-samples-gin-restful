@@ -50,6 +50,8 @@ The project follows a **layered architecture** with clear separation of concerns
 
 **Data Flow**: HTTP Request → Controller (validation, status codes) → Service (business logic) → Data (ORM/DB) → Response
 
+**Dependency Injection**: main → data.Connect() → service.NewPlayerService(db) → controller.NewPlayerController(service) → route.Setup(controller)
+
 ## Coding Guidelines
 
 ### General Principles

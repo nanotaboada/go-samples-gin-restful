@@ -14,7 +14,7 @@ import (
 )
 
 // Setup configures the router Engine connecting URL paths with controller handlers
-func Setup() *gin.Engine {
+func Setup(controller *controller.PlayerController) *gin.Engine {
 	store := persistence.NewInMemoryStore(time.Hour)
 
 	router := gin.Default()

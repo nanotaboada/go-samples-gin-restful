@@ -12,13 +12,8 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var (
-	// DB is a global database connection
-	DB *gorm.DB
-)
-
-// Connect initializes and returns a global DB connection
-func Connect(dataSourceName string) {
+// Connect initializes and returns a DB connection
+func Connect(dataSourceName string) *gorm.DB {
 	// https://gorm.io/docs/logger.html
 	newLogger := logger.New(
 		log.New(log.Writer(), "\r\n", log.LstdFlags),
@@ -38,9 +33,9 @@ func Connect(dataSourceName string) {
 		log.Fatal(err)
 	}
 
-	DB = db
-
-	if err := DB.AutoMigrate(&model.Player{}); err != nil {
+	if err := db.AutoMigrate(&model.Player{}); err != nil {
 		log.Fatal(err)
 	}
+
+	return db
 }
