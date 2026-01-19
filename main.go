@@ -6,12 +6,17 @@ package main
 
 import (
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cache/persistence"
+	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/controller"
 	"github.com/nanotaboada/go-samples-gin-restful/data"
 	"github.com/nanotaboada/go-samples-gin-restful/route"
 	"github.com/nanotaboada/go-samples-gin-restful/service"
 	"github.com/nanotaboada/go-samples-gin-restful/swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -24,7 +29,17 @@ func main() {
 	db := data.Connect(dsn)
 	playerService := service.NewPlayerService(db)
 	playerController := controller.NewPlayerController(playerService)
-	app := route.Setup(playerController)
+
+	store := persistence.NewInMemoryStore(time.Hour)
+	app := gin.Default()
+
+	route.RegisterPlayerRoutes(app, playerController, store)
+
+	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	app.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
 	swagger.Setup()
 	app.Run(":9000")
 }

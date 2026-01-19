@@ -9,18 +9,10 @@ import (
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	"github.com/nanotaboada/go-samples-gin-restful/controller"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// Setup configures the router Engine connecting URL paths with controller handlers
-func Setup(controller *controller.PlayerController) *gin.Engine {
-	store := persistence.NewInMemoryStore(time.Hour)
-
-	router := gin.Default()
-
-	router.GET(SwaggerPath, ginSwagger.WrapHandler(swaggerFiles.Handler))
-
+// RegisterPlayerRoutes configures player-related routes on the router
+func RegisterPlayerRoutes(router *gin.Engine, controller *controller.PlayerController, store *persistence.InMemoryStore) {
 	// Register routes for /players (without trailing slash)
 	router.GET(GetAllPath, cache.CachePage(store, time.Hour, controller.GetAll))
 	router.POST(GetAllPath, ClearCache(store, controller.Post))
@@ -33,12 +25,6 @@ func Setup(controller *controller.PlayerController) *gin.Engine {
 	router.GET(GetBySquadNumberPath, cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
 	router.PUT(GetByIDPath, ClearCache(store, controller.Put))
 	router.DELETE(GetByIDPath, ClearCache(store, controller.Delete))
-
-	router.GET(HealthPath, func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
-	})
-
-	return router
 }
 
 // ClearCache resets the cache when the collection is modified (POST, PUT, DELETE)
