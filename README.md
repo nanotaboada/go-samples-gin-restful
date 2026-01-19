@@ -114,28 +114,25 @@ graph LR
     %% Test coverage
     tests[tests]
 
-    %% Core application flow
+    %% Module dependencies (solid arrows = imports)
+    main --> data
+    main --> service
+    main --> controller
     main --> route
+    main --> swagger
+    main --> docs
     route --> controller
     controller --> service
     service --> data
     data --> model
-
-    %% Dependency injection relationships
-    main --> data
-    main --> service
-    main --> controller
-
-    %% Supporting features connections
-    route --> docs
-    main --> swagger
-
-    %% External dependencies
-    controller --> gin
     data --> gorm
+    route --> gin
+    tests --> main
 
-    %% Test coverage
-    tests -.-> main
+    %% Runtime composition (dotted arrows = main creates/wires)
+    main -.-> gin
+    main -.-> service
+    main -.-> controller
 
     %% Node styling
     classDef core fill:#b3d9ff,stroke:#6db1ff,stroke-width:2px,color:#555,font-family:monospace;
@@ -149,7 +146,16 @@ graph LR
     class tests test
 ```
 
-Layered architecture: Core application flow (blue), supporting features (yellow), external dependencies (red), and test coverage (green). Dependencies are injected at startup, enabling better testability and separation of concerns.
+**Arrow Semantics:**
+
+- **Solid arrows** represent compile-time module dependencies (imports). For example, `controller → service` means the controller package imports and uses the service package.
+- **Dotted arrows** represent runtime composition. The `main` package creates instances (database connection, service, controller, Gin router) and wires them together at startup.
+
+**Composition Root Pattern:** The `main` package acts as the composition root, creating all dependencies and the Gin router instance. It registers player routes through the `route` package and adds Swagger/health routes directly. This pattern enables dependency injection, improves testability, and maintains clear separation of concerns.
+
+**Layered Architecture:** HTTP requests flow through distinct layers: `route` → `controller` → `service` → `data` → `model`. Each layer has a specific responsibility - routes handle HTTP mapping, controllers manage request/response, services contain business logic, data handles persistence, and models define data structures.
+
+**Color Coding:** Core packages (blue) implement the application logic, supporting features (yellow) provide documentation and utilities, external dependencies (red) are third-party frameworks and ORMs, and tests (green) ensure code quality.
 
 ## API Reference
 
