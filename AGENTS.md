@@ -1,8 +1,8 @@
 # AGENTS.md
 
-> **⚡ Token Efficiency Note**: This file contains complete operational instructions (~2,500 tokens).  
-> **Auto-loaded**: NO (load explicitly with `#file:AGENTS.md` when you need detailed procedures)  
-> **When to load**: Complex workflows, troubleshooting, CI/CD setup, detailed architecture questions  
+> **⚡ Token Efficiency Note**: This file contains complete operational instructions (~2,500 tokens).
+> **Auto-loaded**: NO (load explicitly with `#file:AGENTS.md` when you need detailed procedures)
+> **When to load**: Complex workflows, troubleshooting, CI/CD setup, detailed architecture questions
 > **Related files**: See `#file:.github/copilot-instructions.md` for quick context (auto-loaded, ~500 tokens)
 
 ---
@@ -59,6 +59,7 @@ golangci-lint run  # if installed
 ```
 
 **Pre-commit checklist**:
+
 1. Run `go fmt ./...` - formats all Go files
 2. Run `go vet ./...` - must pass with no warnings
 3. Run `go test ./tests/... -v` - all tests must pass
@@ -126,6 +127,7 @@ curl http://localhost:9000/health
 **Trigger**: Push to `main`/`master` or PR
 
 **Jobs**:
+
 1. **Setup**: Go 1.25 installation, dependency caching
 2. **Format Check**: `go fmt` validation
 3. **Lint**: `go vet` checks
@@ -134,6 +136,7 @@ curl http://localhost:9000/health
 6. **Coverage**: Upload to Codecov and Codacy
 
 **Local validation** (run this before pushing):
+
 ```bash
 # Matches CI exactly
 go fmt ./... && \
@@ -146,7 +149,7 @@ go test ./tests/... -v -race -coverprofile=coverage.out
 
 **Structure**: Layered architecture (Controller → Service → Data)
 
-```
+```tree
 main.go              # Entry point: DB init, router setup, server start
 
 controller/          # HTTP handlers
@@ -180,6 +183,7 @@ tests/               # Integration tests
 ```
 
 **Key patterns**:
+
 - GORM ORM for database operations
 - Gin middleware for routing, caching, CORS
 - Swagger annotations for API docs (`// @` comments)
@@ -189,12 +193,14 @@ tests/               # Integration tests
 ## Troubleshooting
 
 ### Port already in use
+
 ```bash
 # Kill process on port 9000
 lsof -ti:9000 | xargs kill -9
 ```
 
 ### Module dependency errors
+
 ```bash
 # Clean module cache and reinstall
 go clean -modcache
@@ -203,6 +209,7 @@ go mod tidy  # Cleanup unused dependencies
 ```
 
 ### Database locked errors
+
 ```bash
 # Stop all running instances
 pkill -f "go run main.go"
@@ -212,6 +219,7 @@ rm storage/players.db
 ```
 
 ### Swagger not updating
+
 ```bash
 # Ensure swag is installed
 go install github.com/swaggo/swag/cmd/swag@latest
@@ -223,6 +231,7 @@ swag init
 ```
 
 ### Build failures
+
 ```bash
 # Verify Go version
 go version  # Should be 1.25
@@ -235,6 +244,7 @@ go build -v ./...
 ```
 
 ### Docker issues
+
 ```bash
 # Clean slate
 docker compose down -v
@@ -245,12 +255,15 @@ docker compose up
 ## Testing the API
 
 ### Using Swagger UI (Recommended)
-Open http://localhost:9000/swagger/index.html - Interactive documentation with "Try it out"
+
+Open <http://localhost:9000/swagger/index.html> - Interactive documentation with "Try it out"
 
 ### Using Postman
+
 Pre-configured collection available in `postman-collections/`
 
 ### Using curl
+
 ```bash
 # Health check
 curl http://localhost:9000/health

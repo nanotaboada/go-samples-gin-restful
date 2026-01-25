@@ -21,7 +21,7 @@
 
 ## 🏗️ Architecture at a Glance
 
-```
+```text
 Controller → Service → GORM → Database
      ↓           ↓
   Cache      Validation
