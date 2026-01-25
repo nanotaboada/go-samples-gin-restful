@@ -1,14 +1,14 @@
 # GitHub Copilot Instructions
 
-> **⚡ Token Efficiency Note**: This is a minimal pointer file (~500 tokens, auto-loaded by Copilot).  
-> For complete operational details, reference: `#file:AGENTS.md` (~2,500 tokens, loaded on-demand)  
+> **⚡ Token Efficiency Note**: This is a minimal pointer file (~500 tokens, auto-loaded by Copilot).
+> For complete operational details, reference: `#file:AGENTS.md` (~2,500 tokens, loaded on-demand)
 > For specialized knowledge, use: `#file:SKILLS/<skill-name>/SKILL.md` (loaded on-demand when needed)
 
 ## 🎯 Quick Context
 
-**Project**: Gin-based REST API demonstrating idiomatic Go patterns  
-**Stack**: Go 1.25 • Gin • GORM • SQLite • Docker • testify  
-**Pattern**: Controller → Service → ORM (layered architecture)  
+**Project**: Gin-based REST API demonstrating idiomatic Go patterns
+**Stack**: Go 1.25 • Gin • GORM • SQLite • Docker • testify
+**Pattern**: Controller → Service → ORM (layered architecture)
 **Philosophy**: Learning-focused PoC emphasizing simplicity and Go best practices
 
 ## 📐 Core Conventions
@@ -67,13 +67,13 @@ go test ./... -v
 # Docker
 docker compose up
 
-# Swagger: http://localhost:8080/swagger/index.html
+# Swagger: http://localhost:9000/swagger/index.html
 ```
 
 ## 📚 Need More Detail?
 
-**For operational procedures**: Load `#file:AGENTS.md`  
-**For Docker expertise**: *(Planned)* `#file:SKILLS/docker-containerization/SKILL.md`  
+**For operational procedures**: Load `#file:AGENTS.md`
+**For Docker expertise**: *(Planned)* `#file:SKILLS/docker-containerization/SKILL.md`
 **For testing patterns**: *(Planned)* `#file:SKILLS/testing-patterns/SKILL.md`
 
 ---
