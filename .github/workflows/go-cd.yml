@@ -1,0 +1,192 @@
+# Continuous Deployment for Go
+# Triggered only on version tags with famous football player names
+# Example tag: v1.0.0-ademir
+
+name: Go CD
+
+on:
+  push:
+    tags:
+      - 'v*.*.*-*'
+
+env:
+  GO_VERSION: 1.25.0
+  PKG_SERVICE: "github.com/nanotaboada/go-samples-gin-restful/service"
+  PKG_CONTROLLER: "github.com/nanotaboada/go-samples-gin-restful/controller"
+  PKG_ROUTE: "github.com/nanotaboada/go-samples-gin-restful/route"
+
+jobs:
+  test:
+    name: Test before deployment
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Go environment
+        uses: actions/setup-go@v6.2.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: go.sum
+
+      - name: Install dependencies
+        run: |
+          go mod tidy
+          go get .
+
+      - name: Compile packages and dependencies
+        run: |
+          go build -v ./...
+
+      - name: Run tests with race detector
+        run: |
+          go test -v ./... -race \
+            -coverpkg=${{ env.PKG_SERVICE }},${{ env.PKG_CONTROLLER }},${{ env.PKG_ROUTE }} \
+            -covermode=atomic \
+            -coverprofile=coverage.out
+
+  deploy:
+    name: Build and publish Docker image
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Extract version and player name from tag
+        id: extract_tag
+        run: |
+          # Tag format: v1.0.0-ademir
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+
+          # Extract semantic version (e.g., v1.0.0-ademir -> 1.0.0)
+          SEMVER=$(echo "$TAG_NAME" | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+
+          # Extract player name (e.g., v1.0.0-ademir -> ademir)
+          PLAYER=$(echo "$TAG_NAME" | sed -E 's/^v[0-9]+\.[0-9]+\.[0-9]+-//')
+
+          # Validate semver format (X.Y.Z)
+          if ! echo "$SEMVER" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "❌ Error: Invalid semantic version '$SEMVER' extracted from tag '$TAG_NAME'"
+            echo "Expected format: v{MAJOR}.{MINOR}.{PATCH}-{PLAYER} (e.g., v1.0.0-ademir)"
+            exit 1
+          fi
+
+          # Valid player names (A-Z from CHANGELOG.md)
+          VALID_PLAYERS="ademir bobby cafu distefano eusebio franz garrincha henry inzaghi jairzinho keane lampard maradona nilton okocha pele quagliarella romario scholes totti uwe vieira wright xabi yashin zico"
+
+          # Validate player name against the list
+          if [ -z "$PLAYER" ]; then
+            echo "❌ Error: Player name is empty in tag '$TAG_NAME'"
+            echo "Expected format: v{MAJOR}.{MINOR}.{PATCH}-{PLAYER} (e.g., v1.0.0-ademir)"
+            exit 1
+          fi
+
+          if ! echo "$VALID_PLAYERS" | grep -qw "$PLAYER"; then
+            echo "❌ Error: Invalid player name '$PLAYER' in tag '$TAG_NAME'"
+            echo "Valid players (A-Z): $VALID_PLAYERS"
+            echo "See CHANGELOG.md for the complete list"
+            exit 1
+          fi
+
+          # Export validated outputs
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "semver=$SEMVER" >> $GITHUB_OUTPUT
+          echo "player=$PLAYER" >> $GITHUB_OUTPUT
+
+          echo "📦 Release version: $SEMVER"
+          echo "🎖️ Player name: $PLAYER"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.12.0
+
+      - name: Build and push Docker image to GitHub Container Registry
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.semver }}
+            ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.player }}
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+-' | sed -n '2p')
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "📝 First release - no previous tag found"
+            CHANGELOG="Initial release"
+          else
+            echo "📝 Generating changelog from $PREVIOUS_TAG to ${{ steps.extract_tag.outputs.tag_name }}"
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREVIOUS_TAG}..${{ steps.extract_tag.outputs.tag_name }})
+          fi
+
+          # Write changelog to file
+          echo "$CHANGELOG" > changelog.txt
+          cat changelog.txt
+
+          # Set output for use in release body
+          {
+            echo "changelog<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2.5.0
+        with:
+          name: "v${{ steps.extract_tag.outputs.semver }} - ${{ steps.extract_tag.outputs.player }} 🎖️"
+          tag_name: ${{ steps.extract_tag.outputs.tag_name }}
+          body: |
+            # Release ${{ steps.extract_tag.outputs.semver }} - ${{ steps.extract_tag.outputs.player }} 🎖️
+
+            ## Docker Images
+
+            Pull this release using any of the following tags:
+
+            ```bash
+            # By semantic version (recommended)
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.semver }}
+
+            # By player name
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.player }}
+
+            # Latest
+            docker pull ghcr.io/${{ github.repository }}:latest
+            ```
+
+            ## Quick Start
+
+            ```bash
+            docker run -p 9000:9000 ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.semver }}
+            ```
+
+            Visit http://localhost:9000/swagger/index.html for API documentation.
+
+            ---
+
+            📦 **Package:** [ghcr.io/${{ github.repository }}](https://github.com/${{ github.repository }}/pkgs/container/go-samples-gin-restful)
+          draft: false
+          prerelease: false
+          generate_release_notes: true
