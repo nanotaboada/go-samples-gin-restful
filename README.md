@@ -1,6 +1,6 @@
 # 🧪 RESTful API with Go and Gin
 
-[![Go CI](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go.yml)
+[![Go CI](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-ci.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanotaboada_go-samples-gin-restful&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=nanotaboada_go-samples-gin-restful)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e2b234e8182d4a0f8efb9da619e1dc26)](https://app.codacy.com/gh/nanotaboada/go-samples-gin-restful/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
@@ -21,6 +21,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 - [Quick Start](#quick-start)
 - [Testing](#testing)
 - [Docker](#docker)
+- [Releases](#releases)
 - [Environment Variables](#environment-variables)
 - [Command Summary](#command-summary)
 - [Contributing](#contributing)
@@ -40,7 +41,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 ## Tech Stack
 
 | Category | Technology |
-|----------|------------|
+| -------- | ---------- |
 | **Language** | [Go 1.25](https://github.com/golang/go) |
 | **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
 | **ORM** | [GORM](https://github.com/go-gorm/gorm) |
@@ -52,7 +53,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 
 ## Project Structure
 
-```text
+```tree
 /
 ├── main.go                 # Entry point: DB connection, route setup, server start
 ├── controller/             # HTTP handlers (request/response logic)
@@ -318,6 +319,49 @@ docker compose down -v
 
 The containerized application runs on port 9000 and includes health checks that monitor the `/health` endpoint every 30 seconds.
 
+## Releases
+
+This project uses famous football players as release codenames 🎖️, inspired by Ubuntu, Android, and macOS naming conventions.
+
+### Release Naming Convention
+
+Releases follow the pattern: `v{SEMVER}-{PLAYER}` (e.g., `v1.0.0-ademir`)
+
+- **Semantic Version**: Standard versioning (MAJOR.MINOR.PATCH)
+- **Player Name**: Alphabetically ordered codename from the [player list](CHANGELOG.md#player-release-names)
+
+### Create a Release
+
+To create a new release, tag a commit and push the tag:
+
+```bash
+git tag -a v1.0.0-ademir -m "Release 1.0.0 - Ademir"
+git push origin v1.0.0-ademir
+```
+
+This triggers the CD workflow which automatically:
+
+1. Builds and tests the project with race detector
+2. Publishes Docker images to GitHub Container Registry with three tags
+3. Creates a GitHub Release with auto-generated changelog
+
+### Pull Docker Images
+
+Each release publishes multiple tags for flexibility:
+
+```bash
+# By semantic version (recommended for production)
+docker pull ghcr.io/nanotaboada/go-samples-gin-restful:1.0.0
+
+# By player name (memorable alternative)
+docker pull ghcr.io/nanotaboada/go-samples-gin-restful:ademir
+
+# Latest release
+docker pull ghcr.io/nanotaboada/go-samples-gin-restful:latest
+```
+
+> 💡 **Note:** See [CHANGELOG.md](CHANGELOG.md) for the complete player list (A-Z) and release history.
+
 ## Environment Variables
 
 The application can be configured using the following environment variables (declared in [`compose.yaml`](https://github.com/nanotaboada/go-samples-gin-restful/blob/master/compose.yaml)):
@@ -335,7 +379,7 @@ GIN_MODE=release
 ## Command Summary
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `go run .` | Start development server |
 | `go build` | Build the application |
 | `go test ./...` | Run all tests |
