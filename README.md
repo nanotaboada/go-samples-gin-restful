@@ -1,6 +1,7 @@
 # 🧪 RESTful API with Go and Gin
 
 [![Go CI](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-ci.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-ci.yml)
+[![Go CD](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-cd.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-cd.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanotaboada_go-samples-gin-restful&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=nanotaboada_go-samples-gin-restful)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e2b234e8182d4a0f8efb9da619e1dc26)](https://app.codacy.com/gh/nanotaboada/go-samples-gin-restful/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
@@ -328,7 +329,7 @@ This project uses famous football players as release codenames 🎖️, inspired
 Releases follow the pattern: `v{SEMVER}-{PLAYER}` (e.g., `v1.0.0-ademir`)
 
 - **Semantic Version**: Standard versioning (MAJOR.MINOR.PATCH)
-- **Player Name**: Alphabetically ordered codename from the [player list](CHANGELOG.md#player-release-names)
+- **Player Name**: Alphabetically ordered codename from the [famous player list](CHANGELOG.md#famous-football-player-names-️)
 
 ### Create a Release
 
