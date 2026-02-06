@@ -136,7 +136,7 @@ curl http://localhost:9000/health
 3. **Lint**: `go vet` checks
 4. **Build**: `go build -v ./...`
 5. **Test**: `go test -v ./...` with `-race`, `-coverpkg` (service/controller/route), and coverage output
-6. **Coverage**: Upload to Codecov and Codacy
+6. **Coverage**: Upload to Codecov
 
 **Local validation** (run this before pushing):
 
