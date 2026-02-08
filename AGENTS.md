@@ -169,18 +169,19 @@ When ready to release:
 1. **Update CHANGELOG.md**: Move items from `[Unreleased]` to a new versioned section:
 
    ```markdown
-   ## [1.1.0 - bobby] - 2026-02-15
+   ## [1.1.0 - Bobby] - 2026-02-15
    ```
 
-2. **Commit and push** CHANGELOG changes
-3. **Create and push tag**:
+   Commit and push this change before creating the tag.
+
+2. **Create and push tag**:
 
    ```bash
    git tag -a v1.1.0-bobby -m "Release 1.1.0 - Bobby"
    git push origin v1.1.0-bobby
    ```
 
-4. **CD workflow runs automatically** to publish Docker images and create GitHub Release
+3. **CD workflow runs automatically** to publish Docker images and create GitHub Release
 
 See [CHANGELOG.md](CHANGELOG.md#how-to-release) for complete release instructions and player naming convention.
 
