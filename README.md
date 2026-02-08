@@ -2,6 +2,7 @@
 
 [![Go CI](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-ci.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-ci.yml)
 [![Go CD](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-cd.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-cd.yml)
+[![CodeQL](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/github-code-scanning/codeql)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanotaboada_go-samples-gin-restful&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=nanotaboada_go-samples-gin-restful)
 [![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nanotaboada/go-samples-gin-restful)](https://goreportcard.com/report/github.com/nanotaboada/go-samples-gin-restful)
@@ -29,14 +30,14 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 
 ## Features
 
-- 🔌 **RESTful CRUD operations** for football player data
-- 📚 **Interactive API documentation** with Swagger UI and Postman collection
-- 🩺 **Health check endpoint** for monitoring
-- ⚡ **In-memory caching** (1-hour TTL)
-- 💿 **Relational database with ORM**
-- ✅ **Comprehensive integration tests**
-- 🐳 **Full containerization support**
-- 🔄 **CI/CD pipeline** with automated testing and deployment
+- 🏗️ **Idiomatic Go patterns** - Clean architecture with middleware, dependency injection, and concurrency safety
+- 📚 **Interactive API exploration** - Auto-generated Swagger docs with Postman collection and health monitoring
+- ⚡ **Performance optimizations** - In-memory caching, connection pooling, and efficient GORM queries
+- 🧪 **Comprehensive integration tests** - Full endpoint coverage with automated reporting to Codecov and SonarCloud
+- 📖 **Token-efficient documentation** - AGENTS.md + auto-loaded Copilot instructions for AI-assisted development
+- 🐳 **Full containerization** - Optimized Docker builds with Docker Compose orchestration
+- 🔄 **Complete CI/CD pipeline** - Automated testing with race detection, Docker publishing, and GitHub releases
+- 🎖️ **Player-themed semantic versioning** - Memorable, alphabetical release names honoring football legends
 
 ## Tech Stack
 
@@ -162,7 +163,7 @@ graph LR
 
 Interactive API documentation is available via Swagger UI at `http://localhost:9000/swagger/index.html` when the server is running.
 
-> 💡 **Note:** The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes, run `swag init`.
+> 💡 The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes, run `swag init`.
 
 ### Request Flow
 
@@ -301,7 +302,7 @@ docker compose build
 docker compose up
 ```
 
-> 💡 **Note:** On first run, the container copies a pre-seeded SQLite database into a persistent volume. On subsequent runs, that volume is reused and the data is preserved.
+> 💡 On first run, the container copies a pre-seeded SQLite database into a persistent volume. On subsequent runs, that volume is reused and the data is preserved.
 
 ### Stop the application
 
@@ -332,18 +333,39 @@ Releases follow the pattern: `v{SEMVER}-{PLAYER}` (e.g., `v1.0.0-ademir`)
 
 ### Create a Release
 
-To create a new release, tag a commit and push the tag:
+To create a new release, follow this workflow:
+
+#### 1. Update CHANGELOG.md
+
+First, document your changes in [CHANGELOG.md](CHANGELOG.md):
+
+```bash
+# Move items from [Unreleased] to new release section
+# Example: [1.0.0 - Ademir] - 2026-02-15
+git add CHANGELOG.md
+git commit -m "docs: prepare changelog for v1.0.0-ademir release"
+git push
+```
+
+#### 2. Create and Push Tag
+
+Then create and push the version tag:
 
 ```bash
 git tag -a v1.0.0-ademir -m "Release 1.0.0 - Ademir"
 git push origin v1.0.0-ademir
 ```
 
+#### 3. Automated CD Workflow
+
 This triggers the CD workflow which automatically:
 
-1. Builds and tests the project with race detector
-2. Publishes Docker images to GitHub Container Registry with three tags
-3. Creates a GitHub Release with auto-generated changelog
+1. Validates the player name
+2. Builds and tests the project with race detector
+3. Publishes Docker images to GitHub Container Registry with three tags
+4. Creates a GitHub Release with auto-generated changelog from commits
+
+> 💡 Always update CHANGELOG.md before creating the tag. See [CHANGELOG.md](CHANGELOG.md#how-to-release) for detailed release instructions.
 
 ### Pull Docker Images
 
@@ -360,7 +382,7 @@ docker pull ghcr.io/nanotaboada/go-samples-gin-restful:ademir
 docker pull ghcr.io/nanotaboada/go-samples-gin-restful:latest
 ```
 
-> 💡 **Note:** See [CHANGELOG.md](CHANGELOG.md) for the complete player list (A-Z) and release history.
+> 💡 See [CHANGELOG.md](CHANGELOG.md) for the complete player list (A-Z) and release history.
 
 ## Environment Variables
 
