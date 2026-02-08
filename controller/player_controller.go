@@ -14,7 +14,7 @@ import (
 
 // PlayerController holds dependencies for player handlers
 type PlayerController struct {
-	service service.PlayerService
+	service service.PlayerService // The service layer for business logic
 }
 
 // NewPlayerController creates a controller with the given service

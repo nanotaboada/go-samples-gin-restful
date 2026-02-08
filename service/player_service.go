@@ -19,7 +19,7 @@ type PlayerService interface {
 
 // playerService implements PlayerService using GORM
 type playerService struct {
-	db *gorm.DB
+	db *gorm.DB // The GORM database instance for data operations
 }
 
 // NewPlayerService creates a new PlayerService with the given database

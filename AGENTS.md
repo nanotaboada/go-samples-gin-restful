@@ -63,9 +63,10 @@ golangci-lint run  # if installed
 
 **Pre-commit checklist**:
 
-1. Run `go fmt ./...` - formats all Go files
-2. Run `go vet ./...` - must pass with no warnings
-3. Run `go test -v ./...` - all tests must pass
+1. Update CHANGELOG.md `[Unreleased]` section with your changes (Added/Changed/Deprecated/Removed/Fixed/Security)
+2. Run `go fmt ./...` - formats all Go files
+3. Run `go vet ./...` - must pass with no warnings
+4. Run `go test -v ./...` - all tests must pass
 
 ### Swagger Documentation
 
@@ -122,6 +123,66 @@ curl http://localhost:9000/health
 ```
 
 **First run behavior**: Container initializes SQLite database with seed data. Volume persists data between runs.
+
+## Release Management
+
+### CHANGELOG Maintenance
+
+**Important**: Update CHANGELOG.md continuously as you work, not just before releases.
+
+**For every meaningful commit**:
+
+1. Add your changes to the `[Unreleased]` section in CHANGELOG.md
+2. Categorize under the appropriate heading:
+   - **Added**: New features
+   - **Changed**: Changes in existing functionality
+   - **Deprecated**: Soon-to-be removed features
+   - **Removed**: Removed features
+   - **Fixed**: Bug fixes
+   - **Security**: Security vulnerability fixes
+3. Use clear, user-facing descriptions (not just commit messages)
+4. Include PR/issue numbers when relevant (#123)
+
+**Example**:
+
+```markdown
+## [Unreleased]
+
+### Added
+- User authentication with JWT tokens (#145)
+- Rate limiting middleware for API endpoints
+
+### Deprecated
+- Legacy authentication endpoint /api/v1/auth (use /api/v2/auth instead)
+
+### Fixed
+- Null reference exception in player service (#147)
+
+### Security
+- Fix SQL injection vulnerability in search endpoint (#148)
+```
+
+### Creating a Release
+
+When ready to release:
+
+1. **Update CHANGELOG.md**: Move items from `[Unreleased]` to a new versioned section:
+
+   ```markdown
+   ## [1.1.0 - bobby] - 2026-02-15
+   ```
+
+2. **Commit and push** CHANGELOG changes
+3. **Create and push tag**:
+
+   ```bash
+   git tag -a v1.1.0-bobby -m "Release 1.1.0 - Bobby"
+   git push origin v1.1.0-bobby
+   ```
+
+4. **CD workflow runs automatically** to publish Docker images and create GitHub Release
+
+See [CHANGELOG.md](CHANGELOG.md#how-to-release) for complete release instructions and player naming convention.
 
 ## CI/CD Pipeline
 
@@ -302,6 +363,7 @@ curl -X DELETE http://localhost:9000/api/v1/players/1
 
 ## Important Notes
 
+- **CHANGELOG maintenance**: Update CHANGELOG.md `[Unreleased]` section with every meaningful change
 - **Never commit secrets**: No API keys, tokens, or credentials in code
 - **Test coverage**: Maintain existing coverage levels
 - **Commit messages**: Follow conventional commits (enforced by commitlint)
