@@ -1,81 +1,118 @@
-# GitHub Copilot Instructions
+# Copilot Instructions
 
-> **⚡ Token Efficiency Note**: This is a minimal pointer file (~500 tokens, auto-loaded by Copilot).
-> For complete operational details, reference: [AGENTS.md](../AGENTS.md) (~2,500 tokens, loaded on-demand)
-> For specialized knowledge, use: `SKILLS/<skill-name>/SKILL.md` (loaded on-demand when needed)
+## Project Overview
 
-## 🎯 Quick Context
+REST API for managing football players built with Go 1.25+ and Gin Web Framework. Implements CRUD operations backed by SQLite with GORM ORM, includes Swagger documentation, in-memory caching, and comprehensive testing. Part of a cross-language comparison study (Java, .NET, TypeScript, Python, Go, Rust).
 
-**Project**: Gin-based REST API demonstrating idiomatic Go patterns
-**Stack**: Go 1.25 • Gin • GORM • SQLite • Docker • testify
-**Pattern**: Controller → Service → ORM (layered architecture)
-**Philosophy**: Learning-focused PoC emphasizing simplicity and Go best practices
-
-## 📐 Core Conventions
-
-- **Naming**: camelCase (unexported), PascalCase (exported)
-- **Error Handling**: Explicit error returns, no panics in handlers
-- **Pointers**: Use for structs in handlers, minimize copying
-- **Testing**: testify/assert for readable assertions
-- **Formatting**: gofmt (standard), goimports for imports
-
-## 🏗️ Architecture at a Glance
+## Structure
 
 ```text
-Controller → Service → GORM → Database
-     ↓           ↓
-  Cache      Validation
+main.go           - application entry point (Gin setup, DB connection, route registration)
+go.mod            - Go module dependencies
+/route            - route registration with caching middleware
+/controller       - HTTP handlers (request/response logic)
+/service          - business logic (GORM interactions)
+/data             - database connection setup
+/model            - domain models (Player struct)
+/storage          - SQLite database file (players-sqlite3.db, pre-seeded)
+/docs             - auto-generated Swagger docs (DO NOT EDIT manually)
+/tests            - integration tests with testify assertions
+/scripts          - Docker entrypoint and healthcheck scripts
+/.github          - CI/CD workflows (go-ci.yml for build/test, go-cd.yml for releases)
 ```
 
-- **Controllers**: HTTP handlers with Gin context
-- **Services**: Business logic and GORM operations
-- **Routes**: Gin router with cache middleware
-- **Models**: Structs with JSON/GORM tags
-- **Cache**: gin-contrib/cache (10min/1hr TTL)
+## Build, Run, Test Commands
 
-## ✅ Copilot Should
+All commands validated and used in CI/CD. Always run from repository root.
 
-- Generate idiomatic Go code with proper error handling
-- Use GORM APIs correctly (`db.First()`, `db.Create()`, etc.)
-- Follow Gin patterns (`c.JSON()`, `c.BindJSON()`)
-- Write table-driven tests with testify
-- Apply struct tags for JSON/GORM mappings
-- Use proper HTTP status codes (http.StatusXXX)
-- Handle errors explicitly at every layer
+Development:
+- Install dependencies: `go mod download`
+- Run server: `go run .` (starts on port 9000)
+- Format code: `go fmt ./...` (automatic in most editors)
+- Build binary: `go build` or `go build -v ./...`
+- Clean dependencies: `go mod tidy`
 
-## 🚫 Copilot Should Avoid
+Testing:
+- All tests: `go test ./...`
+- With coverage: `go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out`
+- View coverage: `go tool cover -html=coverage.out`
+- Target: 80%+ coverage for service, controller, route packages
 
-- Using `panic()` in production code
-- Ignoring errors
-- Global variables for state
-- Not using pointers for large structs
-- Missing error checks on database operations
-- Using `fmt.Print` instead of proper logging
+Docker:
+- Build and run: `docker compose up --build`
+- Stop: `docker compose down`
+- Reset database: `docker compose down -v` (removes volume)
 
-## ⚡ Quick Commands
+Documentation:
+- Regenerate Swagger: `swag init` (after updating API comments)
+- View docs: http://localhost:9000/swagger/index.html (when server running)
 
-```bash
-# Run with hot reload (if installed)
-air
+## CI/CD Validation
 
-# Run normally
-go run main.go
+CI runs on push/PR to master (go-ci.yml):
+1. Build: `go build -v ./...`
+2. Test with coverage: `go test -v ./... -coverpkg=... -covermode=atomic -coverprofile=coverage.out`
+3. Lint commits: commitlint validates Conventional Commits format
+4. Upload coverage to Codecov (target: 80%+)
 
-# Test
-go test ./... -v
+CD runs on version tags (go-cd.yml):
+- Validates player name in tag (e.g., v1.0.0-ademir)
+- Runs race detector test: `go test -v ./... -race` (pre-deployment validation)
+- Builds Docker image
+- Publishes to GitHub Container Registry with three tags (semver, player name, latest)
+- Creates GitHub Release with auto-generated changelog
 
-# Docker
-docker compose up
+## Stack
 
-# Swagger: http://localhost:9000/swagger/index.html
-```
+- Language: Go 1.25+
+- Framework: Gin Web Framework
+- Database: SQLite + GORM ORM
+- Caching: gin-contrib/cache (in-memory, 1 hour for GET requests)
+- Testing: Go testing package + testify/assert
+- Linting: golangci-lint
+- API Documentation: Swaggo (Swagger generation from comments)
 
-## 📚 Need More Detail?
+## Project Patterns
 
-**For operational procedures**: Load [AGENTS.md](../AGENTS.md)
-**For Docker expertise**: *(Planned)* `SKILLS/docker-containerization/SKILL.md`
-**For testing patterns**: *(Planned)* `SKILLS/testing-patterns/SKILL.md`
+- Architecture: Layered (Routes → Controllers → Services → Data)
+- Dependency Injection: Explicit passing (Go doesn't have built-in DI)
+- Error Handling: Explicit error returns, check errors immediately
+- Logging: Standard library `log` package (structured logging with slog for production)
 
----
+## Code Conventions
 
-💡 **Why this structure?** Copilot auto-loads this file on every chat (~500 tokens). Loading [AGENTS.md](../AGENTS.md) or `SKILLS/` explicitly gives you deep context only when needed, saving 80% of your token budget!
+- File Names: snake_case for all files (`player_controller.go`, `player_service.go`)
+- Package Structure: Flat structure with feature-based packages (`controller/`, `service/`, `data/`, `model/`, `route/`)
+- Naming:
+  - camelCase for private (unexported) identifiers
+  - PascalCase for public (exported) identifiers
+  - Short variable names in small scopes (`p` for player, `err` for error)
+- Error Handling: Always check errors immediately after function calls
+  ```go
+  player, err := service.GetByID(id)
+  if err != nil {
+      return nil, err
+  }
+  ```
+- Pointers: Use pointers for structs in function signatures to avoid copying
+
+## Testing
+
+- Test Structure: `*_test.go` files in the same package
+- Naming: `Test*` for test functions, descriptive names (e.g., `TestGetPlayerByID`)
+- Table-Driven Tests: Use for multiple test cases
+- Coverage: Target 80%+ for service, controller, route packages
+
+## Avoid
+
+- Ignoring errors (using `_` discard) - always handle errors explicitly
+- Panic in library code - return errors instead
+- Global mutable state - pass dependencies explicitly
+- Using `interface{}` without type assertions - prefer concrete types or generics
+- Complex goroutines for simple CRUD operations - keep it simple
+
+## Commits
+
+- Format: Follow Conventional Commits with issue number suffix
+- Pattern: `type(scope): description (#issue)` (max 80 chars)
+- Examples: `feat(api): add player stats endpoint (#42)`, `fix(db): resolve connection pool leak (#88)`
