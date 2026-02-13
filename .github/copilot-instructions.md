@@ -51,12 +51,13 @@ Documentation:
 
 CI runs on push/PR to master (go-ci.yml):
 1. Build: `go build -v ./...`
-2. Test with race detector: `go test -v ./... -coverpkg=... -covermode=atomic -coverprofile=coverage.out`
+2. Test with coverage: `go test -v ./... -coverpkg=... -covermode=atomic -coverprofile=coverage.out`
 3. Lint commits: commitlint validates Conventional Commits format
 4. Upload coverage to Codecov (target: 80%+)
 
 CD runs on version tags (go-cd.yml):
 - Validates player name in tag (e.g., v1.0.0-ademir)
+- Runs race detector test: `go test -v ./... -race` (pre-deployment validation)
 - Builds Docker image
 - Publishes to GitHub Container Registry with three tags (semver, player name, latest)
 - Creates GitHub Release with auto-generated changelog
