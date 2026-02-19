@@ -1,118 +1,119 @@
-# Copilot Instructions
+# GitHub Copilot Instructions
 
-## Project Overview
+## Overview
 
-REST API for managing football players built with Go 1.25+ and Gin Web Framework. Implements CRUD operations backed by SQLite with GORM ORM, includes Swagger documentation, in-memory caching, and comprehensive testing. Part of a cross-language comparison study (Java, .NET, TypeScript, Python, Go, Rust).
+REST API for managing football players built with Go and Gin Web Framework. Implements CRUD operations with SQLite + GORM, in-memory caching, and Swagger documentation. Part of a cross-language comparison study (.NET, Java, Python, Rust, TypeScript).
+
+## Tech Stack
+
+- **Language**: Go 1.25+
+- **Framework**: Gin Web Framework
+- **ORM**: GORM
+- **Database**: SQLite
+- **Caching**: gin-contrib/cache (in-memory, 1-hour TTL)
+- **Testing**: Go testing package + testify/assert
+- **Linting**: golangci-lint
+- **API Docs**: Swaggo (Swagger generated from comments)
+- **Containerization**: Docker
 
 ## Structure
 
 ```text
-main.go           - application entry point (Gin setup, DB connection, route registration)
-go.mod            - Go module dependencies
-/route            - route registration with caching middleware
-/controller       - HTTP handlers (request/response logic)
-/service          - business logic (GORM interactions)
-/data             - database connection setup
-/model            - domain models (Player struct)
-/storage          - SQLite database file (players-sqlite3.db, pre-seeded)
-/docs             - auto-generated Swagger docs (DO NOT EDIT manually)
-/tests            - integration tests with testify assertions
-/scripts          - Docker entrypoint and healthcheck scripts
-/.github          - CI/CD workflows (go-ci.yml for build/test, go-cd.yml for releases)
+main.go         — application entry point: Gin setup, DB init, route registration
+go.mod          — module dependencies
+/route          — route registration + caching middleware       [HTTP layer]
+/controller     — HTTP handlers; request/response logic         [HTTP layer]
+/service        — business logic + GORM interactions            [business layer]
+/data           — database connection setup                     [data layer]
+/model          — Player struct (domain model)
+/storage        — SQLite database file (players-sqlite3.db, pre-seeded)
+/docs           — auto-generated Swagger docs (DO NOT EDIT manually)
+/tests          — integration tests with testify assertions
+/scripts        — Docker entrypoint and healthcheck scripts
 ```
 
-## Build, Run, Test Commands
+**Layer rule**: `Routes → Controllers → Services → Data`. Never skip a layer. Controllers must not contain business logic.
 
-All commands validated and used in CI/CD. Always run from repository root.
+## Coding Guidelines
 
-Development:
-- Install dependencies: `go mod download`
-- Run server: `go run .` (starts on port 9000)
-- Format code: `go fmt ./...` (automatic in most editors)
-- Build binary: `go build` or `go build -v ./...`
-- Clean dependencies: `go mod tidy`
+- **Naming**: camelCase (unexported), PascalCase (exported), short names in small scopes
+- **Files**: snake_case for all file names
+- **Errors**: Always check errors immediately after function calls; never discard with `_`
+- **Pointers**: Use pointers for structs in function signatures to avoid copying
+- **Logging**: Standard `log` package (structured `slog` for new code)
+- **Tests**: Table-driven tests for multiple cases; `Test*` naming convention; target 80%+ coverage for service, controller, route packages
+- **Avoid**: ignoring errors, `panic` in library code, global mutable state, `interface{}` without type assertions, complex goroutines for simple CRUD
 
-Testing:
-- All tests: `go test ./...`
-- With coverage: `go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out`
-- View coverage: `go tool cover -html=coverage.out`
-- Target: 80%+ coverage for service, controller, route packages
+## Commands
 
-Docker:
-- Build and run: `docker compose up --build`
-- Stop: `docker compose down`
-- Reset database: `docker compose down -v` (removes volume)
+### Quick Start
 
-Documentation:
-- Regenerate Swagger: `swag init` (after updating API comments)
-- View docs: http://localhost:9000/swagger/index.html (when server running)
+```bash
+go mod download
+go run .            # starts on port 9000
+go build -v ./...
+go test ./...       # all tests
+go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out
+go tool cover -html=coverage.out
+swag init           # regenerate Swagger docs
+docker compose up --build
+```
 
-## CI/CD Validation
+### Pre-commit Checks
 
-CI runs on push/PR to master (go-ci.yml):
-1. Build: `go build -v ./...`
-2. Test with coverage: `go test -v ./... -coverpkg=... -covermode=atomic -coverprofile=coverage.out`
-3. Lint commits: commitlint validates Conventional Commits format
-4. Upload coverage to Codecov (target: 80%+)
+1. Update `CHANGELOG.md` `[Unreleased]` section (Added / Changed / Fixed / Removed)
+2. `go fmt ./...`
+3. `go build`
+4. `go test ./...` — all tests must pass
+5. Full coverage command above — target 80%+ for service, controller, route
+6. `golangci-lint run`
+7. Verify all errors explicitly checked; JSON struct tags present on model structs
+8. Commit message follows Conventional Commits format (enforced by commitlint)
 
-CD runs on version tags (go-cd.yml):
-- Validates player name in tag (e.g., v1.0.0-ademir)
-- Runs race detector test: `go test -v ./... -race` (pre-deployment validation)
-- Builds Docker image
-- Publishes to GitHub Container Registry with three tags (semver, player name, latest)
-- Creates GitHub Release with auto-generated changelog
+### Commits
 
-## Stack
+Format: `type(scope): description (#issue)` — max 80 chars
+Types: `feat` `fix` `chore` `docs` `test` `refactor` `ci` `perf`
+Example: `feat(api): add player stats endpoint (#42)`
 
-- Language: Go 1.25+
-- Framework: Gin Web Framework
-- Database: SQLite + GORM ORM
-- Caching: gin-contrib/cache (in-memory, 1 hour for GET requests)
-- Testing: Go testing package + testify/assert
-- Linting: golangci-lint
-- API Documentation: Swaggo (Swagger generation from comments)
+## Agent Mode
 
-## Project Patterns
+### Proceed freely
 
-- Architecture: Layered (Routes → Controllers → Services → Data)
-- Dependency Injection: Explicit passing (Go doesn't have built-in DI)
-- Error Handling: Explicit error returns, check errors immediately
-- Logging: Standard library `log` package (structured logging with slog for production)
+- Route handlers and controllers
+- Service layer logic and validation
+- Unit and integration tests
+- Refactoring within controller/service layers
+- Documentation updates and bug fixes
+- Utility functions and helpers
 
-## Code Conventions
+### Ask before changing
 
-- File Names: snake_case for all files (`player_controller.go`, `player_service.go`)
-- Package Structure: Flat structure with feature-based packages (`controller/`, `service/`, `data/`, `model/`, `route/`)
-- Naming:
-  - camelCase for private (unexported) identifiers
-  - PascalCase for public (exported) identifiers
-  - Short variable names in small scopes (`p` for player, `err` for error)
-- Error Handling: Always check errors immediately after function calls
-  ```go
-  player, err := service.GetByID(id)
-  if err != nil {
-      return nil, err
-  }
-  ```
-- Pointers: Use pointers for structs in function signatures to avoid copying
+- Database schema (`Player` struct fields)
+- Dependencies (`go.mod`)
+- CI/CD configuration (`.github/workflows/`)
+- Docker setup
+- Gin middleware or router configuration
+- HTTP status codes or error response formats
+- Package organization
 
-## Testing
+### Never modify
 
-- Test Structure: `*_test.go` files in the same package
-- Naming: `Test*` for test functions, descriptive names (e.g., `TestGetPlayerByID`)
-- Table-Driven Tests: Use for multiple test cases
-- Coverage: Target 80%+ for service, controller, route packages
+- `go.mod` module path
+- Port configuration (9000)
+- Database type (SQLite)
+- Auto-generated Swagger docs in `/docs` (run `swag init` instead)
 
-## Avoid
+### Key workflows
 
-- Ignoring errors (using `_` discard) - always handle errors explicitly
-- Panic in library code - return errors instead
-- Global mutable state - pass dependencies explicitly
-- Using `interface{}` without type assertions - prefer concrete types or generics
-- Complex goroutines for simple CRUD operations - keep it simple
+**Add an endpoint**: Define model in `/model/` (if needed) → add service method in `/service/` → create controller handler in `/controller/` → register route in `/route/` → add Swagger comments → add tests → run `swag init` → run pre-commit checks.
 
-## Commits
+**Modify schema**: Update `Player` struct → update GORM queries in `/service/` → update controller handlers → update `/tests/players.json` → fix test assertions → run `swag init` → run `go test ./...`.
 
-- Format: Follow Conventional Commits with issue number suffix
-- Pattern: `type(scope): description (#issue)` (max 80 chars)
-- Examples: `feat(api): add player stats endpoint (#42)`, `fix(db): resolve connection pool leak (#88)`
+**After completing work**: Suggest a branch name (e.g. `feat/add-player-stats`) and a commit message following Conventional Commits including co-author line:
+
+```text
+feat(scope): description (#issue)
+
+Co-authored-by: Copilot <175728472+Copilot@users.noreply.github.com>
+```
