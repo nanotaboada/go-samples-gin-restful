@@ -63,7 +63,7 @@ docker compose up --build
 
 1. Update `CHANGELOG.md` `[Unreleased]` section (Added / Changed / Fixed / Removed)
 2. `go fmt ./...`
-3. `go build`
+3. `go build -v ./...`
 4. `go test ./...` — all tests must pass
 5. Full coverage command above — target 80%+ for service, controller, route
 6. `golangci-lint run`
