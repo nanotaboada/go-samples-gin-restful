@@ -45,7 +45,8 @@ func TestMain(main *testing.M) {
 	if err := testDB.Create(&players).Error; err != nil {
 		log.Fatal(err)
 	}
-	// playerService is local - only used to initialize playerController, then garbage collected
+	// playerService is local - only used to initialize playerController,
+	// then garbage collected
 	playerService := service.NewPlayerService(testDB)
 	playerController = controller.NewPlayerController(playerService)
 	os.Exit(main.Run())
@@ -70,9 +71,9 @@ const (
 
 /* GET /health -------------------------------------------------------------- */
 
-// Given GET
-// When request
-// Then response status should be 200 (OK)
+// TestRequestGETHealthResponseStatusOK tests that a
+// GET request to /health
+// returns a 200 OK status, indicating the server is running and healthy.
 func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := setupRouter(playerController)
@@ -88,10 +89,10 @@ func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 
 /* POST /players/ ----------------------------------------------------------- */
 
-// Given POST
-// When request body is empty
-// Then response status should be 400 (Bad Request)
-func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
+// TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest tests that a
+// POST request to /players/ with an empty body
+// returns a 400 Bad Request status.
+func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -105,10 +106,10 @@ func TestRequestPOSTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// Given POST
-// When request body is existing Player
-// Then response status should be 409 (Conflict)
-func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
+// TestRequestPOSTPlayersExistingPlayerResponseStatusConflict tests that a
+// POST request to /players/ with an existing player
+// returns a 409 Conflict status.
+func TestRequestPOSTPlayersExistingPlayerResponseStatusConflict(test *testing.T) {
 	// Arrange
 	player := MakeExistingPlayer()
 	body, _ := json.Marshal(player)
@@ -124,10 +125,10 @@ func TestRequestPOSTBodyExistingPlayerResponseStatusConflict(test *testing.T) {
 	assert.Equal(test, http.StatusConflict, recorder.Code)
 }
 
-// Given POST
-// when request body is non-existing Player
-// Then response status should be 201 (Created)
-func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) {
+// TestRequestPOSTPlayersNonExistingPlayerResponseStatusCreated tests that a
+// POST request to /players/ with a non-existing player
+// returns a 201 Created status.
+func TestRequestPOSTPlayersNonExistingPlayerResponseStatusCreated(test *testing.T) {
 	// Arrange
 	player := MakeNonExistingPlayer()
 	body, _ := json.Marshal(player)
@@ -143,10 +144,10 @@ func TestRequestPOSTBodyNonExistingPlayerResponseStatusCreated(test *testing.T) 
 	assert.Equal(test, http.StatusCreated, recorder.Code)
 }
 
-// Given POST
-// When request to /players/ (with trailing slash) and body is empty
-// Then response status should be 400 (Bad Request)
-func TestRequestPOSTTrailingSlashBodyEmptyResponseStatusBadRequest(test *testing.T) {
+// TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest tests that a
+// POST request to /players/ (with trailing slash) and an empty body
+// returns a 400 Bad Request status.
+func TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -163,10 +164,10 @@ func TestRequestPOSTTrailingSlashBodyEmptyResponseStatusBadRequest(test *testing
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// Given POST
-// When service.RetrieveByID() fails with non-NotFound error
-// Then response status should be 500 (Internal Server Error)
-func TestRequestPOSTServiceRetrieveByIDGenericErrorResponseStatusInternalServerError(test *testing.T) {
+// TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError tests that a
+// POST request to /players/ when service.RetrieveByID() returns an unexpected error
+// returns a 500 Internal Server Error status.
+func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {
@@ -188,10 +189,10 @@ func TestRequestPOSTServiceRetrieveByIDGenericErrorResponseStatusInternalServerE
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-// Given POST
-// When service.Create() fails
-// Then response status should be 500 (Internal Server Error)
-func TestRequestPOSTServiceCreateFailureResponseStatusInternalServerError(test *testing.T) {
+// TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError tests that a
+// POST request to /players/ when service.Create() returns an error
+// returns a 500 Internal Server Error status.
+func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {
@@ -218,10 +219,10 @@ func TestRequestPOSTServiceCreateFailureResponseStatusInternalServerError(test *
 
 /* GET /players/ ------------------------------------------------------------ */
 
-// Given GET
-// When request to /players/ (with trailing slash)
-// Then response status should be 200 (OK) - both routes are handled directly
-func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
+// TestRequestGETPlayersTrailingSlashResponseStatusOK tests that a
+// GET request to /players/ (with trailing slash)
+// returns a 200 OK status.
+func TestRequestGETPlayersTrailingSlashResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -237,10 +238,10 @@ func TestRequestGETTrailingSlashResponseStatusOK(test *testing.T) {
 	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
-// Given GET
-// When request path has no Id
-// Then response status should be 200 (OK)
-func TestRequestGETNoParamResponseStatusOK(test *testing.T) {
+// TestRequestGETPlayersResponseStatusOK tests that a
+// GET request to /players/
+// returns a 200 OK status.
+func TestRequestGETPlayersResponseStatusOK(test *testing.T) {
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -253,10 +254,10 @@ func TestRequestGETNoParamResponseStatusOK(test *testing.T) {
 	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
-// Given GET
-// When request path has no Id
-// Then response body should be collection of Players
-func TestRequestGETNoParamResponsePlayers(test *testing.T) {
+// TestRequestGETPlayersResponsePlayers tests that a
+// GET request to /players/
+// returns a collection of Players.
+func TestRequestGETPlayersResponsePlayers(test *testing.T) {
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -271,10 +272,10 @@ func TestRequestGETNoParamResponsePlayers(test *testing.T) {
 	assert.NotEmpty(test, players)
 }
 
-// Given GET
-// When service.RetrieveAll() fails
-// Then response status should be 500 (Internal Server Error)
-func TestRequestGETAllServiceRetrieveAllFailureResponseStatusInternalServerError(test *testing.T) {
+// TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError tests that a
+// GET request to /players/ when service.RetrieveAll() returns an unexpected error
+// returns a 500 Internal Server Error status.
+func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveAllFunc: func() ([]model.Player, error) {
@@ -293,109 +294,12 @@ func TestRequestGETAllServiceRetrieveAllFailureResponseStatusInternalServerError
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-// Given GET by Squad Number
-// When service.RetrieveBySquadNumber() fails with non-NotFound error
-// Then response status should be 500 (Internal Server Error)
-func TestRequestGETBySquadNumberServiceGenericErrorResponseStatusInternalServerError(test *testing.T) {
-	// Arrange
-	mockService := &MockPlayerService{
-		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
-			return model.Player{}, ErrGenericError
-		},
-	}
-	controller := controller.NewPlayerController(mockService)
-	router := setupRouter(controller)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/10", nil)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
-}
-
 /* GET /players/:id --------------------------------------------------------- */
 
-// Given GET
-// When request path is non-existing Squad Number
-// Then response status should be 404 (Not Found)
-func TestRequestGETSquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
-	// Arrange
-	squadNumber := "999"
-	router := setupRouter(playerController)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusNotFound, recorder.Code)
-}
-
-// Given GET
-// When request path is invalid Squad Number (non-numeric)
-// Then response status should be 400 (Bad Request)
-func TestRequestGETSquadNumberInvalidParamResponseStatusBadRequest(test *testing.T) {
-	// Arrange
-	squadNumber := InvalidSquadNumber
-	router := setupRouter(playerController)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusBadRequest, recorder.Code)
-}
-
-// Given GET
-// When request path is existing Squad Number
-// Then response status should be 200 (OK)
-func TestRequestGETSquadNumberExistingResponseStatusOK(test *testing.T) {
-	// Arrange
-	squadNumber := "11"
-	router := setupRouter(playerController)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-
-	// Assert
-	assert.Equal(test, http.StatusOK, recorder.Code)
-}
-
-// Given GET
-// When request path is existing Squad Number
-// Then response body should be matching Player
-func TestRequestGETSquadNumberExistingResponsePlayer(test *testing.T) {
-	// Arrange
-	squadNumber := "11"
-	router := setupRouter(playerController)
-	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
-
-	// Act
-	router.ServeHTTP(recorder, request)
-	var player model.Player
-	json.Unmarshal(recorder.Body.Bytes(), &player)
-
-	// Assert
-	assert.NotEmpty(test, player)
-	assert.Equal(test, 11, player.SquadNumber)
-	assert.Equal(test, "Ángel", player.FirstName)
-	assert.Equal(test, "Di María", player.LastName)
-}
-
-/* GET /players/:id --------------------------------------------------------- */
-
-// Given GET
-// When request path is non-existing Id
-// Then response status should be 404 (Not Found)
-func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {
+// TestRequestGETPlayerByIDNonExistingResponseStatusNotFound tests that a
+// GET request to /players/:id when the id does not exist
+// returns a 404 Not Found status.
+func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
 	router := setupRouter(playerController)
@@ -409,10 +313,10 @@ func TestRequestGETIdNonExistingResponseStatusNotFound(test *testing.T) {
 	assert.Equal(test, http.StatusNotFound, recorder.Code)
 }
 
-// Given GET
-// When request path is invalid Id (non-numeric)
-// Then response status should be 400 (Bad Request)
-func TestRequestGETIdInvalidParamResponseStatusBadRequest(test *testing.T) {
+// TestRequestGETPlayerByIDInvalidParamResponseStatusBadRequest tests that a
+// GET request to /players/:id when the id is invalid (non-numeric)
+// returns a 400 Bad Request status.
+func TestRequestGETPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	id := InvalidID
 	router := setupRouter(playerController)
@@ -426,10 +330,10 @@ func TestRequestGETIdInvalidParamResponseStatusBadRequest(test *testing.T) {
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// Given GET
-// When request path is existing Id
-// Then response status should be 200 (OK)
-func TestRequestGETIdExistingResponseStatusOK(test *testing.T) {
+// TestRequestGETPlayerByIDExistingResponseStatusOK tests that a
+// GET request to /players/:id when the id exists
+// returns a 200 OK status.
+func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 	// Arrange
 	id := "10"
 	router := setupRouter(playerController)
@@ -443,10 +347,10 @@ func TestRequestGETIdExistingResponseStatusOK(test *testing.T) {
 	assert.Equal(test, http.StatusOK, recorder.Code)
 }
 
-// Given GET
-// When request path is existing Id
-// Then response body should be matching Player
-func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
+// TestRequestGETPlayerByIDExistingResponsePlayer tests that a
+// GET request to /players/:id when the id exists
+// returns a matching Player.
+func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 	// Arrange
 	id := "10"
 	router := setupRouter(playerController)
@@ -465,10 +369,10 @@ func TestRequestGETIdExistingResponsePlayer(test *testing.T) {
 	assert.Equal(test, "Messi", player.LastName)
 }
 
-// Given GET by ID
-// When service.RetrieveByID() fails with non-NotFound error
-// Then response status should be 500 (Internal Server Error)
-func TestRequestGETByIDServiceGenericErrorResponseStatusInternalServerError(test *testing.T) {
+// TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError tests that a
+// GET request to /players/:id when service.RetrieveByID() returns an unexpected error
+// returns a 500 Internal Server Error status.
+func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {
@@ -487,12 +391,109 @@ func TestRequestGETByIDServiceGenericErrorResponseStatusInternalServerError(test
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
+/* GET /players/squadNumber/:squadNumber ------------------------------------ */
+
+// TestRequestGETPlayerBySquadNumberNonExistingResponseStatusNotFound tests that a
+// GET request to /players/squadNumber/:squadNumber when the squad number does not exist
+// returns a 404 Not Found status.
+func TestRequestGETPlayerBySquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
+	// Arrange
+	squadNumber := "999"
+	router := setupRouter(playerController)
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusNotFound, recorder.Code)
+}
+
+// TestRequestGETPlayerBySquadNumberInvalidParamResponseStatusBadRequest tests that a
+// GET request to /players/squadNumber/:squadNumber when the squad number is invalid (non-numeric)
+// returns a 400 Bad Request status.
+func TestRequestGETPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test *testing.T) {
+	// Arrange
+	squadNumber := InvalidSquadNumber
+	router := setupRouter(playerController)
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusBadRequest, recorder.Code)
+}
+
+// TestRequestGETPlayerBySquadNumberExistingResponseStatusOK tests that a
+// GET request to /players/squadNumber/:squadNumber when the squad number exists
+// returns a 200 OK status.
+func TestRequestGETPlayerBySquadNumberExistingResponseStatusOK(test *testing.T) {
+	// Arrange
+	squadNumber := "11"
+	router := setupRouter(playerController)
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusOK, recorder.Code)
+}
+
+// TestRequestGETPlayerBySquadNumberExistingResponsePlayer tests that a
+// GET request to /players/squadNumber/:squadNumber when the squad number exists
+// returns a matching Player.
+func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
+	// Arrange
+	squadNumber := "11"
+	router := setupRouter(playerController)
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+	var player model.Player
+	json.Unmarshal(recorder.Body.Bytes(), &player)
+
+	// Assert
+	assert.NotEmpty(test, player)
+	assert.Equal(test, 11, player.SquadNumber)
+	assert.Equal(test, "Ángel", player.FirstName)
+	assert.Equal(test, "Di María", player.LastName)
+}
+
+// TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
+// GET request to /players/squadNumber/:squadNumber when service.RetrieveBySquadNumber() returns an unexpected error
+// returns a 500 Internal Server Error status.
+func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+	// Arrange
+	mockService := &MockPlayerService{
+		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
+			return model.Player{}, ErrGenericError
+		},
+	}
+	controller := controller.NewPlayerController(mockService)
+	router := setupRouter(controller)
+	recorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/10", nil)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
+}
+
 /* PUT /players/:id --------------------------------------------------------- */
 
-// Given PUT
-// When request body is empty
-// Then response status should be 400 (Bad Request)
-func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
+// TestRequestPUTPlayerByIDEmptyBodyResponseStatusBadRequest tests that a
+// PUT request to /players/:id with an empty body
+// returns a 400 Bad Request status.
+func TestRequestPUTPlayerByIDEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	id := "10"
 	router := setupRouter(playerController)
@@ -507,10 +508,10 @@ func TestRequestPUTBodyEmptyResponseStatusBadRequest(test *testing.T) {
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// Given PUT
-// When request body is unknown Player
-// Then response status should be 404 (Not Found)
-func TestRequestPUTBodyUnknownPlayerResponseStatusNotFound(test *testing.T) {
+// TestRequestPUTPlayerByIDUnknownPlayerResponseStatusNotFound tests that a
+// PUT request to /players/:id when the player does not exist
+// returns a 404 Not Found status.
+func TestRequestPUTPlayerByIDUnknownPlayerResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
 	player := model.Player{
@@ -530,10 +531,10 @@ func TestRequestPUTBodyUnknownPlayerResponseStatusNotFound(test *testing.T) {
 	assert.Equal(test, http.StatusNotFound, recorder.Code)
 }
 
-// Given PUT
-// When request path is invalid Id (non-numeric)
-// Then response status should be 400 (Bad Request)
-func TestRequestPUTIdInvalidParamResponseStatusBadRequest(test *testing.T) {
+// TestRequestPUTPlayerByIDInvalidParamResponseStatusBadRequest tests that a
+// PUT request to /players/:id when the id is invalid (non-numeric)
+// returns a 400 Bad Request status.
+func TestRequestPUTPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	id := InvalidID
 	player := MakeExistingPlayer()
@@ -550,10 +551,10 @@ func TestRequestPUTIdInvalidParamResponseStatusBadRequest(test *testing.T) {
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// Given PUT
-// When request body is existing Player
-// Then response status should be 204 (No Content)
-func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
+// TestRequestPUTPlayerByIDExistingPlayerResponseStatusNoContent tests that a
+// PUT request to /players/:id with an existing player
+// returns a 204 No Content status.
+func TestRequestPUTPlayerByIDExistingPlayerResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	id := "1"
 	player := MakeExistingPlayer()
@@ -572,10 +573,10 @@ func TestRequestPUTPBodyExistingPlayerResponseStatusNoContent(test *testing.T) {
 	assert.Equal(test, http.StatusNoContent, recorder.Code)
 }
 
-// Given PUT
-// When first service.RetrieveByID() fails with non-NotFound error
-// Then response status should be 500 (Internal Server Error)
-func TestRequestPUTServiceRetrieveByIDGenericErrorResponseStatusInternalServerError(test *testing.T) {
+// TestRequestPUTPlayerByIDRetrieveErrorResponseStatusInternalServerError tests that a
+// PUT request to /players/:id when service.RetrieveByID() returns an unexpected error
+// returns a 500 Internal Server Error status.
+func TestRequestPUTPlayerByIDRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {
@@ -597,10 +598,10 @@ func TestRequestPUTServiceRetrieveByIDGenericErrorResponseStatusInternalServerEr
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-// Given PUT
-// When service.Update() fails
-// Then response status should be 500 (Internal Server Error)
-func TestRequestPUTServiceUpdateFailureResponseStatusInternalServerError(test *testing.T) {
+// TestRequestPUTPlayerByIDUpdateErrorResponseStatusInternalServerError tests that a
+// PUT request to /players/:id when service.Update() returns an error
+// returns a 500 Internal Server Error status.
+func TestRequestPUTPlayerByIDUpdateErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {
@@ -627,10 +628,10 @@ func TestRequestPUTServiceUpdateFailureResponseStatusInternalServerError(test *t
 
 /* DELETE /players/:id ------------------------------------------------------ */
 
-// Given DELETE
-// When request path is non-existing Id
-// Then response status should be 404 (Not Found)
-func TestRequestDELETEIdNonExistingIdResponseStatusNotFound(test *testing.T) {
+// TestRequestDELETEPlayerByIDNonExistingResponseStatusNotFound tests that a
+// DELETE request to /players/:id when the id does not exist
+// returns a 404 Not Found status.
+func TestRequestDELETEPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
 	router := setupRouter(playerController)
@@ -644,10 +645,10 @@ func TestRequestDELETEIdNonExistingIdResponseStatusNotFound(test *testing.T) {
 	assert.Equal(test, http.StatusNotFound, recorder.Code)
 }
 
-// Given DELETE
-// When request path is invalid Id (non-numeric)
-// Then response status should be 400 (Bad Request)
-func TestRequestDELETEIdInvalidParamResponseStatusBadRequest(test *testing.T) {
+// TestRequestDELETEPlayerByIDInvalidParamResponseStatusBadRequest tests that a
+// DELETE request to /players/:id when the id is invalid (non-numeric)
+// returns a 400 Bad Request status.
+func TestRequestDELETEPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	id := InvalidID
 	router := setupRouter(playerController)
@@ -661,10 +662,10 @@ func TestRequestDELETEIdInvalidParamResponseStatusBadRequest(test *testing.T) {
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// Given DELETE
-// when request path is existing Id
-// Then response status should be  204 (No Content)
-func TestRequestDELETEIdExistingIdResponseStatusNoContent(test *testing.T) {
+// TestRequestDELETEPlayerByIDExistingResponseStatusNoContent tests that a
+// DELETE request to /players/:id when the id exists
+// returns a 204 No Content status.
+func TestRequestDELETEPlayerByIDExistingResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	id := "12"
 	router := setupRouter(playerController)
@@ -678,10 +679,10 @@ func TestRequestDELETEIdExistingIdResponseStatusNoContent(test *testing.T) {
 	assert.Equal(test, http.StatusNoContent, recorder.Code)
 }
 
-// Given DELETE
-// When first service.RetrieveByID() fails with non-NotFound error
-// Then response status should be 500 (Internal Server Error)
-func TestRequestDELETEServiceRetrieveByIDGenericErrorResponseStatusInternalServerError(test *testing.T) {
+// TestRequestDELETEPlayerByIDRetrieveErrorResponseStatusInternalServerError tests that a
+// DELETE request to /players/:id when service.RetrieveByID() returns an unexpected error
+// returns a 500 Internal Server Error status.
+func TestRequestDELETEPlayerByIDRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {
@@ -700,10 +701,10 @@ func TestRequestDELETEServiceRetrieveByIDGenericErrorResponseStatusInternalServe
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-// Given DELETE
-// When service.Delete() fails
-// Then response status should be 500 (Internal Server Error)
-func TestRequestDELETEServiceDeleteFailureResponseStatusInternalServerError(test *testing.T) {
+// TestRequestDELETEPlayerByIDDeleteErrorResponseStatusInternalServerError tests that a
+// DELETE request to /players/:id when service.Delete() returns an error
+// returns a 500 Internal Server Error status.
+func TestRequestDELETEPlayerByIDDeleteErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id int) (model.Player, error) {

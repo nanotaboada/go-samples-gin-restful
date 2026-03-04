@@ -41,7 +41,13 @@ go.mod          — module dependencies
 - **Errors**: Always check errors immediately after function calls; never discard with `_`
 - **Pointers**: Use pointers for structs in function signatures to avoid copying
 - **Logging**: Standard `log` package (structured `slog` for new code)
-- **Tests**: Table-driven tests for multiple cases; `Test*` naming convention; target 80%+ coverage for service, controller, route packages
+- **Tests**: Table-driven tests for multiple cases; target 80%+ coverage for service, controller, route packages
+- **Test naming**: `TestRequest{METHOD}{Resource}{Condition}Response{Outcome}`:
+  - **Resource**: explicit endpoint target — `Players`, `PlayerByID`, `PlayerBySquadNumber`
+  - **Condition**: `Existing`, `NonExisting`, `InvalidParam`, `EmptyBody`, `TrailingSlash`, `RetrieveError`, `CreateError`, `UpdateError`, `DeleteError`
+  - **Outcome**: `StatusOK`, `StatusCreated`, `StatusNoContent`, `StatusBadRequest`, `StatusNotFound`, `StatusConflict`, `StatusInternalServerError`, or `Players` / `Player` for body assertions
+  - Examples: `TestRequestGETPlayerByIDExistingResponseStatusOK`, `TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest`, `TestRequestDELETEPlayerByIDDeleteErrorResponseStatusInternalServerError`
+- **Test godoc**: Each `Test*` function must open with: `// TestFuncName tests that a\n// {METHOD} request to {/path} {condition}\n// returns a {outcome}.`
 - **Avoid**: ignoring errors, `panic` in library code, global mutable state, `interface{}` without type assertions, complex goroutines for simple CRUD
 
 ## Commands
