@@ -44,11 +44,19 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+- `rest/players.rest`: HTTP request file covering health check, POST, GET all, GET by ID, GET by squad number, PUT, and DELETE — compatible with VS Code REST Client (`humao.rest-client`) and JetBrains built-in HTTP Client
+- `humao.rest-client` listed in `.vscode/extensions.json` recommended extensions
+
 ### Changed
+
+- Updated `codecov.yml` ignore list: replaced `postman-collections/**/*` with `rest/**/*`
+- Updated `README.md`: replaced Postman Collection section with HTTP Requests section referencing `rest/players.rest`
 
 ### Deprecated
 
 ### Removed
+
+- `postman-collections/` directory and Postman collection JSON file
 
 ### Fixed
 

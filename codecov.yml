@@ -21,7 +21,7 @@ ignore:
   - "data/**/*"
   - "docs/**/*"
   - "model/**/*"
-  - "postman-collections/**/*"
+  - "rest/**/*"
   - "scripts/**/*"
   - "storage/**/*"
   - "swagger/**/*"
