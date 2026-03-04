@@ -11,7 +11,7 @@
 // disguise: the mock replaces only the service layer so the controller's error
 // handling branches can be reached and verified.
 //
-// TODO: Once a dedicated player_service_test.go exists, the mock-assisted
+// Once a dedicated player_service_test.go exists, the mock-assisted
 // tests should be moved there and rewritten as pure unit tests.
 package tests
 
@@ -80,6 +80,9 @@ const (
 	ApplicationJSON    = "application/json"
 	InvalidID          = "invalid-id"
 	InvalidSquadNumber = "invalid-squadnumber"
+	ErrNewRequest      = "failed to create request: %v"
+	ErrMarshal         = "failed to marshal player: %v"
+	ErrUnmarshal       = "failed to unmarshal response body: %v"
 )
 
 /* GET /health -------------------------------------------------------------- */
@@ -93,7 +96,7 @@ func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, "/health", nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -114,7 +117,7 @@ func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPath, nil)
 	if err != nil {
-		test.Fatalf("failed to create POST request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -125,21 +128,21 @@ func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// TestRequestPOSTPlayersExistingPlayerResponseStatusConflict tests that a
+// TestRequestPOSTPlayersExistingResponseStatusConflict tests that a
 // POST request to /players with an existing player
 // returns a 409 Conflict status.
-func TestRequestPOSTPlayersExistingPlayerResponseStatusConflict(test *testing.T) {
+func TestRequestPOSTPlayersExistingResponseStatusConflict(test *testing.T) {
 	// Arrange
 	player := MakeExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create POST request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -150,21 +153,21 @@ func TestRequestPOSTPlayersExistingPlayerResponseStatusConflict(test *testing.T)
 	assert.Equal(test, http.StatusConflict, recorder.Code)
 }
 
-// TestRequestPOSTPlayersNonExistingPlayerResponseStatusCreated tests that a
+// TestRequestPOSTPlayersNonExistingResponseStatusCreated tests that a
 // POST request to /players with a non-existing player
 // returns a 201 Created status.
-func TestRequestPOSTPlayersNonExistingPlayerResponseStatusCreated(test *testing.T) {
+func TestRequestPOSTPlayersNonExistingResponseStatusCreated(test *testing.T) {
 	// Arrange
 	player := MakeNonExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create POST request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -184,7 +187,7 @@ func TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest(test *
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPathTrailingSlash, nil)
 	if err != nil {
-		test.Fatalf("failed to create POST request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -210,12 +213,12 @@ func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *
 	player := MakeNonExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create POST request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -244,12 +247,12 @@ func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *te
 	player := MakeNonExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create POST request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -271,7 +274,7 @@ func TestRequestGETPlayersTrailingSlashResponseStatusOK(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.GetAllPathTrailingSlash, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -290,7 +293,7 @@ func TestRequestGETPlayersResponseStatusOK(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -309,14 +312,14 @@ func TestRequestGETPlayersResponsePlayers(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
 	var players []model.Player
 	if err := json.Unmarshal(recorder.Body.Bytes(), &players); err != nil {
-		test.Fatalf("failed to unmarshal response body: %v", err)
+		test.Fatalf(ErrUnmarshal, err)
 	}
 
 	// Assert
@@ -338,7 +341,7 @@ func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *t
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.GetAllPath, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -360,7 +363,7 @@ func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) 
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -380,7 +383,7 @@ func TestRequestGETPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -400,7 +403,7 @@ func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -420,14 +423,14 @@ func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
 	var player model.Player
 	if err := json.Unmarshal(recorder.Body.Bytes(), &player); err != nil {
-		test.Fatalf("failed to unmarshal response body: %v", err)
+		test.Fatalf(ErrUnmarshal, err)
 	}
 
 	// Assert
@@ -452,7 +455,7 @@ func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/10", nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -474,7 +477,7 @@ func TestRequestGETPlayerBySquadNumberNonExistingResponseStatusNotFound(test *te
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -494,7 +497,7 @@ func TestRequestGETPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -514,7 +517,7 @@ func TestRequestGETPlayerBySquadNumberExistingResponseStatusOK(test *testing.T) 
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -534,14 +537,14 @@ func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
 	var player model.Player
 	if err := json.Unmarshal(recorder.Body.Bytes(), &player); err != nil {
-		test.Fatalf("failed to unmarshal response body: %v", err)
+		test.Fatalf(ErrUnmarshal, err)
 	}
 
 	// Assert
@@ -566,7 +569,7 @@ func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/10", nil)
 	if err != nil {
-		test.Fatalf("failed to create GET request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -588,7 +591,7 @@ func TestRequestPUTPlayerByIDEmptyBodyResponseStatusBadRequest(test *testing.T) 
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create PUT request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -599,10 +602,10 @@ func TestRequestPUTPlayerByIDEmptyBodyResponseStatusBadRequest(test *testing.T) 
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// TestRequestPUTPlayerByIDNonExistingPlayerResponseStatusNotFound tests that a
+// TestRequestPUTPlayerByIDNonExistingResponseStatusNotFound tests that a
 // PUT request to /players/:id when the player does not exist
 // returns a 404 Not Found status.
-func TestRequestPUTPlayerByIDNonExistingPlayerResponseStatusNotFound(test *testing.T) {
+func TestRequestPUTPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
 	player := model.Player{
@@ -611,13 +614,13 @@ func TestRequestPUTPlayerByIDNonExistingPlayerResponseStatusNotFound(test *testi
 	}
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create PUT request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -637,13 +640,13 @@ func TestRequestPUTPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.
 	player := MakeExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create PUT request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -654,10 +657,10 @@ func TestRequestPUTPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// TestRequestPUTPlayerByIDExistingPlayerResponseStatusNoContent tests that a
+// TestRequestPUTPlayerByIDExistingResponseStatusNoContent tests that a
 // PUT request to /players/:id with an existing player
 // returns a 204 No Content status.
-func TestRequestPUTPlayerByIDExistingPlayerResponseStatusNoContent(test *testing.T) {
+func TestRequestPUTPlayerByIDExistingResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	id := "1"
 	player := MakeExistingPlayer()
@@ -665,13 +668,13 @@ func TestRequestPUTPlayerByIDExistingPlayerResponseStatusNoContent(test *testing
 	player.MiddleName = ""
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+id, bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create PUT request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -697,12 +700,12 @@ func TestRequestPUTPlayerByIDRetrieveErrorResponseStatusInternalServerError(test
 	player := MakeExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/1", bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create PUT request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -731,12 +734,12 @@ func TestRequestPUTPlayerByIDUpdateErrorResponseStatusInternalServerError(test *
 	player := MakeExistingPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
-		test.Fatalf("failed to marshal player: %v", err)
+		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/1", bytes.NewBuffer(body))
 	if err != nil {
-		test.Fatalf("failed to create PUT request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
 
@@ -759,7 +762,7 @@ func TestRequestDELETEPlayerByIDNonExistingResponseStatusNotFound(test *testing.
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create DELETE request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -779,7 +782,7 @@ func TestRequestDELETEPlayerByIDInvalidParamResponseStatusBadRequest(test *testi
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create DELETE request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -799,7 +802,7 @@ func TestRequestDELETEPlayerByIDExistingResponseStatusNoContent(test *testing.T)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+id, nil)
 	if err != nil {
-		test.Fatalf("failed to create DELETE request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -824,7 +827,7 @@ func TestRequestDELETEPlayerByIDRetrieveErrorResponseStatusInternalServerError(t
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/1", nil)
 	if err != nil {
-		test.Fatalf("failed to create DELETE request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
@@ -852,7 +855,7 @@ func TestRequestDELETEPlayerByIDDeleteErrorResponseStatusInternalServerError(tes
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/1", nil)
 	if err != nil {
-		test.Fatalf("failed to create DELETE request: %v", err)
+		test.Fatalf(ErrNewRequest, err)
 	}
 
 	// Act
