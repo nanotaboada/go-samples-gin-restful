@@ -1,0 +1,80 @@
+### HTTP Requests for go-samples-gin-restful
+### Supported by:
+###   - VS Code: REST Client extension (humao.rest-client)
+###   - JetBrains IDEs: built-in HTTP Client
+
+@baseUrl = http://localhost:9000
+
+# -----------------------------------------------------------------------------
+
+### Health Check
+# GET /health → 204 No Content
+GET {{baseUrl}}/health
+
+###
+
+### Create Player
+# POST /players → 201 Created
+POST {{baseUrl}}/players
+Content-Type: application/json
+
+{
+  "id": 19,
+  "firstName": "Leandro",
+  "middleName": "Daniel",
+  "lastName": "Paredes",
+  "dateOfBirth": "1994-06-29T00:00:00.000Z",
+  "squadNumber": 5,
+  "position": "Defensive Midfield",
+  "abbrPosition": "DM",
+  "team": "AS Roma",
+  "league": "Serie A",
+  "starting11": false
+}
+
+###
+
+### Get All Players
+# GET /players → 200 OK
+GET {{baseUrl}}/players
+
+###
+
+### Get Player by ID
+# GET /players/:id → 200 OK
+GET {{baseUrl}}/players/1
+
+###
+
+### Get Player by Squad Number
+# GET /players/squadnumber/:squadnumber → 200 OK
+GET {{baseUrl}}/players/squadnumber/23
+
+###
+
+### Update Player
+# PUT /players/:id → 204 No Content
+PUT {{baseUrl}}/players/19
+Content-Type: application/json
+
+{
+  "id": 19,
+  "firstName": "Leandro",
+  "middleName": "Daniel",
+  "lastName": "Paredes",
+  "dateOfBirth": "1994-06-29T00:00:00.000Z",
+  "squadNumber": 5,
+  "position": "Defensive Midfield",
+  "abbrPosition": "DM",
+  "team": "Juventus FC",
+  "league": "Serie A",
+  "starting11": false
+}
+
+###
+
+### Delete Player
+# DELETE /players/:id → 204 No Content
+DELETE {{baseUrl}}/players/19
+
+###

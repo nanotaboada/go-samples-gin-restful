@@ -31,7 +31,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 ## Features
 
 - 🏗️ **Idiomatic Go patterns** - Clean architecture with middleware, dependency injection, and concurrency safety
-- 📚 **Interactive API exploration** - Auto-generated Swagger docs with Postman collection and health monitoring
+- 📚 **Interactive API exploration** - Auto-generated Swagger docs with `.rest` file, REST Client integration, and health monitoring
 - ⚡ **Performance optimizations** - In-memory caching, connection pooling, and efficient GORM queries
 - 🧪 **Comprehensive integration tests** - Full endpoint coverage with automated reporting to Codecov and SonarCloud
 - 📖 **Token-efficient documentation** - AGENTS.md + auto-loaded Copilot instructions for AI-assisted development
@@ -78,6 +78,8 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 │   ├── main_test.go
 │   ├── player_fake.go
 │   └── players.json
+├── rest/                   # HTTP request files
+│   └── players.rest        # CRUD requests (REST Client / JetBrains HTTP Client)
 ├── storage/                # SQLite database file (pre-seeded)
 ├── scripts/                # Container entrypoint & healthcheck
 └── .github/workflows/      # CI/CD pipelines
@@ -221,9 +223,14 @@ HTTP request-response cycle: Client → Route → Controller → Service → Dat
 
 For complete endpoint documentation with request/response schemas, explore the [interactive Swagger UI](http://localhost:9000/swagger/index.html). You can also access the OpenAPI JSON specification at `http://localhost:9000/swagger.json`.
 
-### Postman Collection
+### HTTP Requests
 
-A pre-configured Postman collection is available at [`postman-collections/go-samples-gin-restful.postman_collection.json`](postman-collections/go-samples-gin-restful.postman_collection.json).
+A ready-to-use HTTP request file is available at [`rest/players.rest`](rest/players.rest). It covers all CRUD operations and can be run directly from your editor without leaving the development environment:
+
+- **VS Code** — install the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension (`humao.rest-client`), open `rest/players.rest`, and click **Send Request** above any entry.
+- **JetBrains IDEs** (IntelliJ IDEA, GoLand, WebStorm) — the built-in HTTP Client supports `.rest` files natively; no plugin required.
+
+The file targets `http://localhost:9000` by default (configurable via the `@baseUrl` variable at the top of the file).
 
 ## Prerequisites
 
