@@ -90,7 +90,7 @@ func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 /* POST /players/ ----------------------------------------------------------- */
 
 // TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest tests that a
-// POST request to /players/ with an empty body
+// POST request to /players with an empty body
 // returns a 400 Bad Request status.
 func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
@@ -107,7 +107,7 @@ func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
 }
 
 // TestRequestPOSTPlayersExistingPlayerResponseStatusConflict tests that a
-// POST request to /players/ with an existing player
+// POST request to /players with an existing player
 // returns a 409 Conflict status.
 func TestRequestPOSTPlayersExistingPlayerResponseStatusConflict(test *testing.T) {
 	// Arrange
@@ -126,7 +126,7 @@ func TestRequestPOSTPlayersExistingPlayerResponseStatusConflict(test *testing.T)
 }
 
 // TestRequestPOSTPlayersNonExistingPlayerResponseStatusCreated tests that a
-// POST request to /players/ with a non-existing player
+// POST request to /players with a non-existing player
 // returns a 201 Created status.
 func TestRequestPOSTPlayersNonExistingPlayerResponseStatusCreated(test *testing.T) {
 	// Arrange
@@ -165,7 +165,7 @@ func TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest(test *
 }
 
 // TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError tests that a
-// POST request to /players/ when service.RetrieveByID() returns an unexpected error
+// POST request to /players when service.RetrieveByID() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -190,7 +190,7 @@ func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *
 }
 
 // TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError tests that a
-// POST request to /players/ when service.Create() returns an error
+// POST request to /players when service.Create() returns an error
 // returns a 500 Internal Server Error status.
 func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -239,7 +239,7 @@ func TestRequestGETPlayersTrailingSlashResponseStatusOK(test *testing.T) {
 }
 
 // TestRequestGETPlayersResponseStatusOK tests that a
-// GET request to /players/
+// GET request to /players
 // returns a 200 OK status.
 func TestRequestGETPlayersResponseStatusOK(test *testing.T) {
 	// Arrange
@@ -255,7 +255,7 @@ func TestRequestGETPlayersResponseStatusOK(test *testing.T) {
 }
 
 // TestRequestGETPlayersResponsePlayers tests that a
-// GET request to /players/
+// GET request to /players
 // returns a collection of Players.
 func TestRequestGETPlayersResponsePlayers(test *testing.T) {
 	// Arrange
@@ -273,7 +273,7 @@ func TestRequestGETPlayersResponsePlayers(test *testing.T) {
 }
 
 // TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError tests that a
-// GET request to /players/ when service.RetrieveAll() returns an unexpected error
+// GET request to /players when service.RetrieveAll() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -304,7 +304,10 @@ func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) 
 	id := "999"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -321,7 +324,10 @@ func TestRequestGETPlayerByIDInvalidParamResponseStatusBadRequest(test *testing.
 	id := InvalidID
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -338,7 +344,10 @@ func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 	id := "10"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -355,7 +364,10 @@ func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 	id := "10"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -391,17 +403,20 @@ func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-/* GET /players/squadNumber/:squadNumber ------------------------------------ */
+/* GET /players/squadnumber/:squadnumber ------------------------------------ */
 
 // TestRequestGETPlayerBySquadNumberNonExistingResponseStatusNotFound tests that a
-// GET request to /players/squadNumber/:squadNumber when the squad number does not exist
+// GET request to /players/squadnumber/:squadnumber when the squad number does not exist
 // returns a 404 Not Found status.
 func TestRequestGETPlayerBySquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	squadNumber := "999"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -411,14 +426,17 @@ func TestRequestGETPlayerBySquadNumberNonExistingResponseStatusNotFound(test *te
 }
 
 // TestRequestGETPlayerBySquadNumberInvalidParamResponseStatusBadRequest tests that a
-// GET request to /players/squadNumber/:squadNumber when the squad number is invalid (non-numeric)
+// GET request to /players/squadnumber/:squadnumber when the squad number is invalid (non-numeric)
 // returns a 400 Bad Request status.
 func TestRequestGETPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	squadNumber := InvalidSquadNumber
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -428,14 +446,17 @@ func TestRequestGETPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 }
 
 // TestRequestGETPlayerBySquadNumberExistingResponseStatusOK tests that a
-// GET request to /players/squadNumber/:squadNumber when the squad number exists
+// GET request to /players/squadnumber/:squadnumber when the squad number exists
 // returns a 200 OK status.
 func TestRequestGETPlayerBySquadNumberExistingResponseStatusOK(test *testing.T) {
 	// Arrange
 	squadNumber := "11"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -445,14 +466,17 @@ func TestRequestGETPlayerBySquadNumberExistingResponseStatusOK(test *testing.T) 
 }
 
 // TestRequestGETPlayerBySquadNumberExistingResponsePlayer tests that a
-// GET request to /players/squadNumber/:squadNumber when the squad number exists
+// GET request to /players/squadnumber/:squadnumber when the squad number exists
 // returns a matching Player.
 func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 	// Arrange
 	squadNumber := "11"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -467,7 +491,7 @@ func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 }
 
 // TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
-// GET request to /players/squadNumber/:squadNumber when service.RetrieveBySquadNumber() returns an unexpected error
+// GET request to /players/squadnumber/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -479,7 +503,10 @@ func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/10", nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+route.SquadNumberParam+"/10", nil)
+	if err != nil {
+		test.Fatalf("failed to create GET request: %v", err)
+	}
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -508,10 +535,10 @@ func TestRequestPUTPlayerByIDEmptyBodyResponseStatusBadRequest(test *testing.T) 
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// TestRequestPUTPlayerByIDUnknownPlayerResponseStatusNotFound tests that a
+// TestRequestPUTPlayerByIDNonExistingPlayerResponseStatusNotFound tests that a
 // PUT request to /players/:id when the player does not exist
 // returns a 404 Not Found status.
-func TestRequestPUTPlayerByIDUnknownPlayerResponseStatusNotFound(test *testing.T) {
+func TestRequestPUTPlayerByIDNonExistingPlayerResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	id := "999"
 	player := model.Player{
