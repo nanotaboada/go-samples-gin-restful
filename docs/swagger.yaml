@@ -105,7 +105,7 @@ paths:
         in: path
         name: squadnumber
         required: true
-        type: integer
+        type: string
       responses:
         "204":
           description: No Content
@@ -126,7 +126,7 @@ paths:
         in: path
         name: squadnumber
         required: true
-        type: integer
+        type: string
       - description: Player
         in: body
         name: player

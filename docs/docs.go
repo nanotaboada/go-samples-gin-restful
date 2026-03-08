@@ -156,7 +156,7 @@ const docTemplate = `{
                 "summary": "Updates (entirely) a Player by its Squad Number",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Player.SquadNumber",
                         "name": "squadnumber",
                         "in": "path",
@@ -194,7 +194,7 @@ const docTemplate = `{
                 "summary": "Deletes a Player by its Squad Number",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Player.SquadNumber",
                         "name": "squadnumber",
                         "in": "path",

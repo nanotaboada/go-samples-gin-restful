@@ -178,7 +178,7 @@ func (c *PlayerController) GetBySquadNumber(context *gin.Context) {
 // @Summary Updates (entirely) a Player by its Squad Number
 // @Tags players
 // @Accept application/json
-// @Param squadnumber path int true "Player.SquadNumber"
+// @Param squadnumber path string true "Player.SquadNumber"
 // @Param player body model.Player true "Player"
 // @Success 204 "No Content"
 // @Failure 400 "Bad Request"
@@ -194,7 +194,7 @@ func (c *PlayerController) Put(context *gin.Context) {
 	var player model.Player
 	// Guard against mismatched URL and body: the squad number in the URL must
 	// equal the one in the JSON body, otherwise the request is ambiguous → 400.
-	if err := context.BindJSON(&player); err != nil || player.SquadNumber != squadNumber {
+	if err = context.BindJSON(&player); err != nil || player.SquadNumber != squadNumber {
 		context.Status(http.StatusBadRequest)
 		return
 	}
@@ -210,7 +210,7 @@ func (c *PlayerController) Put(context *gin.Context) {
 	// Preserve the internal UUID — clients identify players by squadNumber, not UUID.
 	// Without this, Save would try to zero out the primary key, causing a DB error.
 	player.ID = existing.ID
-	if err := c.service.Update(&player); err != nil {
+	if err = c.service.Update(&player); err != nil {
 		context.Status(http.StatusInternalServerError)
 		return
 	}
@@ -222,7 +222,7 @@ func (c *PlayerController) Put(context *gin.Context) {
 //
 // @Summary Deletes a Player by its Squad Number
 // @Tags players
-// @Param squadnumber path int true "Player.SquadNumber"
+// @Param squadnumber path string true "Player.SquadNumber"
 // @Success 204 "No Content"
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
@@ -246,7 +246,7 @@ func (c *PlayerController) Delete(context *gin.Context) {
 		}
 		return
 	}
-	if err := c.service.Delete(&existing); err != nil {
+	if err = c.service.Delete(&existing); err != nil {
 		context.Status(http.StatusInternalServerError)
 		return
 	}

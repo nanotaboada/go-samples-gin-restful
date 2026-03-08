@@ -67,7 +67,26 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Fixed
 
+- Eliminated variable shadowing in `Put` and `Delete` handlers: inner `err :=` assignments replaced with `err =` to reuse the outer declaration
+
 ### Security
+
+### Migration Notes
+
+This release changes the database schema in a **backwards-incompatible** way.
+An existing `players-sqlite3.db` with integer primary keys will fail at startup because `AutoMigrate` cannot alter a column type in SQLite.
+Re-create the database from scratch using the provided seed scripts:
+
+```bash
+# Drop and reseed with starting-eleven players (squad numbers 1–11)
+go run tools/seed_001_starting_eleven.go
+
+# Append substitute players (squad numbers 12–23)
+go run tools/seed_002_substitutes.go
+```
+
+Both scripts use `//go:build ignore` so they are excluded from normal `go build ./...` and `go test ./...` runs.
+Run them only when you need to recreate the local SQLite database.
 
 ---
 

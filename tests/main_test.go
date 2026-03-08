@@ -31,6 +31,7 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -274,6 +275,44 @@ func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *te
 
 	// Assert
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
+}
+
+// TestRequestPOSTPlayersCreateErrorResponseStatusConflict tests that a
+// POST request to /players when service.Create() returns a unique constraint
+// error (concurrent insert race) returns a 409 Conflict status.
+func TestRequestPOSTPlayersCreateErrorResponseStatusConflict(test *testing.T) {
+	// Arrange
+	mockService := &MockPlayerService{
+		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
+			// Preflight check passes (squad number not found), simulating the
+			// window between the read and the write where a concurrent request
+			// inserts the same squadNumber, causing the subsequent Create to
+			// violate the UNIQUE constraint.
+			return model.Player{}, gorm.ErrRecordNotFound
+		},
+		CreateFunc: func(player *model.Player) error {
+			return errors.New("UNIQUE constraint failed: players.squad_number")
+		},
+	}
+	controller := controller.NewPlayerController(mockService)
+	router := setupRouter(controller)
+	player := MakeNonExistingPlayer()
+	body, err := json.Marshal(player)
+	if err != nil {
+		test.Fatalf(ErrMarshal, err)
+	}
+	recorder := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
+	if err != nil {
+		test.Fatalf(ErrNewRequest, err)
+	}
+	request.Header.Set(ContentType, ApplicationJSON)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusConflict, recorder.Code)
 }
 
 /* GET /players/ ------------------------------------------------------------ */
@@ -680,6 +719,32 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 
 	// Assert
 	assert.Equal(test, http.StatusNoContent, recorder.Code)
+}
+
+// TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadRequest tests that a
+// PUT request to /players/:squadnumber when the squad number in the URL
+// does not match the one in the request body returns a 400 Bad Request status.
+func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadRequest(test *testing.T) {
+	// Arrange
+	player := MakeExistingPlayer() // SquadNumber == 23
+	player.SquadNumber = 99        // mismatch: URL targets /players/23, body carries 99
+	body, err := json.Marshal(player)
+	if err != nil {
+		test.Fatalf(ErrMarshal, err)
+	}
+	router := setupRouter(playerController)
+	recorder := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/23", bytes.NewBuffer(body))
+	if err != nil {
+		test.Fatalf(ErrNewRequest, err)
+	}
+	request.Header.Set(ContentType, ApplicationJSON)
+
+	// Act
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
 // TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
