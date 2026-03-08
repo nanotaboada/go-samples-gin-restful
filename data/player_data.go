@@ -26,7 +26,11 @@ import (
 // AutoMigrate compares the current SQLite schema with the Player struct and
 // applies the minimum set of DDL changes (CREATE TABLE if absent, ADD COLUMN
 // for new fields, CREATE INDEX for new uniqueIndex tags).  It never drops
-// columns or indexes, so it is safe to call on an existing database.
+// columns or changes column types, so it cannot handle breaking schema changes
+// such as the id column type changing from integer to text (UUID).  If the
+// on-disk schema is incompatible with the current Player struct, re-seed the
+// database using the tools/seed_001_starting_eleven.go and
+// tools/seed_002_substitutes.go scripts before starting the server.
 func Connect(dataSourceName string) *gorm.DB {
 	// GORM's built-in logger prints slow queries and all SQL statements.
 	// SlowThreshold defines when a query is considered "slow" and logged at

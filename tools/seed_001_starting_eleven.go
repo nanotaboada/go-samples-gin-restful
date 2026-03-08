@@ -108,7 +108,7 @@ func main() {
 			DateOfBirth:  "1988-02-14T00:00:00.000Z",
 			SquadNumber:  11,
 			Position:     "Right Winger",
-			AbbrPosition: "LW",
+			AbbrPosition: "RW",
 			Team:         "SL Benfica",
 			League:       "Liga Portugal",
 			Starting11:   true,
