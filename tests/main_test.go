@@ -364,10 +364,10 @@ func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *t
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-/* GET /players/uuid/:id ---------------------------------------------------- */
+/* GET /players/:id --------------------------------------------------------- */
 
 // TestRequestGETPlayerByIDNonExistingResponseStatusNotFound tests that a
-// GET request to /players/uuid/:id when the UUID does not exist
+// GET request to /players/:id when the UUID does not exist
 // returns a 404 Not Found status.
 func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
@@ -375,7 +375,7 @@ func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) 
 	id := "00000000-0000-4000-8000-000000000000"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/uuid/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -388,7 +388,7 @@ func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) 
 }
 
 // TestRequestGETPlayerByIDExistingResponseStatusOK tests that a
-// GET request to /players/uuid/:id when the UUID exists
+// GET request to /players/:id when the UUID exists
 // returns a 200 OK status.
 func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 	// Arrange
@@ -396,7 +396,7 @@ func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 	id := "9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/uuid/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -409,7 +409,7 @@ func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 }
 
 // TestRequestGETPlayerByIDExistingResponsePlayer tests that a
-// GET request to /players/uuid/:id when the UUID exists
+// GET request to /players/:id when the UUID exists
 // returns a matching Player.
 func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 	// Arrange
@@ -417,7 +417,7 @@ func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 	id := "9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/uuid/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -437,7 +437,7 @@ func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 }
 
 // TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError tests that a
-// GET request to /players/uuid/:id when service.RetrieveByID() returns an unexpected error
+// GET request to /players/:id when service.RetrieveByID() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -449,7 +449,7 @@ func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/uuid/9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03", nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03", nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}

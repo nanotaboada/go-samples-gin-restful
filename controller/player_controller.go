@@ -102,20 +102,19 @@ func (c *PlayerController) GetAll(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, players)
 }
 
-// GetByID retrieves a Player by its internal UUID (admin use only)
+// GetByID retrieves a Player by its internal UUID
 //
-// @Summary Retrieves a Player by its internal UUID (admin only)
+// @Summary Retrieves a Player by its internal UUID
 // @Tags players
 // @Produce application/json
 // @Param id path string true "Player.ID (UUID)"
 // @Success 200 {object} model.Player "OK"
 // @Failure 404 "Not Found"
 // @Failure 500 "Internal Server Error"
-// @Router /players/uuid/{id} [get]
+// @Router /players/{id} [get]
 func (c *PlayerController) GetByID(context *gin.Context) {
 	// context.Param reads a named route parameter defined with ":name" syntax.
-	// For the route "/players/uuid/:id", context.Param("id") returns the
-	// value captured from the URL.
+	// context.Param("id") returns the UUID value captured from the URL.
 	id := context.Param("id")
 	player, err := c.service.RetrieveByID(id)
 	if err != nil {

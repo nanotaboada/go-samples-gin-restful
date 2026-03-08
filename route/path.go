@@ -6,7 +6,6 @@
 // URL segment (no slashes). For example:
 //
 //	/players/:squadnumber  matches /players/10 → Param("squadnumber") == "10"
-//	/players/uuid/:id      matches /players/uuid/abc-... → Param("id") == "abc-..."
 //
 // The "*any" wildcard (used for the Swagger route) matches the remainder of
 // the path including slashes, so "/swagger/*any" captures "/swagger/index.html"
@@ -43,9 +42,8 @@ const (
 	// GetAllPathTrailingSlash is the trailing-slash alias for GetAllPath.
 	GetAllPathTrailingSlash = PlayersPathTrailingSlash
 
-	// GetByUUIDPath exposes the internal UUID lookup (admin / debugging use).
-	// Using a "/uuid/" static prefix avoids ambiguity with GetBySquadNumberPath.
-	GetByUUIDPath = PlayersPath + "/uuid/:" + IDParam
+	// GetByIDPath retrieves a player by its internal UUID (surrogate key).
+	GetByIDPath = PlayersPath + "/:" + IDParam
 
 	// GetBySquadNumberPath looks up a player by the user-facing squad number.
 	// The "/squadnumber/" static prefix disambiguates from BySquadNumberPath.
