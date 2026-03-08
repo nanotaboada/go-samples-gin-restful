@@ -2,26 +2,37 @@ definitions:
   model.Player:
     properties:
       abbrPosition:
+        description: The abbreviated form of the Player's position
         type: string
       dateOfBirth:
+        description: The date of birth of the Player
         type: string
       firstName:
+        description: The first name of the Player
         type: string
       id:
-        type: integer
+        description: Internal UUID (server-generated, opaque to clients)
+        type: string
       lastName:
+        description: The last name of the Player
         type: string
       league:
+        description: The league where the team plays
         type: string
       middleName:
+        description: The middle name of the Player, if any
         type: string
       position:
+        description: The playing position of the Player
         type: string
       squadNumber:
+        description: User-facing unique identifier; DB-enforced uniqueness
         type: integer
       starting11:
+        description: Indicates whether the Player is in the starting 11
         type: boolean
       team:
+        description: The team to which the Player belongs
         type: string
     type: object
 info:
@@ -66,28 +77,9 @@ paths:
       tags:
       - players
   /players/{id}:
-    delete:
-      parameters:
-      - description: Player.ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-        "404":
-          description: Not Found
-        "500":
-          description: Internal Server Error
-      summary: Deletes a Player by its ID
-      tags:
-      - players
     get:
       parameters:
-      - description: Player.ID
+      - description: Player.ID (UUID)
         in: path
         name: id
         required: true
@@ -99,22 +91,40 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.Player'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Retrieves a Player by its internal UUID
+      tags:
+      - players
+  /players/{squadnumber}:
+    delete:
+      parameters:
+      - description: Player.SquadNumber
+        in: path
+        name: squadnumber
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
         "400":
           description: Bad Request
         "404":
           description: Not Found
         "500":
           description: Internal Server Error
-      summary: Retrieves a Player by its ID
+      summary: Deletes a Player by its Squad Number
       tags:
       - players
     put:
       consumes:
       - application/json
       parameters:
-      - description: Player.ID
+      - description: Player.SquadNumber
         in: path
-        name: id
+        name: squadnumber
         required: true
         type: string
       - description: Player
@@ -132,7 +142,7 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
-      summary: Updates (entirely) a Player by its ID
+      summary: Updates (entirely) a Player by its Squad Number
       tags:
       - players
   /players/squadnumber/{squadnumber}:
