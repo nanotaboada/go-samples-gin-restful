@@ -17,6 +17,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -37,6 +38,13 @@ type PlayerController struct {
 // enabling dependency injection without a DI framework.
 func NewPlayerController(service service.PlayerService) *PlayerController {
 	return &PlayerController{service: service}
+}
+
+// isUniqueConstraintError reports whether err is a SQLite unique constraint
+// violation (SQLITE_CONSTRAINT_UNIQUE, error code 2067 or message containing
+// "UNIQUE constraint failed").
+func isUniqueConstraintError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "UNIQUE constraint failed")
 }
 
 // Post creates a Player
@@ -77,7 +85,13 @@ func (c *PlayerController) Post(context *gin.Context) {
 		return
 	}
 	if err := c.service.Create(&player); err != nil {
-		context.Status(http.StatusInternalServerError)
+		// A unique constraint violation means the squadNumber was inserted by a
+		// concurrent request between the preflight check and the INSERT → 409.
+		if isUniqueConstraintError(err) {
+			context.Status(http.StatusConflict)
+		} else {
+			context.Status(http.StatusInternalServerError)
+		}
 		return
 	}
 	context.Status(http.StatusCreated)
