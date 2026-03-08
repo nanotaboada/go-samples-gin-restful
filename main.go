@@ -5,6 +5,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"time"
 
@@ -63,5 +64,7 @@ func main() {
 	swagger.Setup()
 	// app.Run blocks until the process exits.  The port is fixed at 9000 to
 	// match the Docker EXPOSE directive and the compose.yaml port mapping.
-	app.Run(":9000")
+	if err := app.Run(":9000"); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 }
