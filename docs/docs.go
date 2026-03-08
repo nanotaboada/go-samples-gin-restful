@@ -111,7 +111,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/players/{id}": {
+        "/players/uuid/{id}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -119,11 +119,11 @@ const docTemplate = `{
                 "tags": [
                     "players"
                 ],
-                "summary": "Retrieves a Player by its ID",
+                "summary": "Retrieves a Player by its internal UUID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Player.ID",
+                        "description": "Player.ID (UUID)",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -136,9 +136,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Player"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request"
-                    },
                     "404": {
                         "description": "Not Found"
                     },
@@ -146,7 +143,9 @@ const docTemplate = `{
                         "description": "Internal Server Error"
                     }
                 }
-            },
+            }
+        },
+        "/players/{squadnumber}": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -154,12 +153,12 @@ const docTemplate = `{
                 "tags": [
                     "players"
                 ],
-                "summary": "Updates (entirely) a Player by its ID",
+                "summary": "Updates (entirely) a Player by its Squad Number",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Player.ID",
-                        "name": "id",
+                        "type": "integer",
+                        "description": "Player.SquadNumber",
+                        "name": "squadnumber",
                         "in": "path",
                         "required": true
                     },
@@ -192,12 +191,12 @@ const docTemplate = `{
                 "tags": [
                     "players"
                 ],
-                "summary": "Deletes a Player by its ID",
+                "summary": "Deletes a Player by its Squad Number",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Player.ID",
-                        "name": "id",
+                        "type": "integer",
+                        "description": "Player.SquadNumber",
+                        "name": "squadnumber",
                         "in": "path",
                         "required": true
                     }
@@ -224,36 +223,47 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "abbrPosition": {
+                    "description": "The abbreviated form of the Player's position",
                     "type": "string"
                 },
                 "dateOfBirth": {
+                    "description": "The date of birth of the Player",
                     "type": "string"
                 },
                 "firstName": {
+                    "description": "The first name of the Player",
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "description": "Internal UUID (server-generated, opaque to clients)",
+                    "type": "string"
                 },
                 "lastName": {
+                    "description": "The last name of the Player",
                     "type": "string"
                 },
                 "league": {
+                    "description": "The league where the team plays",
                     "type": "string"
                 },
                 "middleName": {
+                    "description": "The middle name of the Player, if any",
                     "type": "string"
                 },
                 "position": {
+                    "description": "The playing position of the Player",
                     "type": "string"
                 },
                 "squadNumber": {
+                    "description": "User-facing unique identifier; DB-enforced uniqueness",
                     "type": "integer"
                 },
                 "starting11": {
+                    "description": "Indicates whether the Player is in the starting 11",
                     "type": "boolean"
                 },
                 "team": {
+                    "description": "The team to which the Player belongs",
                     "type": "string"
                 }
             }

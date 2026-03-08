@@ -45,7 +45,7 @@ func RegisterPlayerRoutes(router *gin.Engine, controller *controller.PlayerContr
 	// GET by squad number (user-facing identifier)
 	router.GET(GetBySquadNumberPath, cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
 
-	// GET by internal UUID (admin / audit use only)
+	// GET by internal UUID (surrogate key)
 	router.GET(GetByUUIDPath, cache.CachePage(store, time.Hour, controller.GetByID))
 
 	// PUT and DELETE use squad number as the mutable resource identifier

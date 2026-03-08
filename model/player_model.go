@@ -23,8 +23,8 @@ package model
 //
 // ID is a string (not an integer auto-increment) because it stores a UUID v4,
 // generated server-side on POST. This keeps the internal key opaque and stable
-// across environments.  Clients always use squadNumber to identify players in
-// PUT and DELETE requests; the UUID is only exposed for admin/audit use.
+// across environments.  Clients use squadNumber to identify players in PUT and
+// DELETE requests. The UUID is exposed via GET /players/uuid/:id.
 type Player struct {
 	ID           string `json:"id" gorm:"column:id;primaryKey"`                    // Internal UUID (server-generated, opaque to clients)
 	FirstName    string `json:"firstName" gorm:"column:firstName"`                 // The first name of the Player
