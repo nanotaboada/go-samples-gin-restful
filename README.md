@@ -7,7 +7,10 @@
 [![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nanotaboada/go-samples-gin-restful)](https://goreportcard.com/report/github.com/nanotaboada/go-samples-gin-restful)
 [![CodeFactor](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful/badge)](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful)
-[![License: MIT](https://img.shields.io/badge/License-MIT-white.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-3DA639.svg)](https://opensource.org/licenses/MIT)
+![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-contributing-8662C5?logo=githubcopilot&logoColor=white&labelColor=181818)
+![Claude](https://img.shields.io/badge/Claude-Sonnet_4.6-D97757?logo=claude&logoColor=white&labelColor=181818)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/nanotaboada/go-samples-gin-restful?utm_source=oss&utm_medium=github&utm_campaign=nanotaboada%2Fgo-samples-gin-restful&labelColor=171717&color=4CAF50&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go) and [Gin](https://github.com/gin-gonic/gin). Manage football player data with SQLite, GORM, Swagger documentation, and in-memory caching.
 
@@ -34,7 +37,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 - 📚 **Interactive API exploration** - Auto-generated Swagger docs with `.rest` file, REST Client integration, and health monitoring
 - ⚡ **Performance optimizations** - In-memory caching, connection pooling, and efficient GORM queries
 - 🧪 **Comprehensive integration tests** - Full endpoint coverage with automated reporting to Codecov and SonarCloud
-- 📖 **Token-efficient documentation** - AGENTS.md + auto-loaded Copilot instructions for AI-assisted development
+- 📖 **Token-efficient documentation** - Auto-loaded Copilot instructions for AI-assisted development
 - 🐳 **Full containerization** - Optimized Docker builds with Docker Compose orchestration
 - 🔄 **Complete CI/CD pipeline** - Automated testing with race detection, Docker publishing, and GitHub releases
 - 🎖️ **Player-themed semantic versioning** - Memorable, alphabetical release names honoring football legends
@@ -98,7 +101,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
   }
 }}%%
 
-graph LR
+graph BT
     %% Core application packages
     main[main]
     route[route]
@@ -118,25 +121,24 @@ graph LR
     %% Test coverage
     tests[tests]
 
-    %% Module dependencies (solid arrows = imports)
-    main --> data
-    main --> service
-    main --> controller
-    main --> route
-    main --> swagger
-    main --> docs
-    route --> controller
-    controller --> service
-    service --> data
-    data --> model
-    data --> gorm
-    route --> gin
-    tests --> main
-
-    %% Runtime composition (dotted arrows = main creates/wires)
-    main -.-> gin
-    main -.-> service
-    main -.-> controller
+    %% Module dependencies (solid arrows = is imported by)
+    controller --> main
+    data --> main
+    route --> main
+    service --> main
+    swagger --> main
+    docs --> main
+    gin --> route
+    controller --> route
+    gin --> controller
+    model --> controller
+    service --> controller
+    gorm --> controller
+    model --> service
+    gorm --> service
+    model --> data
+    gorm --> data
+    main -.-> tests
 
     %% Node styling
     classDef core fill:#b3d9ff,stroke:#6db1ff,stroke-width:2px,color:#555,font-family:monospace;
@@ -150,14 +152,11 @@ graph LR
     class tests test
 ```
 
-**Arrow Semantics:**
-
-- **Solid arrows** represent compile-time module dependencies (imports). For example, `controller → service` means the controller package imports and uses the service package.
-- **Dotted arrows** represent runtime composition. The `main` package creates instances (database connection, service, controller, Gin router) and wires them together at startup.
+**Arrow Semantics:** Arrows point from a dependency toward its consumer — i.e. `A → B` means B imports A. The dotted arrow to `tests` indicates the integration tests validate the full application stack as wired by `main`.
 
 **Composition Root Pattern:** The `main` package acts as the composition root, creating all dependencies and the Gin router instance. It registers player routes through the `route` package and adds Swagger/health routes directly. This pattern enables dependency injection, improves testability, and maintains clear separation of concerns.
 
-**Layered Architecture:** HTTP requests flow through distinct layers: `route` → `controller` → `service` → `data` → `model`. Each layer has a specific responsibility - routes handle HTTP mapping, controllers manage request/response, services contain business logic, data handles persistence, and models define data structures.
+**Layered Architecture:** The codebase is organized into distinct layers: `route`, `controller`, `service`, `data`, and `model`. Each layer has a specific responsibility - routes handle HTTP mapping, controllers manage request/response, services contain business logic, data handles persistence, and models define data structures.
 
 **Color Coding:** Core packages (blue) implement the application logic, supporting features (yellow) provide documentation and utilities, external dependencies (red) are third-party frameworks and ORMs, and tests (green) ensure code quality.
 
@@ -167,55 +166,11 @@ Interactive API documentation is available via Swagger UI at `http://localhost:9
 
 > 💡 The Swagger documentation is automatically generated from code annotations using [swaggo/swag](https://github.com/swaggo/swag). To regenerate after making changes, run `swag init`.
 
-### Request Flow
-
-```mermaid
-%%{init: {
-  "theme": "default",
-  "themeVariables": {
-    "fontFamily": "Fira Code, Consolas, monospace",
-    "textColor": "#555",
-    "lineColor": "#555",
-    "lineWidth": 2
-  }
-}}%%
-
-graph LR
-    %% HTTP Request Flow
-    Client[Client] -->|"HTTP Request"| Route[route]
-    Route --> Controller[controller]
-    Controller --> Service[service]
-    Service --> Data[data]
-    Data --> DB[(SQLite)]
-
-    %% Response Flow
-    DB --> Data
-    Data --> Service
-    Service --> Controller
-    Controller --> Route
-    Route -->|"HTTP Response"| Client
-
-    %% Middleware
-    Route -.->|"cache check"| Cache[(In-Memory<br/>Cache)]
-    Cache -.->|"cached response"| Route
-
-    %% Node styling
-    classDef core fill:#e6ccff,stroke:#9966ff,stroke-width:2px,color:#555,font-family:monospace;
-    classDef client fill:#ffe6cc,stroke:#ff9933,stroke-width:2px,color:#555,font-family:monospace;
-    classDef storage fill:#f5f5f5,stroke:#cccccc,stroke-width:2px,color:#555,font-family:monospace;
-
-    class Route,Controller,Service,Data core
-    class Client client
-    class DB,Cache storage
-```
-
-HTTP request-response cycle: Client → Route → Controller → Service → Data → Database. Responses flow back through the same layers. GET requests are cached for 1 hour to improve performance.
-
 **Quick Reference:**
 
 - `GET /players` - List all players
-- `GET /players/:id` - Get player by ID
-- `GET /players/squadnumber/:squadnumber` - Get player by squad number
+- `GET /players/{player_id}` — Get player by UUID (surrogate key)
+- `GET /players/squadnumber/{squad_number}` — Get player by squad number (natural key)
 - `POST /players` - Create new player
 - `PUT /players/:id` - Update player
 - `DELETE /players/:id` - Remove player
