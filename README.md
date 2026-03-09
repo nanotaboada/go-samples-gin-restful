@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-3DA639.svg)](https://opensource.org/licenses/MIT)
 ![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-contributing-8662C5?logo=githubcopilot&logoColor=white&labelColor=181818)
 ![Claude](https://img.shields.io/badge/Claude-Sonnet_4.6-D97757?logo=claude&logoColor=white&labelColor=181818)
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/nanotaboada/go-samples-gin-restful?utm_source=oss&utm_medium=github&utm_campaign=nanotaboada%2Fgo-samples-gin-restful&labelColor=171717&color=4CAF50&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/nanotaboada/go-samples-gin-restful?utm_source=oss&utm_medium=github&utm_campaign=nanotaboada%2Fgo-samples-gin-restful&labelColor=171717&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go) and [Gin](https://github.com/gin-gonic/gin). Manage football player data with SQLite, GORM, Swagger documentation, and in-memory caching.
 
@@ -168,13 +168,13 @@ Interactive API documentation is available via Swagger UI at `http://localhost:9
 
 **Quick Reference:**
 
-- `GET /players` - List all players
-- `GET /players/{player_id}` — Get player by UUID (surrogate key)
-- `GET /players/squadnumber/{squad_number}` — Get player by squad number (natural key)
-- `POST /players` - Create new player
-- `PUT /players/:id` - Update player
-- `DELETE /players/:id` - Remove player
-- `GET /health` - Health check
+- `GET /players` — List all players
+- `GET /players/:id` — Get player by UUID (surrogate key)
+- `GET /players/squadnumber/:squadnumber` — Get player by squad number (natural key)
+- `POST /players` — Create new player
+- `PUT /players/:squadnumber` — Update player by squad number
+- `DELETE /players/:squadnumber` — Remove player by squad number
+- `GET /health` — Health check
 
 For complete endpoint documentation with request/response schemas, explore the [interactive Swagger UI](http://localhost:9000/swagger/index.html). You can also access the OpenAPI JSON specification at `http://localhost:9000/swagger.json`.
 
