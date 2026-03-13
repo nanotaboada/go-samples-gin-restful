@@ -98,31 +98,40 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
     "fontFamily": "Fira Code, Consolas, monospace",
     "textColor": "#555",
     "lineColor": "#555",
-    "lineWidth": 2
+    "clusterBkg": "#f5f5f5",
+    "clusterBorder": "#ddd"
   }
 }}%%
 
-graph BT
-    %% Core application packages
-    main[main]
-    route[route]
-    controller[controller]
-    service[service]
-    data[data]
-    model[model]
+graph RL
 
-    %% Supporting features
-    docs[docs]
-    swagger[swagger]
-
-    %% External dependencies
-    gin[Gin]
-    gorm[GORM]
-
-    %% Test coverage
+    %% Packages
     tests[tests]
 
-    %% Module dependencies (solid arrows = is imported by)
+    subgraph Layer 1[" "]
+      main[main]
+      docs[docs]
+      swagger[swagger]
+    end
+
+    model[model]
+
+    subgraph Layer 2[" "]
+      route[route]
+      controller[controller]
+      gin[Gin]
+    end
+
+    subgraph Layer 3[" "]
+      service[service]
+    end
+
+    subgraph Layer 4[" "]
+      data[data]
+      gorm[GORM]
+    end
+
+    %% Strong dependencies — functional/behavioral coupling
     controller --> main
     data --> main
     route --> main
@@ -130,15 +139,17 @@ graph BT
     swagger --> main
     docs --> main
     gin --> route
-    controller --> route
     gin --> controller
-    model --> controller
     service --> controller
-    gorm --> controller
-    model --> service
     gorm --> service
-    model --> data
     gorm --> data
+
+    %% Soft dependencies — structural/type coupling
+    controller -.-> route
+    model -.-> controller
+    gorm -.-> controller
+    model -.-> service
+    model -.-> data
     main -.-> tests
 
     %% Node styling
@@ -153,11 +164,11 @@ graph BT
     class tests test
 ```
 
-**Arrow Semantics:** Arrows point from a dependency toward its consumer — i.e. `A → B` means B imports A. The dotted arrow to `tests` indicates the integration tests validate the full application stack as wired by `main`.
+**Arrow Semantics:** Arrows point from a dependency toward its consumer. Solid arrows (`-->`) denote **strong (functional) dependencies**: the consumer actively invokes behavior — calling methods, executing queries, or handling HTTP requests. Dotted arrows (`-.->`) denote **soft (structural) dependencies**: the consumer only references types or function signatures, without invoking runtime behavior. This distinction is grounded in UML's `«use»` dependency notation and classical coupling theory (Myers, 1978): strong arrows approximate *control or stamp coupling*, while soft arrows approximate *data coupling*, where only shared data structures cross the boundary.
 
-**Composition Root Pattern:** The `main` package acts as the composition root, creating all dependencies and the Gin router instance. It registers player routes through the `route` package and adds Swagger/health routes directly. This pattern enables dependency injection, improves testability, and maintains clear separation of concerns.
+**Composition Root Pattern:** The `main` package acts as the composition root — all solid arrows originate from it, reflecting that it is the sole site where dependencies are instantiated, wired, and injected. It creates the Gin router instance, initializes the database connection, and registers all routes. This pattern enables dependency injection, improves testability, and ensures that no other package bears responsibility for object creation or lifecycle management.
 
-**Layered Architecture:** The codebase is organized into distinct layers: `route`, `controller`, `service`, `data`, and `model`. Each layer has a specific responsibility - routes handle HTTP mapping, controllers manage request/response, services contain business logic, data handles persistence, and models define data structures.
+**Layered Architecture:** The codebase is organized into four conceptual layers: HTTP (`route`, `controller`), Business (`service`), Data (`data`), and Infrastructure (`Gin`, `GORM`). The `model` package is a **cross-cutting type concern** — it defines shared data structures consumed across all layers via soft (structural) dependencies, without containing logic or behavior of its own. Strong dependencies flow strictly downward through the layers, preserving the layer rule: no layer reaches upward to invoke behavior in a layer above it.
 
 **Color Coding:** Core packages (blue) implement the application logic, supporting features (yellow) provide documentation and utilities, external dependencies (red) are third-party frameworks and ORMs, and tests (green) ensure code quality.
 
