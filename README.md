@@ -91,6 +91,8 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 
 ## Architecture
 
+Layered architecture with dependency injection via constructors and interface-based contracts.
+
 ```mermaid
 %%{init: {
   "theme": "default",
@@ -168,9 +170,15 @@ graph RL
 
 **Composition Root Pattern:** The `main` package acts as the composition root — all solid arrows originate from it, reflecting that it is the sole site where dependencies are instantiated, wired, and injected. It creates the Gin router instance, initializes the database connection, and registers all routes. This pattern enables dependency injection, improves testability, and ensures that no other package bears responsibility for object creation or lifecycle management.
 
-**Layered Architecture:** The codebase is organized into four conceptual layers: HTTP (`route`, `controller`), Business (`service`), Data (`data`), and Infrastructure (`Gin`, `GORM`). The `model` package is a **cross-cutting type concern** — it defines shared data structures consumed across all layers via soft (structural) dependencies, without containing logic or behavior of its own. Strong dependencies flow strictly downward through the layers, preserving the layer rule: no layer reaches upward to invoke behavior in a layer above it.
+**Layered Architecture:** The codebase is organized into four conceptual layers: Initialization (`main`, `docs`, `swagger`), HTTP (`route`, `controller`), Business (`service`), and Data (`data`).
+
+External dependencies (`Gin`, `GORM`) are co-resident within their consumer layers — `Gin` within HTTP, `GORM` within Data — reflecting infrastructure concerns absorbed by those layers rather than a layer of their own.
+
+The `model` package is a **cross-cutting type concern** — it defines shared data structures consumed across all layers via soft (structural) dependencies, without containing logic or behavior of its own. Strong dependencies flow strictly downward through the layers, preserving the layer rule: no layer reaches upward to invoke behavior in a layer above it.
 
 **Color Coding:** Core packages (blue) implement the application logic, supporting features (yellow) provide documentation and utilities, external dependencies (red) are third-party frameworks and ORMs, and tests (green) ensure code quality.
+
+*Simplified, conceptual project structure and main application flow. Not all dependencies are shown.*
 
 ## API Reference
 
