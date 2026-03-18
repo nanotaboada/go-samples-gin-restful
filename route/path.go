@@ -16,7 +16,7 @@
 // Gin resolves path conflicts using a trie (prefix tree).  Static segments
 // (e.g. "/players/squadnumber/") always take priority over dynamic ones
 // (e.g. "/players/:id"), so there is no ambiguity between
-// GetBySquadNumberPath/BySquadNumberPath and GetByIDPath.
+// BySquadNumberPath and GetByIDPath.
 package route
 
 const (
@@ -44,11 +44,8 @@ const (
 	// GetByIDPath retrieves a player by its internal UUID (surrogate key).
 	GetByIDPath = PlayersPath + "/:" + IDParam
 
-	// GetBySquadNumberPath looks up a player by the user-facing squad number.
-	GetBySquadNumberPath = PlayersPath + "/squadnumber/:" + SquadNumberParam
-
-	// BySquadNumberPath is used for PUT and DELETE; standardised under the
-	// "/squadnumber/" prefix so all squad-number routes share the same pattern.
+	// BySquadNumberPath is used for GET, PUT, and DELETE; all squad-number
+	// routes share the "/squadnumber/:" + SquadNumberParam pattern.
 	BySquadNumberPath = PlayersPath + "/squadnumber/:" + SquadNumberParam
 
 	// SwaggerPath uses the "*any" wildcard so the Swagger UI handler receives

@@ -43,7 +43,7 @@ func RegisterPlayerRoutes(router *gin.Engine, controller *controller.PlayerContr
 	router.POST(GetAllPathTrailingSlash, ClearCache(store, controller.Post))
 
 	// GET by squad number (user-facing identifier)
-	router.GET(GetBySquadNumberPath, cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
+	router.GET(BySquadNumberPath, cache.CachePage(store, time.Hour, controller.GetBySquadNumber))
 
 	// GET by internal UUID (surrogate key)
 	router.GET(GetByIDPath, cache.CachePage(store, time.Hour, controller.GetByID))

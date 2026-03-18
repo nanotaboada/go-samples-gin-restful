@@ -624,7 +624,7 @@ func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *te
 	squadNumber := "23"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -654,7 +654,7 @@ func TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound(test *te
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -680,7 +680,7 @@ func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -708,7 +708,7 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -734,7 +734,7 @@ func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadReques
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/23", bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/23", bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -765,7 +765,7 @@ func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/23", bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/23", bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -799,7 +799,7 @@ func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerErr
 		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/23", bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+route.SquadNumberParam+"/23", bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -822,7 +822,7 @@ func TestRequestDELETEPlayerBySquadNumberNonExistingResponseStatusNotFound(test 
 	squadNumber := "999"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -842,7 +842,7 @@ func TestRequestDELETEPlayerBySquadNumberInvalidParamResponseStatusBadRequest(te
 	squadNumber := InvalidSquadNumber
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -862,7 +862,7 @@ func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *t
 	squadNumber := "1" // Franco Armani
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+route.SquadNumberParam+"/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -887,7 +887,7 @@ func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServ
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/23", nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+route.SquadNumberParam+"/23", nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -915,7 +915,7 @@ func TestRequestDELETEPlayerBySquadNumberDeleteErrorResponseStatusInternalServer
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/23", nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+route.SquadNumberParam+"/23", nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
