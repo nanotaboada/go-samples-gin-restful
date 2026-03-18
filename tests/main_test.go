@@ -46,6 +46,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -109,9 +110,11 @@ const (
 	ErrUnmarshal       = "failed to unmarshal response body: %v"
 )
 
-// buildSquadNumberURL returns the request URL for squad-number routes.
-func buildSquadNumberURL(squadNumber string) string {
-	return route.PlayersPath + "/" + route.SquadNumberParam + "/" + squadNumber
+// buildSquadNumberPath returns the request path for squad-number routes by
+// substituting the parameter placeholder in the canonical route constant,
+// keeping the helper in sync with route.BySquadNumberPath automatically.
+func buildSquadNumberPath(squadNumber string) string {
+	return strings.Replace(route.BySquadNumberPath, ":"+route.SquadNumberParam, squadNumber, 1)
 }
 
 /* GET /health -------------------------------------------------------------- */
@@ -534,7 +537,7 @@ func TestRequestGETPlayerBySquadNumber(test *testing.T) {
 		test.Run(tc.name, func(t *testing.T) {
 			router := setupRouter(playerController)
 			recorder := httptest.NewRecorder()
-			request, err := http.NewRequest(http.MethodGet, buildSquadNumberURL(tc.squadNumber), nil)
+			request, err := http.NewRequest(http.MethodGet, buildSquadNumberPath(tc.squadNumber), nil)
 			if err != nil {
 				t.Fatalf(ErrNewRequest, err)
 			}
@@ -552,7 +555,7 @@ func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 	squadNumber := "11"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, buildSquadNumberURL(squadNumber), nil)
+	request, err := http.NewRequest(http.MethodGet, buildSquadNumberPath(squadNumber), nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -584,7 +587,7 @@ func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, buildSquadNumberURL("10"), nil)
+	request, err := http.NewRequest(http.MethodGet, buildSquadNumberPath("10"), nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -606,7 +609,7 @@ func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *te
 	squadNumber := "23"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL(squadNumber), nil)
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(squadNumber), nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -636,7 +639,7 @@ func TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound(test *te
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL(squadNumber), bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(squadNumber), bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -662,7 +665,7 @@ func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL(squadNumber), bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(squadNumber), bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -690,7 +693,7 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL(squadNumber), bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(squadNumber), bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -716,7 +719,7 @@ func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadReques
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL("23"), bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath("23"), bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -747,7 +750,7 @@ func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL("23"), bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath("23"), bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -781,7 +784,7 @@ func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerErr
 		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, buildSquadNumberURL("23"), bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath("23"), bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -813,7 +816,7 @@ func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 		test.Run(tc.name, func(t *testing.T) {
 			router := setupRouter(playerController)
 			recorder := httptest.NewRecorder()
-			request, err := http.NewRequest(http.MethodDelete, buildSquadNumberURL(tc.squadNumber), nil)
+			request, err := http.NewRequest(http.MethodDelete, buildSquadNumberPath(tc.squadNumber), nil)
 			if err != nil {
 				t.Fatalf(ErrNewRequest, err)
 			}
@@ -836,7 +839,7 @@ func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServ
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, buildSquadNumberURL("23"), nil)
+	request, err := http.NewRequest(http.MethodDelete, buildSquadNumberPath("23"), nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -864,7 +867,7 @@ func TestRequestDELETEPlayerBySquadNumberDeleteErrorResponseStatusInternalServer
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, buildSquadNumberURL("23"), nil)
+	request, err := http.NewRequest(http.MethodDelete, buildSquadNumberPath("23"), nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
