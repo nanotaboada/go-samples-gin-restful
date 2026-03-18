@@ -5,7 +5,7 @@
 // Gin uses ":name" to declare a named path parameter that matches a single
 // URL segment (no slashes). For example:
 //
-//	/players/:squadnumber  matches /players/10 → Param("squadnumber") == "10"
+//	/players/squadnumber/:squadnumber  matches /players/squadnumber/10 → Param("squadnumber") == "10"
 //
 // The "*any" wildcard (used for the Swagger route) matches the remainder of
 // the path including slashes, so "/swagger/*any" captures "/swagger/index.html"
@@ -15,9 +15,8 @@
 //
 // Gin resolves path conflicts using a trie (prefix tree).  Static segments
 // (e.g. "/players/squadnumber/") always take priority over dynamic ones
-// (e.g. "/players/:squadnumber"), so there is no ambiguity between
-// GetBySquadNumberPath and BySquadNumberPath despite both matching paths
-// under /players/.
+// (e.g. "/players/:id"), so there is no ambiguity between
+// GetBySquadNumberPath/BySquadNumberPath and GetByIDPath.
 package route
 
 const (
@@ -46,12 +45,11 @@ const (
 	GetByIDPath = PlayersPath + "/:" + IDParam
 
 	// GetBySquadNumberPath looks up a player by the user-facing squad number.
-	// The "/squadnumber/" static prefix disambiguates from BySquadNumberPath.
 	GetBySquadNumberPath = PlayersPath + "/squadnumber/:" + SquadNumberParam
 
-	// BySquadNumberPath is used for PUT and DELETE where the squad number is
-	// the mutable resource identifier in the URL.
-	BySquadNumberPath = PlayersPath + "/:" + SquadNumberParam
+	// BySquadNumberPath is used for PUT and DELETE; standardised under the
+	// "/squadnumber/" prefix so all squad-number routes share the same pattern.
+	BySquadNumberPath = PlayersPath + "/squadnumber/:" + SquadNumberParam
 
 	// SwaggerPath uses the "*any" wildcard so the Swagger UI handler receives
 	// any sub-path under /swagger/ (static assets, index, JSON spec, etc.).

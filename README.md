@@ -192,8 +192,8 @@ Interactive API documentation is available via Swagger UI at `http://localhost:9
 - `GET /players/:id` — Get player by UUID (surrogate key)
 - `GET /players/squadnumber/:squadnumber` — Get player by squad number (natural key)
 - `POST /players` — Create new player
-- `PUT /players/:squadnumber` — Update player by squad number
-- `DELETE /players/:squadnumber` — Remove player by squad number
+- `PUT /players/squadnumber/:squadnumber` — Update player by squad number
+- `DELETE /players/squadnumber/:squadnumber` — Remove player by squad number
 - `GET /health` — Health check
 
 For complete endpoint documentation with request/response schemas, explore the [interactive Swagger UI](http://localhost:9000/swagger/index.html). You can also access the OpenAPI JSON specification at `http://localhost:9000/swagger.json`.

@@ -614,17 +614,17 @@ func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-/* PUT /players/:squadnumber ------------------------------------------------ */
+/* PUT /players/squadnumber/:squadnumber ------------------------------------ */
 
 // TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest tests that a
-// PUT request to /players/:squadnumber with an empty body
+// PUT request to /players/squadnumber/:squadnumber with an empty body
 // returns a 400 Bad Request status.
 func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	squadNumber := "23"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -638,7 +638,7 @@ func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *te
 }
 
 // TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound tests that a
-// PUT request to /players/:squadnumber when the squad number does not exist
+// PUT request to /players/squadnumber/:squadnumber when the squad number does not exist
 // returns a 404 Not Found status.
 func TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
@@ -654,7 +654,7 @@ func TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound(test *te
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+squadNumber, bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -668,7 +668,7 @@ func TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound(test *te
 }
 
 // TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest tests that a
-// PUT request to /players/:squadnumber when the squad number is invalid (non-numeric)
+// PUT request to /players/squadnumber/:squadnumber when the squad number is invalid (non-numeric)
 // returns a 400 Bad Request status.
 func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test *testing.T) {
 	// Arrange
@@ -680,7 +680,7 @@ func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+squadNumber, bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -694,7 +694,7 @@ func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 }
 
 // TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent tests that a
-// PUT request to /players/:squadnumber with an existing player
+// PUT request to /players/squadnumber/:squadnumber with an existing player
 // returns a 204 No Content status.
 func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
 	// Arrange
@@ -708,7 +708,7 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/"+squadNumber, bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/"+squadNumber, bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -722,19 +722,19 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 }
 
 // TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadRequest tests that a
-// PUT request to /players/:squadnumber when the squad number in the URL
+// PUT request to /players/squadnumber/:squadnumber when the squad number in the URL
 // does not match the one in the request body returns a 400 Bad Request status.
 func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	player := MakeExistingPlayer() // SquadNumber == 23
-	player.SquadNumber = 99        // mismatch: URL targets /players/23, body carries 99
+	player.SquadNumber = 99        // mismatch: URL targets /players/squadnumber/23, body carries 99
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
 	}
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/23", bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/23", bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -748,7 +748,7 @@ func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadReques
 }
 
 // TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
-// PUT request to /players/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
+// PUT request to /players/squadnumber/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -765,7 +765,7 @@ func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/23", bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/23", bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -779,7 +779,7 @@ func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 }
 
 // TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerError tests that a
-// PUT request to /players/:squadnumber when service.Update() returns an error
+// PUT request to /players/squadnumber/:squadnumber when service.Update() returns an error
 // returns a 500 Internal Server Error status.
 func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -799,7 +799,7 @@ func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerErr
 		test.Fatalf(ErrMarshal, err)
 	}
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/23", bytes.NewBuffer(body))
+	request, err := http.NewRequest(http.MethodPut, route.PlayersPath+"/squadnumber/23", bytes.NewBuffer(body))
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -812,17 +812,17 @@ func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerErr
 	assert.Equal(test, http.StatusInternalServerError, recorder.Code)
 }
 
-/* DELETE /players/:squadnumber --------------------------------------------- */
+/* DELETE /players/squadnumber/:squadnumber --------------------------------------------- */
 
 // TestRequestDELETEPlayerBySquadNumberNonExistingResponseStatusNotFound tests that a
-// DELETE request to /players/:squadnumber when the squad number does not exist
+// DELETE request to /players/squadnumber/:squadnumber when the squad number does not exist
 // returns a 404 Not Found status.
 func TestRequestDELETEPlayerBySquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
 	// Arrange
 	squadNumber := "999"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -835,14 +835,14 @@ func TestRequestDELETEPlayerBySquadNumberNonExistingResponseStatusNotFound(test 
 }
 
 // TestRequestDELETEPlayerBySquadNumberInvalidParamResponseStatusBadRequest tests that a
-// DELETE request to /players/:squadnumber when the squad number is invalid (non-numeric)
+// DELETE request to /players/squadnumber/:squadnumber when the squad number is invalid (non-numeric)
 // returns a 400 Bad Request status.
 func TestRequestDELETEPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test *testing.T) {
 	// Arrange
 	squadNumber := InvalidSquadNumber
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -855,14 +855,14 @@ func TestRequestDELETEPlayerBySquadNumberInvalidParamResponseStatusBadRequest(te
 }
 
 // TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent tests that a
-// DELETE request to /players/:squadnumber when the squad number exists
+// DELETE request to /players/squadnumber/:squadnumber when the squad number exists
 // returns a 204 No Content status.
 func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	squadNumber := "1" // Franco Armani
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/"+squadNumber, nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/"+squadNumber, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -875,7 +875,7 @@ func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *t
 }
 
 // TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
-// DELETE request to /players/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
+// DELETE request to /players/squadnumber/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -887,7 +887,7 @@ func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServ
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/23", nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/23", nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -900,7 +900,7 @@ func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServ
 }
 
 // TestRequestDELETEPlayerBySquadNumberDeleteErrorResponseStatusInternalServerError tests that a
-// DELETE request to /players/:squadnumber when service.Delete() returns an error
+// DELETE request to /players/squadnumber/:squadnumber when service.Delete() returns an error
 // returns a 500 Internal Server Error status.
 func TestRequestDELETEPlayerBySquadNumberDeleteErrorResponseStatusInternalServerError(test *testing.T) {
 	// Arrange
@@ -915,7 +915,7 @@ func TestRequestDELETEPlayerBySquadNumberDeleteErrorResponseStatusInternalServer
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/23", nil)
+	request, err := http.NewRequest(http.MethodDelete, route.PlayersPath+"/squadnumber/23", nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}

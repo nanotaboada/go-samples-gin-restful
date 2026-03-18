@@ -184,7 +184,7 @@ func (c *PlayerController) GetBySquadNumber(context *gin.Context) {
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
 // @Failure 500 "Internal Server Error"
-// @Router /players/{squadnumber} [put]
+// @Router /players/squadnumber/{squadnumber} [put]
 func (c *PlayerController) Put(context *gin.Context) {
 	squadNumber, err := strconv.Atoi(context.Param("squadnumber"))
 	if err != nil {
@@ -227,7 +227,7 @@ func (c *PlayerController) Put(context *gin.Context) {
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
 // @Failure 500 "Internal Server Error"
-// @Router /players/{squadnumber} [delete]
+// @Router /players/squadnumber/{squadnumber} [delete]
 func (c *PlayerController) Delete(context *gin.Context) {
 	squadNumber, err := strconv.Atoi(context.Param("squadnumber"))
 	if err != nil {
