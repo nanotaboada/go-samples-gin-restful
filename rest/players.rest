@@ -53,8 +53,8 @@ GET {{baseUrl}}/players/squadnumber/23
 ###
 
 ### Update Player
-# PUT /players/:id → 204 No Content
-PUT {{baseUrl}}/players/19
+# PUT /players/squadnumber/:squadnumber → 204 No Content
+PUT {{baseUrl}}/players/squadnumber/5
 Content-Type: application/json
 
 {
@@ -74,7 +74,7 @@ Content-Type: application/json
 ###
 
 ### Delete Player
-# DELETE /players/:id → 204 No Content
-DELETE {{baseUrl}}/players/19
+# DELETE /players/squadnumber/:squadnumber → 204 No Content
+DELETE {{baseUrl}}/players/squadnumber/5
 
 ###

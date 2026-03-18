@@ -98,7 +98,7 @@ paths:
       summary: Retrieves a Player by its internal UUID
       tags:
       - players
-  /players/{squadnumber}:
+  /players/squadnumber/{squadnumber}:
     delete:
       parameters:
       - description: Player.SquadNumber
@@ -116,6 +116,29 @@ paths:
         "500":
           description: Internal Server Error
       summary: Deletes a Player by its Squad Number
+      tags:
+      - players
+    get:
+      parameters:
+      - description: Player.SquadNumber
+        in: path
+        name: squadnumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Player'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Retrieves a Player by its Squad Number
       tags:
       - players
     put:
@@ -143,30 +166,6 @@ paths:
         "500":
           description: Internal Server Error
       summary: Updates (entirely) a Player by its Squad Number
-      tags:
-      - players
-  /players/squadnumber/{squadnumber}:
-    get:
-      parameters:
-      - description: Player.SquadNumber
-        in: path
-        name: squadnumber
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Player'
-        "400":
-          description: Bad Request
-        "404":
-          description: Not Found
-        "500":
-          description: Internal Server Error
-      summary: Retrieves a Player by its Squad Number
       tags:
       - players
 swagger: "2.0"
