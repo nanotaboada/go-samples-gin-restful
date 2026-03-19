@@ -42,6 +42,10 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ## [Unreleased]
 
+---
+
+## [2.0.0 - Bobby] - 2026-03-19
+
 ### Added
 
 - `GET /players/{id}` now accepts a UUID string (surrogate key) instead of an integer ID
@@ -68,8 +72,6 @@ This project uses famous football player names (A-Z) as release codenames:
 ### Fixed
 
 - Eliminated variable shadowing in `Put` and `Delete` handlers: inner `err :=` assignments replaced with `err =` to reuse the outer declaration
-
-### Security
 
 ### Migration Notes
 
@@ -100,7 +102,16 @@ Initial release. See [README.md](README.md) for complete feature list and docume
 
 To create a new release, follow these steps in order:
 
-### 1. Update CHANGELOG.md
+### 1. Create a Release Branch
+
+Branch protection prevents direct pushes to `master`, so all release prep goes through a PR:
+
+```bash
+git checkout master && git pull
+git checkout -b release/vX.Y.Z-player
+```
+
+### 2. Update CHANGELOG.md
 
 Move items from the `[Unreleased]` section to a new release section:
 
@@ -120,11 +131,24 @@ Move items from the `[Unreleased]` section to a new release section:
 - Removed features here
 ```
 
-**Important:** Commit and push this change before creating the tag.
-
-### 2. Create and Push Version Tag
+Then commit and push the branch:
 
 ```bash
+git add CHANGELOG.md
+git commit -m "docs: prepare changelog for vX.Y.Z-player release"
+git push origin release/vX.Y.Z-player
+```
+
+### 3. Merge the Release PR
+
+Open a pull request from `release/vX.Y.Z-player` into `master` and merge it. The tag must be created **after** the merge so it points to the correct commit on `master`.
+
+### 4. Create and Push Version Tag
+
+After the PR is merged, pull `master` and create the annotated tag:
+
+```bash
+git checkout master && git pull
 git tag -a vX.Y.Z-player -m "Release X.Y.Z - Player"
 git push origin vX.Y.Z-player
 ```
@@ -132,11 +156,11 @@ git push origin vX.Y.Z-player
 Example:
 
 ```bash
-git tag -a v1.0.0-ademir -m "Release 1.0.0 - Ademir"
-git push origin v1.0.0-ademir
+git tag -a v2.0.0-bobby -m "Release 2.0.0 - Bobby"
+git push origin v2.0.0-bobby
 ```
 
-### 3. Automated CD Workflow
+### 5. Automated CD Workflow
 
 The CD workflow automatically:
 
@@ -147,8 +171,10 @@ The CD workflow automatically:
 
 ### Pre-Release Checklist
 
+- [ ] Release branch created from `master`
 - [ ] CHANGELOG.md updated with release notes
-- [ ] CHANGELOG.md changes committed and pushed
+- [ ] CHANGELOG.md changes committed and pushed on the release branch
+- [ ] Release PR merged into `master`
 - [ ] Tag created with correct format: `vX.Y.Z-player`
 - [ ] Player name is valid (A-Z from table above)
 - [ ] Tag pushed to trigger CD workflow
@@ -181,5 +207,6 @@ The CD workflow automatically:
 
 ---
 
-[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v1.0.0-ademir...HEAD
+[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.0.0-bobby...HEAD
+[2.0.0 - Bobby]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v1.0.0-ademir...v2.0.0-bobby
 [1.0.0 - Ademir]: https://github.com/nanotaboada/go-samples-gin-restful/releases/tag/v1.0.0-ademir
