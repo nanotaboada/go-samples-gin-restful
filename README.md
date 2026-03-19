@@ -323,7 +323,7 @@ Branch protection prevents direct pushes to `master`, so all release prep goes t
 
 ```bash
 git checkout master && git pull
-git checkout -b release/v2.0.0-bobby
+git checkout -b release/vX.Y.Z-player
 ```
 
 #### 2. Update CHANGELOG.md
@@ -334,13 +334,13 @@ Move items from `[Unreleased]` to a new release section in [CHANGELOG.md](CHANGE
 # Move items from [Unreleased] to new release section
 # Example: [2.0.0 - Bobby] - 2026-03-19
 git add CHANGELOG.md
-git commit -m "docs: prepare changelog for v2.0.0-bobby release"
-git push origin release/v2.0.0-bobby
+git commit -m "docs(changelog): prepare release notes for vX.Y.Z-player"
+git push origin release/vX.Y.Z-player
 ```
 
 #### 3. Merge the Release PR
 
-Open a pull request from `release/v2.0.0-bobby` into `master` and merge it. The tag must be created **after** the merge so it points to the correct commit on `master`.
+Open a pull request from `release/vX.Y.Z-player` into `master` and merge it. The tag must be created **after** the merge so it points to the correct commit on `master`.
 
 #### 4. Create and Push Tag
 
@@ -348,6 +348,13 @@ After the PR is merged, pull `master` and create the annotated tag:
 
 ```bash
 git checkout master && git pull
+git tag -a vX.Y.Z-player -m "Release X.Y.Z - Player"
+git push origin vX.Y.Z-player
+```
+
+Example:
+
+```bash
 git tag -a v2.0.0-bobby -m "Release 2.0.0 - Bobby"
 git push origin v2.0.0-bobby
 ```
@@ -361,7 +368,15 @@ This triggers the CD workflow which automatically:
 3. Publishes Docker images to GitHub Container Registry with three tags
 4. Creates a GitHub Release with auto-generated changelog from commits
 
-> 💡 Always update CHANGELOG.md before creating the tag. See [CHANGELOG.md](CHANGELOG.md#how-to-release) for detailed release instructions.
+#### Pre-Release Checklist
+
+- [ ] Release branch created from `master`
+- [ ] `CHANGELOG.md` updated with release notes
+- [ ] Changes committed and pushed on the release branch
+- [ ] Release PR merged into `master`
+- [ ] Tag created with correct format: `vX.Y.Z-player`
+- [ ] Player name is valid (A-Z from the [famous player list](CHANGELOG.md#famous-football-player-names-️))
+- [ ] Tag pushed to trigger CD workflow
 
 ### Pull Docker Images
 

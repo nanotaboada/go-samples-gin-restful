@@ -100,84 +100,12 @@ Initial release. See [README.md](README.md) for complete feature list and docume
 
 ## How to Release
 
-To create a new release, follow these steps in order:
+The full release procedure — branch, PR, tag, and CD workflow — is documented in
+[README.md § Create a Release](README.md#create-a-release).
 
-### 1. Create a Release Branch
-
-Branch protection prevents direct pushes to `master`, so all release prep goes through a PR:
-
-```bash
-git checkout master && git pull
-git checkout -b release/vX.Y.Z-player
-```
-
-### 2. Update CHANGELOG.md
-
-Move items from the `[Unreleased]` section to a new release section:
-
-```markdown
-## [X.Y.Z - PLAYER_NAME] - YYYY-MM-DD
-
-### Added
-- New features here
-
-### Changed
-- Changes here
-
-### Fixed
-- Bug fixes here
-
-### Removed
-- Removed features here
-```
-
-Then commit and push the branch:
-
-```bash
-git add CHANGELOG.md
-git commit -m "docs: prepare changelog for vX.Y.Z-player release"
-git push origin release/vX.Y.Z-player
-```
-
-### 3. Merge the Release PR
-
-Open a pull request from `release/vX.Y.Z-player` into `master` and merge it. The tag must be created **after** the merge so it points to the correct commit on `master`.
-
-### 4. Create and Push Version Tag
-
-After the PR is merged, pull `master` and create the annotated tag:
-
-```bash
-git checkout master && git pull
-git tag -a vX.Y.Z-player -m "Release X.Y.Z - Player"
-git push origin vX.Y.Z-player
-```
-
-Example:
-
-```bash
-git tag -a v2.0.0-bobby -m "Release 2.0.0 - Bobby"
-git push origin v2.0.0-bobby
-```
-
-### 5. Automated CD Workflow
-
-The CD workflow automatically:
-
-- ✅ Validates the player name against the A-Z list
-- ✅ Builds and tests the project
-- ✅ Publishes Docker images to GHCR with three tags (`:X.Y.Z`, `:player`, `:latest`)
-- ✅ Creates a GitHub Release with auto-generated notes from commits
-
-### Pre-Release Checklist
-
-- [ ] Release branch created from `master`
-- [ ] CHANGELOG.md updated with release notes
-- [ ] CHANGELOG.md changes committed and pushed on the release branch
-- [ ] Release PR merged into `master`
-- [ ] Tag created with correct format: `vX.Y.Z-player`
-- [ ] Player name is valid (A-Z from table above)
-- [ ] Tag pushed to trigger CD workflow
+In summary: move items from `[Unreleased]` to a new `[X.Y.Z - Player]` section
+(see template below), open a `release/vX.Y.Z-player` PR, merge it into `master`,
+then push the annotated tag to trigger the CD workflow.
 
 ---
 
