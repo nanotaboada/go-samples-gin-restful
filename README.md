@@ -317,28 +317,49 @@ Releases follow the pattern: `v{SEMVER}-{PLAYER}` (e.g., `v1.0.0-ademir`)
 
 To create a new release, follow this workflow:
 
-#### 1. Update CHANGELOG.md
+#### 1. Create a Release Branch
 
-First, document your changes in [CHANGELOG.md](CHANGELOG.md):
+Branch protection prevents direct pushes to `master`, so all release prep goes through a PR:
+
+```bash
+git checkout master && git pull
+git checkout -b release/vX.Y.Z-player
+```
+
+#### 2. Update CHANGELOG.md
+
+Move items from `[Unreleased]` to a new release section in [CHANGELOG.md](CHANGELOG.md), then commit and push the branch:
 
 ```bash
 # Move items from [Unreleased] to new release section
-# Example: [1.0.0 - Ademir] - 2026-02-15
+# Example: [2.0.0 - Bobby] - 2026-03-19
 git add CHANGELOG.md
-git commit -m "docs: prepare changelog for v1.0.0-ademir release"
-git push
+git commit -m "docs(changelog): prepare release notes for vX.Y.Z-player"
+git push origin release/vX.Y.Z-player
 ```
 
-#### 2. Create and Push Tag
+#### 3. Merge the Release PR
 
-Then create and push the version tag:
+Open a pull request from `release/vX.Y.Z-player` into `master` and merge it. The tag must be created **after** the merge so it points to the correct commit on `master`.
+
+#### 4. Create and Push Tag
+
+After the PR is merged, pull `master` and create the annotated tag:
 
 ```bash
-git tag -a v1.0.0-ademir -m "Release 1.0.0 - Ademir"
-git push origin v1.0.0-ademir
+git checkout master && git pull
+git tag -a vX.Y.Z-player -m "Release X.Y.Z - Player"
+git push origin vX.Y.Z-player
 ```
 
-#### 3. Automated CD Workflow
+Example:
+
+```bash
+git tag -a v2.0.0-bobby -m "Release 2.0.0 - Bobby"
+git push origin v2.0.0-bobby
+```
+
+#### 5. Automated CD Workflow
 
 This triggers the CD workflow which automatically:
 
@@ -347,7 +368,15 @@ This triggers the CD workflow which automatically:
 3. Publishes Docker images to GitHub Container Registry with three tags
 4. Creates a GitHub Release with auto-generated changelog from commits
 
-> 💡 Always update CHANGELOG.md before creating the tag. See [CHANGELOG.md](CHANGELOG.md#how-to-release) for detailed release instructions.
+#### Pre-Release Checklist
+
+- [ ] Release branch created from `master`
+- [ ] `CHANGELOG.md` updated with release notes
+- [ ] Changes committed and pushed on the release branch
+- [ ] Release PR merged into `master`
+- [ ] Tag created with correct format: `vX.Y.Z-player`
+- [ ] Player name is valid (A-Z from the [famous player list](CHANGELOG.md#famous-football-player-names-️))
+- [ ] Tag pushed to trigger CD workflow
 
 ### Pull Docker Images
 
