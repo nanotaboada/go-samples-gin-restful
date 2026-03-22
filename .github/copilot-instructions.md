@@ -2,7 +2,7 @@
 
 ## Overview
 
-REST API for managing football players built with Go and Gin Web Framework. Implements CRUD operations with SQLite + GORM, in-memory caching, and Swagger documentation. Part of a cross-language comparison study (.NET, Java, Python, Rust, TypeScript).
+REST API for managing football players built with Go and Gin Web Framework. Implements CRUD operations with SQLite + GORM, in-memory caching, and Swagger documentation. Part of a cross-language comparison study (.NET, Java, Python, Rust, TypeScript). Architectural decisions are documented as ADRs in `docs/adr/` — check them before proposing structural changes.
 
 ## Tech Stack
 
@@ -27,6 +27,7 @@ go.mod          — module dependencies
 /data           — database connection setup                     [data layer]
 /model          — Player struct (domain model)
 /storage        — SQLite database file (players-sqlite3.db, pre-seeded)
+/docs/adr       — Architecture Decision Records (read before proposing structural changes)
 /docs           — auto-generated Swagger docs (DO NOT EDIT manually)
 /tests          — integration tests with testify assertions
 /scripts        — Docker entrypoint and healthcheck scripts
@@ -42,6 +43,8 @@ go.mod          — module dependencies
 - **Pointers**: Use pointers for structs in function signatures to avoid copying
 - **Logging**: Standard `log` package (structured `slog` for new code)
 - **Tests**: Table-driven tests for multiple cases; target 80%+ coverage for service, controller, route packages
+- **Test strategy**: Integration tests with real in-memory SQLite for all happy paths and expected branches. Use `MockPlayerService` only for error branches that cannot be triggered with a healthy database (e.g. simulated connection failures). If a scenario can be exercised with a real database, it must use a real database.
+- **Mock pattern**: `MockPlayerService` uses opt-in function fields — only set the `Func` relevant to the test scenario; unset methods return safe zero-value defaults. Never create a new mock type per test.
 - **Test naming**: `TestRequest{METHOD}{Resource}{Condition}Response{Outcome}`:
   - **Resource**: explicit endpoint target — `Players`, `PlayerByID`, `PlayerBySquadNumber`
   - **Condition**: `Existing`, `NonExisting`, `InvalidParam`, `EmptyBody`, `TrailingSlash`, `RetrieveError`, `CreateError`, `UpdateError`, `DeleteError`
@@ -56,7 +59,7 @@ go.mod          — module dependencies
 
 ```bash
 go mod download
-go run .            # starts on port 9000
+go run .            # starts on port 9000 (set STORAGE_PATH to override DB location)
 go build -v ./...
 go test ./...       # all tests
 go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out
@@ -65,22 +68,31 @@ swag init           # regenerate Swagger docs
 docker compose up --build
 ```
 
+**Environment variables:**
+- `STORAGE_PATH` — path to the SQLite database file. Defaults to `./storage/players-sqlite3.db` when unset (local development). Set by Docker Compose to `/storage/players-sqlite3.db` (persistent volume).
+- `GIN_MODE` — `debug` (default locally) or `release` (set by Docker Compose).
+
 ### Pre-commit Checks
 
 1. Update `CHANGELOG.md` `[Unreleased]` section (Added / Changed / Fixed / Removed)
 2. `go fmt ./...`
 3. `go build -v ./...`
-4. `go test ./...` — all tests must pass
-5. Full coverage command above — target 80%+ for service, controller, route
-6. `golangci-lint run`
-7. Verify all errors explicitly checked; JSON struct tags present on model structs
-8. Commit message follows Conventional Commits format (enforced by commitlint)
+4. If Swagger annotations were modified: `swag init`
+5. `go test ./...` — all tests must pass
+6. Full coverage command above — target 80%+ for service, controller, route
+7. `golangci-lint run`
+8. Verify all errors explicitly checked; JSON struct tags present on model structs
+9. Commit message follows Conventional Commits format (enforced by commitlint)
 
 ### Commits
 
 Format: `type(scope): description (#issue)` — max 80 chars
 Types: `feat` `fix` `chore` `docs` `test` `refactor` `ci` `perf`
 Example: `feat(api): add player stats endpoint (#42)`
+
+### Releases
+
+Tags follow the format `v{SEMVER}-{PLAYER}` (e.g. `v2.0.0-bobby`). The CD workflow validates the player name against the 26-name list in `CHANGELOG.md` and rejects unknown names. Never suggest a release tag without confirming the player name is in that list.
 
 ## Agent Mode
 
@@ -95,7 +107,7 @@ Example: `feat(api): add player stats endpoint (#42)`
 
 ### Ask before changing
 
-- Database schema (`Player` struct fields)
+- Database schema (`Player` struct fields) — `AutoMigrate` cannot handle breaking changes (column type changes, column drops); re-seeding from the seed scripts is required and must be flagged explicitly
 - Dependencies (`go.mod`)
 - CI/CD configuration (`.github/workflows/`)
 - Docker setup
@@ -114,13 +126,12 @@ Example: `feat(api): add player stats endpoint (#42)`
 
 **Add an endpoint**: Define model in `/model/` (if needed) → add service method in `/service/` → create controller handler in `/controller/` → register route in `/route/` → add Swagger comments → add tests → run `swag init` → run pre-commit checks.
 
-**Modify schema**: Update `Player` struct → update GORM queries in `/service/` → update controller handlers → update `/tests/players.json` → fix test assertions → run `swag init` → run `go test ./...`.
+**Modify schema**: Update `Player` struct → update GORM queries in `/service/` → update controller handlers → update `/tests/players.json` → fix test assertions → run `swag init` → run `go test ./...`. If the change is breaking (column type or column removal), warn that `AutoMigrate` will not apply it automatically — the database must be re-created using the seed scripts.
 
 **After completing work**: Suggest a branch name (e.g. `feat/add-player-stats`) and a commit message following Conventional Commits including co-author line:
 
 ```text
 feat(scope): description (#issue)
 
-Co-authored-by: Copilot <175728472+Copilot@users.noreply.github.com>
-Co-authored-by: Claude <noreply@anthropic.com>
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
