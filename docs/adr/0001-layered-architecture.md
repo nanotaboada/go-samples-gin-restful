@@ -21,7 +21,7 @@ Gin is a minimal framework that imposes no structure. A single-domain, learning-
 
 We will use a four-layer architecture with explicit package boundaries:
 
-```
+```text
 route → controller → service → data
 ```
 

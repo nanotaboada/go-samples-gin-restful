@@ -4,7 +4,7 @@ Date: 2026-03-21
 
 ## Status
 
-Accepted
+Accepted (decision). Implementation pending — controller still binds `model.Player`; `PlayerRequest` will be introduced in a dedicated ticket.
 
 ## Context
 
