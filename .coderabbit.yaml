@@ -75,23 +75,25 @@ reviews:
       instructions: |
         - Use Go struct tags for serialization (e.g., `json:"fieldName"`)
         - Verify camelCase JSON serialization with struct tags
-        - Check separation of internal (Player) vs API models (PlayerRequest/Response)
         - Ensure proper GORM struct tags for database mapping
-        - Validate ID generation logic for auto-increment
+        - Validate ID field uses UUID v4 (server-generated on create, never client-supplied)
 
     - path: "tests/**/*.go"
       instructions: |
         - Tests should use testify for assertions
-        - Verify test naming follows Test<Method><Scenario>Response<Expected> pattern
+        - Verify test naming follows TestRequest{METHOD}{Resource}{Condition}Response{Outcome} pattern
+          (e.g. TestRequestGETPlayerByIDExistingResponseStatusOK)
         - Check Given-When-Then/AAA structure
         - Ensure test database uses in-memory SQLite
         - Validate test data is loaded from tests/players.json
+        - Use MockPlayerService only for error branches unreachable with a healthy database
         - Check coverage targets (80% for services, controllers, routes)
 
     - path: "**/*_test.go"
       instructions: |
-        - Unit tests should use testify for assertions
-        - Follow Test<FunctionName><Scenario> naming convention
+        - Tests should use testify for assertions
+        - Verify test naming follows TestRequest{METHOD}{Resource}{Condition}Response{Outcome} pattern
+          (e.g. TestRequestGETPlayerByIDExistingResponseStatusOK)
         - Use table-driven tests for multiple test cases
         - Use external test packages (package_name_test) for black-box testing, or same package for white-box testing
         - Mock external dependencies appropriately

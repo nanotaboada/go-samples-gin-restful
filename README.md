@@ -82,8 +82,12 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 │   └── swagger.yaml
 ├── tests/                  # Integration tests
 │   ├── main_test.go
+│   ├── mock_service.go
 │   ├── player_fake.go
 │   └── players.json
+├── tools/                  # Database seed scripts
+│   ├── seed_001_starting_eleven.go
+│   └── seed_002_substitutes.go
 ├── rest/                   # HTTP request files
 │   └── players.rest        # CRUD requests (REST Client / JetBrains HTTP Client)
 ├── storage/                # SQLite database file (pre-seeded)
@@ -426,6 +430,7 @@ GIN_MODE=release
 | `go tool cover -html=coverage.out` | View coverage report |
 | `go fmt ./...` | Format code |
 | `go mod tidy` | Clean up dependencies |
+| `golangci-lint run` | Run linter |
 | `swag init` | Regenerate Swagger documentation |
 | `docker compose build` | Build Docker image |
 | `docker compose up` | Start Docker container |
