@@ -21,6 +21,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
+- [Architecture Decisions](#architecture-decisions)
 - [API Reference](#api-reference)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
@@ -74,8 +75,9 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 │   └── player_data.go
 ├── swagger/                # Swagger configuration
 │   └── swagger.go
-├── docs/                   # Auto-generated Swagger docs (DO NOT EDIT)
-│   ├── docs.go
+├── docs/                   # Documentation
+│   ├── adr/                # Architecture Decision Records
+│   ├── docs.go             # Auto-generated Swagger docs (DO NOT EDIT)
 │   ├── swagger.json
 │   └── swagger.yaml
 ├── tests/                  # Integration tests
@@ -179,6 +181,10 @@ The `model` package is a **cross-cutting type concern** — it defines shared da
 **Color Coding:** Core packages (blue) implement the application logic, supporting features (yellow) provide documentation and utilities, external dependencies (red) are third-party frameworks and ORMs, and tests (green) ensure code quality.
 
 *Simplified, conceptual project structure and main application flow. Not all dependencies are shown.*
+
+## Architecture Decisions
+
+Significant architectural decisions — the alternatives considered, the choice made, and the trade-offs accepted — are documented as [Architecture Decision Records](docs/adr/README.md) in `docs/adr/`. Each ADR is an append-only record; when a decision changes, a new ADR is added rather than editing the original.
 
 ## API Reference
 

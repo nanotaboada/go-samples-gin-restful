@@ -42,6 +42,10 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ## [Unreleased]
 
+### Added
+
+- `docs/adr/`: 10 Architecture Decision Records documenting key design choices — layered architecture, Gin, GORM, SQLite, UUID v4 primary key, squad number as mutation identifier, single domain struct with dedicated request binding type, full update semantics (PUT / PATCH deferred to #172), in-memory cache strategy, and mixed test strategy (closes #162)
+
 ---
 
 ## [2.0.0 - Bobby] - 2026-03-19

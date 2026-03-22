@@ -22,3 +22,6 @@ go-samples-gin-restful
 
 # Go workspace file
 go.work
+
+# Claude Code local settings (machine-specific, not for version control)
+.claude/settings.local.json
