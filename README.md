@@ -4,7 +4,7 @@
 [![Go CD](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-cd.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/go-cd.yml)
 [![CodeQL Advanced](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/codeql.yml/badge.svg)](https://github.com/nanotaboada/go-samples-gin-restful/actions/workflows/codeql.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanotaboada_go-samples-gin-restful&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=nanotaboada_go-samples-gin-restful)
-[![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
+[![codecov](https://codecov.io/gh/nanotaboada/go-samples-gin-restful/branch/master/graph/badge.svg?token=i37VDcDWwx)](https://codecov.io/gh/nanotaboada/go-samples-gin-restful)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nanotaboada/go-samples-gin-restful)](https://goreportcard.com/report/github.com/nanotaboada/go-samples-gin-restful)
 [![CodeFactor](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful/badge)](https://www.codefactor.io/repository/github/nanotaboada/go-samples-gin-restful)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3DA639.svg)](https://opensource.org/licenses/MIT)
@@ -26,7 +26,7 @@ Proof of Concept for a RESTful API built with [Go](https://github.com/golang/go)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Testing](#testing)
-- [Docker](#docker)
+- [Containers](#containers)
 - [Releases](#releases)
 - [Environment Variables](#environment-variables)
 - [Command Summary](#command-summary)
@@ -172,17 +172,25 @@ graph RL
     class tests test
 ```
 
-**Arrow Semantics:** Arrows point from a dependency toward its consumer. Solid arrows (`-->`) denote **strong (functional) dependencies**: the consumer actively invokes behavior — calling methods, executing queries, or handling HTTP requests. Dotted arrows (`-.->`) denote **soft (structural) dependencies**: the consumer only references types or function signatures, without invoking runtime behavior. This distinction is grounded in UML's `«use»` dependency notation and classical coupling theory (Myers, 1978): strong arrows approximate *control or stamp coupling*, while soft arrows approximate *data coupling*, where only shared data structures cross the boundary.
+### Arrow Semantics
 
-**Composition Root Pattern:** The `main` package acts as the composition root — all solid arrows originate from it, reflecting that it is the sole site where dependencies are instantiated, wired, and injected. It creates the Gin router instance, initializes the database connection, and registers all routes. This pattern enables dependency injection, improves testability, and ensures that no other package bears responsibility for object creation or lifecycle management.
+Arrows follow the wiring direction: `A --> B` means A is provided to B. Solid arrows (`-->`) represent active dependencies — packages explicitly wired in `main` and invoked at runtime. Dotted arrows (`-.->`) represent structural dependencies — the consumer references types or function signatures without invoking runtime behavior.
 
-**Layered Architecture:** The codebase is organized into four conceptual layers: Initialization (`main`, `docs`, `swagger`), HTTP (`route`, `controller`), Business (`service`), and Data (`data`).
+### Composition Root Pattern
 
-External dependencies (`Gin`, `GORM`) are co-resident within their consumer layers — `Gin` within HTTP, `GORM` within Data — reflecting infrastructure concerns absorbed by those layers rather than a layer of their own.
+`main` is the composition root: it instantiates all dependencies, creates the Gin router, initializes the database connection, and registers all routes. No other package bears responsibility for wiring.
 
-The `model` package is a **cross-cutting type concern** — it defines shared data structures consumed across all layers via soft (structural) dependencies, without containing logic or behavior of its own. Strong dependencies flow strictly downward through the layers, preserving the layer rule: no layer reaches upward to invoke behavior in a layer above it.
+### Layered Architecture
 
-**Color Coding:** Core packages (blue) implement the application logic, supporting features (yellow) provide documentation and utilities, external dependencies (red) are third-party frameworks and ORMs, and tests (green) ensure code quality.
+Four layers: Initialization (`main`, `docs`, `swagger`), HTTP (`route`, `controller`), Business (`service`), and Data (`data`).
+
+External packages are placed inside the subgraph of the layer that uses them — `Gin` in HTTP, `GORM` in Data.
+
+`model` is a cross-cutting type concern — shared data structures consumed across all layers, with no logic of its own.
+
+### Color Coding
+
+Blue = core application packages, yellow = documentation and utility packages, red = third-party frameworks, green = tests.
 
 *Simplified, conceptual project structure and main application flow. Not all dependencies are shown.*
 
@@ -278,7 +286,7 @@ Tests are located in the `tests/` directory and use testify for integration test
 
 **Coverage targets:** 80% minimum for service, controller, and route packages.
 
-## Docker
+## Containers
 
 This project includes full Docker support with multi-stage builds and Docker Compose for easy deployment.
 
@@ -450,4 +458,4 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for de
 
 ## Legal
 
-This project is provided for educational and demonstration purposes and may be used in production environments at your discretion. All referenced trademarks, service marks, product names, company names, and logos are the property of their respective owners and are used solely for identification or illustrative purposes.
+This project is provided for educational and demonstration purposes and may be used in production at your own discretion. All trademarks, service marks, product names, company names, and logos referenced herein are the property of their respective owners and are used solely for identification or illustrative purposes.
