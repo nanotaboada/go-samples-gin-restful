@@ -1,3 +1,9 @@
 {
-  "model": "claude-sonnet-4-6"
+  "permissions": {
+    "allow": [
+      "Bash(go *)",
+      "Bash(swag *)",
+      "Bash(golangci-lint *)"
+    ]
+  }
 }
