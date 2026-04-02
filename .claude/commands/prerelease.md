@@ -53,13 +53,17 @@ proceeding. Never create a branch, commit, tag, or push without approval.
 
 3. Show the full diff of `CHANGELOG.md` and propose this commit message:
 
-   ```
+   ```bash
    docs(changelog): prepare release notes for vX.Y.Z-{player} (#issue)
    ```
 
    **Wait for explicit approval before committing.**
 
-4. Run `/precommit` (skipping the CHANGELOG step — it was just done).
+4. Run `/precommit`, explicitly skipping Step 1 (CHANGELOG update — already
+   completed in step 2 above). Tell `/precommit` to skip Step 1 by opening
+   with: "Skip Step 1 — CHANGELOG was already updated as part of this release
+   branch." `/precommit` Step 1 is optional when the CHANGELOG has been
+   updated by the release preparation step immediately prior.
 
 5. Propose opening a PR from `release/vX.Y.Z-{player}` into `master`.
    **Wait for explicit approval before opening.**
@@ -78,20 +82,20 @@ proceeding. Never create a branch, commit, tag, or push without approval.
    - The PR has been merged into `master`
 
 2. Once confirmed, run:
-   ```
+   ```bash
    git checkout master && git pull origin master
    ```
    and show the resulting `git log --oneline -3`.
 
 3. Propose the annotated tag:
-   ```
+   ```bash
    git tag -a vX.Y.Z-{player} -m "Release vX.Y.Z - PlayerName"
    ```
 
    **Wait for explicit approval before creating the tag.**
 
 4. Create the tag, then propose:
-   ```
+   ```bash
    git push origin vX.Y.Z-{player}
    ```
 
