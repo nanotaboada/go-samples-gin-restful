@@ -49,6 +49,8 @@ This project uses famous football player names (A-Z) as release codenames:
 ### Added
 
 - CD workflow (`go-cd.yml`): added "Verify tag commit is reachable from master" step to `deploy` job — fails early with a descriptive error if the tag's commit is not an ancestor of `origin/master` (closes #231)
+- `.claude/commands/prerelease.md`: `/prerelease` slash command implementing a three-phase pre-release checklist — determine next version and player codename, prepare release branch and CHANGELOG, tag and push (closes #233)
+- `.claude/commands/precommit.md`: step 1 updated to automate `CHANGELOG.md` `[Unreleased]` update instead of deferring to the user (closes #233)
 
 ### Changed
 
