@@ -60,6 +60,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Verify tag commit is reachable from master
+        run: |
+          if ! git branch -r --contains "${{ github.sha }}" | grep -q "origin/master"; then
+            echo "❌ Error: Commit ${{ github.sha }} is not reachable from origin/master"
+            echo "Ensure the PR is merged into master before pushing a release tag"
+            exit 1
+          fi
+          echo "✅ Commit ${{ github.sha }} is reachable from origin/master"
+
       - name: Extract version and player name from tag
         id: extract_tag
         run: |
