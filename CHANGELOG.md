@@ -46,6 +46,16 @@ This project uses famous football player names (A-Z) as release codenames:
 
 - `docs/adr/`: 10 Architecture Decision Records documenting key design choices — layered architecture, Gin, GORM, SQLite, UUID v4 primary key, squad number as mutation identifier, single domain struct with dedicated request binding type, full update semantics (PUT / PATCH deferred to #172), in-memory cache strategy, and mixed test strategy (closes #162)
 
+### Changed
+
+- Player dataset normalised to November 2022 World Cup snapshot: Di María `abbrPosition` → `RW`, Mac Allister `team` → Brighton & Hove Albion, Fernández team/league → SL Benfica / Liga Portugal, Messi team/league → Paris Saint-Germain / Ligue 1 (closes #227)
+- All player UUIDs migrated to canonical UUID v5 (namespace `f201b13e-c670-473d-885d-e2be219f74c8`, formula `{firstName}-{lastName}`) (closes #227)
+- Test fixture for Create/Delete replaced: Paredes (squad 5) → Lo Celso (squad 27) (closes #227)
+- `MakeUpdatePlayer()` added to `player_fake.go`: Emiliano Martínez (squad 23) (closes #227)
+- DELETE test restructured: Armani (squad 1) → Lo Celso (squad 27) via POST+DELETE pattern (closes #227)
+- GET by squad number body assertion retargeted to Messi (squad 10) (closes #227)
+- `rest/players.rest` updated: `@newSquadNumber = 27`, `@existingSquadNumber = 23` (closes #227)
+
 ---
 
 ## [2.0.0 - Bobby] - 2026-03-19

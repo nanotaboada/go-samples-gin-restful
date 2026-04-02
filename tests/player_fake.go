@@ -13,13 +13,13 @@
 // Given the same namespace and the same name, uuid5 always returns the same
 // UUID. This means fixture IDs are:
 //   - Stable across test runs — no random regeneration needed
-//   - Derived from meaningful data — the squad number is the name, so the
-//     UUID for squad #10 is always the same value
-//   - Scoped to this project — the namespace UUID below is project-specific,
-//     preventing accidental collisions with other uuid5 users
+//   - Derived from meaningful data — the player name is the input, so the
+//     UUID for Lionel Messi is always the same value
+//   - Scoped to this project — the namespace UUID below is the canonical
+//     cross-project standard for the 2022 FIFA World Cup Argentina squad
 //
-// Namespace: a7d5e3b2-1c4f-5a8d-9e6b-3f2c0d1e4a7b (arbitrary, project-fixed)
-// Name:      squad number as a decimal string (e.g. "10" for Messi)
+// Namespace: f201b13e-c670-473d-885d-e2be219f74c8 (FIFA_WORLD_CUP_QATAR_2022_ARGENTINA_SQUAD)
+// Formula:   uuidv5("{firstName}-{lastName}", namespace) — UTF-8
 package tests
 
 import (
@@ -32,10 +32,10 @@ import (
 )
 
 // MakeExistingPlayer returns a Player that already exists in the original collection.
-// ID is UUID v5 derived from squad number 23 using the project namespace.
+// ID is UUID v5 derived from "Damián-Martínez" using the canonical namespace.
 func MakeExistingPlayer() model.Player {
 	return model.Player{
-		ID:           "45ef18c4-a919-50c8-8003-279845045804",
+		ID:           "01772c59-43f0-5d85-b913-c78e4e281452",
 		FirstName:    "Damián",
 		MiddleName:   "Emiliano",
 		LastName:     "Martínez",
@@ -50,20 +50,42 @@ func MakeExistingPlayer() model.Player {
 }
 
 // MakeNonExistingPlayer returns a Player that does not exist in the original collection.
-// ID is UUID v5 derived from squad number 5 using the project namespace.
+// Giovani Lo Celso was selected for the preliminary squad but ruled out by a hamstring
+// injury during training camp and replaced by Thiago Almada. Squad 27 is outside the
+// seeded range, so POST never conflicts with seeded data and a failed cleanup never
+// corrupts seeded records.
+// ID is UUID v5 derived from "Giovani-Lo Celso" using the canonical namespace.
 func MakeNonExistingPlayer() model.Player {
 	return model.Player{
-		ID:           "f9897dec-7d3e-568a-9f7f-03d2739c5a7c",
-		FirstName:    "Leandro",
-		MiddleName:   "Daniel",
-		LastName:     "Paredes",
-		DateOfBirth:  "1994-06-29T00:00:00.000Z",
-		SquadNumber:  5,
-		Position:     "Defensive Midfield",
-		AbbrPosition: "DM",
-		Team:         "AS Roma",
-		League:       "Serie A",
+		ID:           "f8d13028-0d22-5513-8774-08a2332b5814",
+		FirstName:    "Giovani",
+		MiddleName:   "",
+		LastName:     "Lo Celso",
+		DateOfBirth:  "1996-04-09T00:00:00.000Z",
+		SquadNumber:  27,
+		Position:     "Central Midfield",
+		AbbrPosition: "CM",
+		Team:         "Villarreal CF",
+		League:       "La Liga",
 		Starting11:   false,
+	}
+}
+
+// MakeUpdatePlayer returns the update body for Damián Emiliano Martínez (squad 23).
+// The canonical Update scenario changes FirstName from "Damián" to "Emiliano" and
+// clears MiddleName, reflecting that he goes by his middle name.
+func MakeUpdatePlayer() model.Player {
+	return model.Player{
+		FirstName:    "Emiliano",
+		MiddleName:   "",
+		LastName:     "Martínez",
+		DateOfBirth:  "1992-09-02T00:00:00.000Z",
+		SquadNumber:  23,
+		Position:     "Goalkeeper",
+		AbbrPosition: "GK",
+		Team:         "Aston Villa FC",
+		League:       "Premier League",
+		Starting11:   true,
 	}
 }
 
