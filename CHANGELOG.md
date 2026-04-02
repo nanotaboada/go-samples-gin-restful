@@ -46,6 +46,10 @@ This project uses famous football player names (A-Z) as release codenames:
 
 - `docs/adr/`: 10 Architecture Decision Records documenting key design choices — layered architecture, Gin, GORM, SQLite, UUID v4 primary key, squad number as mutation identifier, single domain struct with dedicated request binding type, full update semantics (PUT / PATCH deferred to #172), in-memory cache strategy, and mixed test strategy (closes #162)
 
+### Added
+
+- CD workflow (`go-cd.yml`): added "Verify tag commit is reachable from master" step to `deploy` job — fails early with a descriptive error if the tag's commit is not an ancestor of `origin/master` (closes #231)
+
 ### Changed
 
 - Player dataset normalised to November 2022 World Cup snapshot: Di María `abbrPosition` → `RW`, Mac Allister `team` → Brighton & Hove Albion, Fernández team/league → SL Benfica / Liga Portugal, Messi team/league → Paris Saint-Germain / Ligue 1 (closes #227)
