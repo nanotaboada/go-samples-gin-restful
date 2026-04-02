@@ -46,6 +46,8 @@ This project uses famous football player names (A-Z) as release codenames:
 
 - `docs/adr/`: 10 Architecture Decision Records documenting key design choices — layered architecture, Gin, GORM, SQLite, UUID v4 primary key, squad number as mutation identifier, single domain struct with dedicated request binding type, full update semantics (PUT / PATCH deferred to #172), in-memory cache strategy, and mixed test strategy (closes #162)
 - CD workflow (`go-cd.yml`): added "Verify tag commit is reachable from master" step to `deploy` job — fails early with a descriptive error if the tag's commit is not an ancestor of `origin/master` (closes #231)
+- `.claude/commands/prerelease.md`: `/prerelease` slash command implementing a three-phase pre-release checklist — determine next version and player codename, prepare release branch and CHANGELOG, tag and push (closes #233)
+- `.claude/commands/precommit.md`: step 1 marked as skippable when CHANGELOG has already been updated as part of release branch preparation (closes #233)
 
 ### Changed
 
@@ -56,6 +58,10 @@ This project uses famous football player names (A-Z) as release codenames:
 - DELETE test restructured: Armani (squad 1) → Lo Celso (squad 27) via POST+DELETE pattern (closes #227)
 - GET by squad number body assertion retargeted to Messi (squad 10) (closes #227)
 - `rest/players.rest` updated: `@newSquadNumber = 27`, `@existingSquadNumber = 23` (closes #227)
+
+### Fixed
+
+### Removed
 
 ---
 
