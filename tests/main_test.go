@@ -449,8 +449,8 @@ func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) 
 // returns a 200 OK status.
 func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 	// Arrange
-	// Squad #10 = Lionel Messi → UUID v5 derived from squad number 10
-	id := "9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03"
+	// Squad #10 = Lionel Messi → UUID v5 derived from "Lionel-Messi" using canonical namespace
+	id := "acc433bf-d505-51fe-831e-45eb44c4d43c"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
@@ -470,8 +470,8 @@ func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 // returns a matching Player.
 func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 	// Arrange
-	// Squad #10 = Lionel Messi → UUID v5 derived from squad number 10
-	id := "9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03"
+	// Squad #10 = Lionel Messi → UUID v5 derived from "Lionel-Messi" using canonical namespace
+	id := "acc433bf-d505-51fe-831e-45eb44c4d43c"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
@@ -506,7 +506,7 @@ func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03", nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/acc433bf-d505-51fe-831e-45eb44c4d43c", nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -531,7 +531,7 @@ func TestRequestGETPlayerBySquadNumber(test *testing.T) {
 	}{
 		{"NonExistingResponseStatusNotFound", "999", http.StatusNotFound},
 		{"InvalidParamResponseStatusBadRequest", InvalidSquadNumber, http.StatusBadRequest},
-		{"ExistingResponseStatusOK", "11", http.StatusOK},
+		{"ExistingResponseStatusOK", "10", http.StatusOK},
 	}
 	for _, tc := range cases {
 		test.Run(tc.name, func(t *testing.T) {
@@ -552,7 +552,7 @@ func TestRequestGETPlayerBySquadNumber(test *testing.T) {
 // returns a matching Player.
 func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 	// Arrange
-	squadNumber := "11"
+	squadNumber := "10"
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
 	request, err := http.NewRequest(http.MethodGet, buildSquadNumberPath(squadNumber), nil)
@@ -569,9 +569,12 @@ func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 
 	// Assert
 	assert.NotEmpty(test, player)
-	assert.Equal(test, 11, player.SquadNumber)
-	assert.Equal(test, "Ángel", player.FirstName)
-	assert.Equal(test, "Di María", player.LastName)
+	assert.Equal(test, 10, player.SquadNumber)
+	assert.Equal(test, "Lionel", player.FirstName)
+	assert.Equal(test, "Messi", player.LastName)
+	assert.Equal(test, "Paris Saint-Germain", player.Team)
+	assert.Equal(test, "Ligue 1", player.League)
+	assert.Equal(test, "acc433bf-d505-51fe-831e-45eb44c4d43c", player.ID)
 }
 
 // TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
@@ -684,9 +687,7 @@ func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
 	// Arrange
 	squadNumber := "23"
-	player := MakeExistingPlayer()
-	player.FirstName = "Emiliano"
-	player.MiddleName = ""
+	player := MakeUpdatePlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
@@ -698,6 +699,14 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 		test.Fatalf(ErrNewRequest, err)
 	}
 	request.Header.Set(ContentType, ApplicationJSON)
+	// Restore Martínez to original data after the test so subsequent tests
+	// that depend on the seeded state are not affected.
+	test.Cleanup(func() {
+		original := MakeExistingPlayer()
+		if err := testDB.Save(&original).Error; err != nil {
+			test.Logf("cleanup: failed to restore Martínez: %v", err)
+		}
+	})
 
 	// Act
 	router.ServeHTTP(recorder, request)
@@ -800,8 +809,8 @@ func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerErr
 /* DELETE /players/squadnumber/:squadnumber --------------------------------------------- */
 
 // TestRequestDELETEPlayerBySquadNumber tests that a
-// DELETE request to /players/squadnumber/:squadnumber for non-existing,
-// invalid, and existing squad numbers returns the expected status code.
+// DELETE request to /players/squadnumber/:squadnumber for non-existing
+// and invalid squad numbers returns the expected status code.
 func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 	cases := []struct {
 		name        string
@@ -810,7 +819,6 @@ func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 	}{
 		{"NonExistingResponseStatusNotFound", "999", http.StatusNotFound},
 		{"InvalidParamResponseStatusBadRequest", InvalidSquadNumber, http.StatusBadRequest},
-		{"ExistingResponseStatusNoContent", "1", http.StatusNoContent},
 	}
 	for _, tc := range cases {
 		test.Run(tc.name, func(t *testing.T) {
@@ -824,6 +832,44 @@ func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 			assert.Equal(t, tc.wantCode, recorder.Code)
 		})
 	}
+}
+
+// TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent tests that a
+// DELETE request to /players/squadnumber/:squadnumber when the squad number exists
+// returns a 204 No Content status.
+// Lo Celso (squad 27) is used so no seeded player is permanently removed from the
+// shared in-memory DB. The test first POSTs Lo Celso (accepting 201 or 409 in case
+// a prior test already inserted him) then DELETEs squad 27.
+func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
+	// Arrange
+	player := MakeNonExistingPlayer()
+	body, err := json.Marshal(player)
+	if err != nil {
+		test.Fatalf(ErrMarshal, err)
+	}
+	router := setupRouter(playerController)
+	// POST Lo Celso — he may already be present from a prior test run
+	postRecorder := httptest.NewRecorder()
+	postRequest, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
+	if err != nil {
+		test.Fatalf(ErrNewRequest, err)
+	}
+	postRequest.Header.Set(ContentType, ApplicationJSON)
+	router.ServeHTTP(postRecorder, postRequest)
+	if postRecorder.Code != http.StatusCreated && postRecorder.Code != http.StatusConflict {
+		test.Fatalf("expected 201 or 409 for POST Lo Celso, got %d", postRecorder.Code)
+	}
+
+	// Act
+	recorder := httptest.NewRecorder()
+	request, err := http.NewRequest(http.MethodDelete, buildSquadNumberPath("27"), nil)
+	if err != nil {
+		test.Fatalf(ErrNewRequest, err)
+	}
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	assert.Equal(test, http.StatusNoContent, recorder.Code)
 }
 
 // TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a

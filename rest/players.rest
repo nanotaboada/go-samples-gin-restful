@@ -3,7 +3,9 @@
 ###   - VS Code: REST Client extension (humao.rest-client)
 ###   - JetBrains IDEs: built-in HTTP Client
 
-@baseUrl = http://localhost:9000
+@baseUrl             = http://localhost:9000
+@newSquadNumber      = 27
+@existingSquadNumber = 23
 
 # -----------------------------------------------------------------------------
 
@@ -19,16 +21,14 @@ POST {{baseUrl}}/players
 Content-Type: application/json
 
 {
-  "id": 19,
-  "firstName": "Leandro",
-  "middleName": "Daniel",
-  "lastName": "Paredes",
-  "dateOfBirth": "1994-06-29T00:00:00.000Z",
-  "squadNumber": 5,
-  "position": "Defensive Midfield",
-  "abbrPosition": "DM",
-  "team": "AS Roma",
-  "league": "Serie A",
+  "firstName": "Giovani",
+  "lastName": "Lo Celso",
+  "dateOfBirth": "1996-04-09T00:00:00.000Z",
+  "squadNumber": 27,
+  "position": "Central Midfield",
+  "abbrPosition": "CM",
+  "team": "Villarreal CF",
+  "league": "La Liga",
   "starting11": false
 }
 
@@ -42,39 +42,38 @@ GET {{baseUrl}}/players
 
 ### Get Player by ID
 # GET /players/:id → 200 OK
-GET {{baseUrl}}/players/1
+GET {{baseUrl}}/players/acc433bf-d505-51fe-831e-45eb44c4d43c
 
 ###
 
 ### Get Player by Squad Number
 # GET /players/squadnumber/:squadnumber → 200 OK
-GET {{baseUrl}}/players/squadnumber/23
+GET {{baseUrl}}/players/squadnumber/10
 
 ###
 
 ### Update Player
 # PUT /players/squadnumber/:squadnumber → 204 No Content
-PUT {{baseUrl}}/players/squadnumber/5
+PUT {{baseUrl}}/players/squadnumber/{{existingSquadNumber}}
 Content-Type: application/json
 
 {
-  "id": 19,
-  "firstName": "Leandro",
-  "middleName": "Daniel",
-  "lastName": "Paredes",
-  "dateOfBirth": "1994-06-29T00:00:00.000Z",
-  "squadNumber": 5,
-  "position": "Defensive Midfield",
-  "abbrPosition": "DM",
-  "team": "Juventus FC",
-  "league": "Serie A",
-  "starting11": false
+  "firstName": "Emiliano",
+  "lastName": "Martínez",
+  "dateOfBirth": "1992-09-02T00:00:00.000Z",
+  "squadNumber": 23,
+  "position": "Goalkeeper",
+  "abbrPosition": "GK",
+  "team": "Aston Villa FC",
+  "league": "Premier League",
+  "starting11": true
 }
 
 ###
 
 ### Delete Player
 # DELETE /players/squadnumber/:squadnumber → 204 No Content
-DELETE {{baseUrl}}/players/squadnumber/5
+# Requires Create Player to have been run first.
+DELETE {{baseUrl}}/players/squadnumber/{{newSquadNumber}}
 
 ###

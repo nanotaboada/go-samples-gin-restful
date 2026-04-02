@@ -37,7 +37,7 @@ func main() {
 
 	players := []model.Player{
 		{
-			ID:           "45ef18c4-a919-50c8-8003-279845045804",
+			ID:           "01772c59-43f0-5d85-b913-c78e4e281452",
 			FirstName:    "Damián",
 			MiddleName:   "Emiliano",
 			LastName:     "Martínez",
@@ -50,7 +50,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "2b1a505b-8350-510f-8aaf-208a413a2268",
+			ID:           "da31293b-4c7e-5e0f-a168-469ee29ecbc4",
 			FirstName:    "Nahuel",
 			LastName:     "Molina",
 			DateOfBirth:  "1998-04-06T00:00:00.000Z",
@@ -62,7 +62,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "e115fb02-0f87-52f0-91a6-4e5d4ff21a6c",
+			ID:           "c096c69e-762b-5281-9290-bb9c167a24a0",
 			FirstName:    "Cristian",
 			MiddleName:   "Gabriel",
 			LastName:     "Romero",
@@ -75,7 +75,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "46d02909-2e4f-52e3-92f0-142d9fbbb280",
+			ID:           "d5f7dd7a-1dcb-5960-ba27-e34865b63358",
 			FirstName:    "Nicolás",
 			MiddleName:   "Hernán Gonzalo",
 			LastName:     "Otamendi",
@@ -88,7 +88,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "9cb75237-89ca-5722-a9b1-b5aee822fe03",
+			ID:           "2f6f90a0-9b9d-5023-96d2-a2aaf03143a6",
 			FirstName:    "Nicolás",
 			MiddleName:   "Alejandro",
 			LastName:     "Tagliafico",
@@ -101,7 +101,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "972d7357-6109-5d7a-b0f2-9f9797610a54",
+			ID:           "b5b46e79-929e-5ed2-949d-0d167109c022",
 			FirstName:    "Ángel",
 			MiddleName:   "Fabián",
 			LastName:     "Di María",
@@ -114,7 +114,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "d5b1810e-a40c-5d4b-9692-c9702a6f4699",
+			ID:           "0293b282-1da8-562e-998e-83849b417a42",
 			FirstName:    "Rodrigo",
 			MiddleName:   "Javier",
 			LastName:     "de Paul",
@@ -127,7 +127,7 @@ func main() {
 			Starting11:   true,
 		},
 		{
-			ID:           "7148b61b-a894-5628-bc8d-ca0e55d3a495",
+			ID:           "d3ba552a-dac3-588a-b961-1ea7224017fd",
 			FirstName:    "Enzo",
 			MiddleName:   "Jeremías",
 			LastName:     "Fernández",
@@ -135,24 +135,24 @@ func main() {
 			SquadNumber:  24,
 			Position:     "Central Midfield",
 			AbbrPosition: "CM",
-			Team:         "Chelsea FC",
-			League:       "Premier League",
+			Team:         "SL Benfica",
+			League:       "Liga Portugal",
 			Starting11:   true,
 		},
 		{
-			ID:           "0b759f4d-3e64-56fd-9cbe-19e3d4c04923",
+			ID:           "9613cae9-16ab-5b54-937e-3135123b9e0d",
 			FirstName:    "Alexis",
 			LastName:     "Mac Allister",
 			DateOfBirth:  "1998-12-24T00:00:00.000Z",
 			SquadNumber:  20,
 			Position:     "Central Midfield",
 			AbbrPosition: "CM",
-			Team:         "Liverpool FC",
+			Team:         "Brighton & Hove Albion",
 			League:       "Premier League",
 			Starting11:   true,
 		},
 		{
-			ID:           "9a5fa2e4-9c9e-58e5-aeb3-8b1b46e87e03",
+			ID:           "acc433bf-d505-51fe-831e-45eb44c4d43c",
 			FirstName:    "Lionel",
 			MiddleName:   "Andrés",
 			LastName:     "Messi",
@@ -160,12 +160,12 @@ func main() {
 			SquadNumber:  10,
 			Position:     "Right Winger",
 			AbbrPosition: "RW",
-			Team:         "Inter Miami CF",
-			League:       "Major League Soccer",
+			Team:         "Paris Saint-Germain",
+			League:       "Ligue 1",
 			Starting11:   true,
 		},
 		{
-			ID:           "0345510c-bb7a-5ad0-9493-ea4dae3bef49",
+			ID:           "38bae91d-8519-55a2-b30a-b9fe38849bfb",
 			FirstName:    "Julián",
 			LastName:     "Álvarez",
 			DateOfBirth:  "2000-01-31T00:00:00.000Z",

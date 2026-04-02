@@ -31,7 +31,7 @@ func main() {
 
 	players := []model.Player{
 		{
-			ID:           "f8e66ec2-008f-50ee-937f-8f4180165216",
+			ID:           "5a9cd988-95e6-54c1-bc34-9aa08acca8d0",
 			FirstName:    "Franco",
 			MiddleName:   "Daniel",
 			LastName:     "Armani",
@@ -44,7 +44,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "5d1cf792-9fb8-57b1-b8af-ecb6be526315",
+			ID:           "5fdb10e8-38c0-5084-9a3f-b369a960b9c2",
 			FirstName:    "Juan",
 			MiddleName:   "Marcos",
 			LastName:     "Foyth",
@@ -57,7 +57,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "4507092d-3454-5664-922f-dc718ed10025",
+			ID:           "bbd441f7-fcfb-5834-8468-2a9004b64c8c",
 			FirstName:    "Gonzalo",
 			MiddleName:   "Ariel",
 			LastName:     "Montiel",
@@ -70,7 +70,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "5f3099ad-ba4d-5b52-bb80-c30383061231",
+			ID:           "d8bfea25-f189-5d5e-b3a5-ed89329b9f7c",
 			FirstName:    "Germán",
 			MiddleName:   "Alejo",
 			LastName:     "Pezzella",
@@ -83,7 +83,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "813181ca-1c37-5fe5-b0f5-0a99cb7445a2",
+			ID:           "dca343a8-12e5-53d6-89a8-916b120a5ee4",
 			FirstName:    "Marcos",
 			MiddleName:   "Javier",
 			LastName:     "Acuña",
@@ -96,7 +96,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "d273b527-ff15-5133-9f4e-81cd2531503c",
+			ID:           "c62f2ac1-41e8-5d34-b073-2ba0913d0e31",
 			FirstName:    "Gerónimo",
 			LastName:     "Rulli",
 			DateOfBirth:  "1992-05-20T00:00:00.000Z",
@@ -108,7 +108,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "ca9bca3f-31a3-58af-be6e-9ea11b0e0c0a",
+			ID:           "d3b0e8e8-2c34-531a-b608-b24fed0ef986",
 			FirstName:    "Exequiel",
 			MiddleName:   "Alejandro",
 			LastName:     "Palacios",
@@ -121,7 +121,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "a1f44b3b-64de-5796-9616-be11a1fa1ac8",
+			ID:           "b1306b7b-a3a4-5f7c-90fd-dd5bdbed57ba",
 			FirstName:    "Ángel",
 			MiddleName:   "Martín",
 			LastName:     "Correa",
@@ -134,7 +134,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "3e7bc8e0-0523-5495-9f77-2455422dadb5",
+			ID:           "ecec27e8-487b-5622-b116-0855020477ed",
 			FirstName:    "Thiago",
 			MiddleName:   "Ezequiel",
 			LastName:     "Almada",
@@ -147,7 +147,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "dc503d71-b6d7-51e2-90d0-932075a74048",
+			ID:           "7cc8d527-56a2-58bd-9528-2618fc139d30",
 			FirstName:    "Alejandro",
 			MiddleName:   "Darío",
 			LastName:     "Gómez",
@@ -160,7 +160,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "0091ab48-00bb-5744-89f3-200d8582a28a",
+			ID:           "191c82af-0c51-526a-b903-c3600b61b506",
 			FirstName:    "Guido",
 			LastName:     "Rodríguez",
 			DateOfBirth:  "1994-04-12T00:00:00.000Z",
@@ -172,7 +172,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "d13a8488-6373-5265-9c16-98a32c462562",
+			ID:           "7941cd7c-4df1-5952-97e8-1e7f5d08e8aa",
 			FirstName:    "Paulo",
 			MiddleName:   "Exequiel",
 			LastName:     "Dybala",
@@ -185,7 +185,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "551991be-7313-505c-be42-7cfa63ec214c",
+			ID:           "79c96f29-c59f-5f98-96b8-3a5946246624",
 			FirstName:    "Lautaro",
 			MiddleName:   "Javier",
 			LastName:     "Martínez",
@@ -198,7 +198,7 @@ func main() {
 			Starting11:   false,
 		},
 		{
-			ID:           "76db51c9-4d21-50d9-9da0-1939ff821ac1",
+			ID:           "98306555-a466-5d18-804e-dc82175e697b",
 			FirstName:    "Lisandro",
 			LastName:     "Martínez",
 			DateOfBirth:  "1998-01-18T00:00:00.000Z",
