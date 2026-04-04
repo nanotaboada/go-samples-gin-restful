@@ -44,6 +44,12 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+- `.sonarcloud.properties`: SonarCloud Automatic Analysis configuration —
+  sources, tests, coverage exclusions aligned with `codecov.yml` (#239)
+- `.dockerignore`: added `.claude/`, `CLAUDE.md`, `.coderabbit.yaml`,
+  `.sonarcloud.properties`, `.sonarlint/`, `CHANGELOG.md`, `README.md`
+  (#239)
+
 - `docs/adr/`: 10 Architecture Decision Records documenting key design choices — layered architecture, Gin, GORM, SQLite, UUID v4 primary key, squad number as mutation identifier, single domain struct with dedicated request binding type, full update semantics (PUT / PATCH deferred to #172), in-memory cache strategy, and mixed test strategy (closes #162)
 - CD workflow (`go-cd.yml`): added "Verify tag commit is reachable from master" step to `deploy` job — fails early with a descriptive error if the tag's commit is not an ancestor of `origin/master` (closes #231)
 - `.claude/commands/prerelease.md`: `/prerelease` slash command implementing a three-phase pre-release checklist — determine next version and player codename, prepare release branch and CHANGELOG, tag and push (closes #233)
@@ -62,6 +68,9 @@ This project uses famous football player names (A-Z) as release codenames:
 ### Fixed
 
 ### Removed
+
+- `sonar-project.properties`: replaced by `.sonarcloud.properties` for
+  SonarCloud Automatic Analysis compatibility (#239)
 
 ---
 
