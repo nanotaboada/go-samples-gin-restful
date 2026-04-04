@@ -3,7 +3,12 @@
 .git/
 .github/
 .gitignore
+.sonarlint/
 .vscode/
+CHANGELOG.md
+.claude/
+CLAUDE.md
+.coderabbit.yaml
 CODE_OF_CONDUCT.md
 codecov.yml
 commitlint.config.mjs
@@ -11,5 +16,6 @@ CONTRIBUTING.md
 coverage.out
 LICENSE
 postman-collections/
+.sonarcloud.properties
 
 /tests/
