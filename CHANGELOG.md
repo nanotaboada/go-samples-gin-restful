@@ -44,12 +44,23 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+---
+
+## [2.1.0 - Cafu] - 2026-04-04
+
+### Added
+
 - `.sonarcloud.properties`: SonarCloud Automatic Analysis configuration —
   sources, tests, coverage exclusions aligned with `codecov.yml` (#239)
 - `.dockerignore`: added `.claude/`, `CLAUDE.md`, `.coderabbit.yaml`,
   `.sonarcloud.properties`, `.sonarlint/`, `CHANGELOG.md`, `README.md`
   (#239)
-
 - `docs/adr/`: 10 Architecture Decision Records documenting key design choices — layered architecture, Gin, GORM, SQLite, UUID v4 primary key, squad number as mutation identifier, single domain struct with dedicated request binding type, full update semantics (PUT / PATCH deferred to #172), in-memory cache strategy, and mixed test strategy (closes #162)
 - CD workflow (`go-cd.yml`): added "Verify tag commit is reachable from master" step to `deploy` job — fails early with a descriptive error if the tag's commit is not an ancestor of `origin/master` (closes #231)
 - `.claude/commands/prerelease.md`: `/prerelease` slash command implementing a three-phase pre-release checklist — determine next version and player codename, prepare release branch and CHANGELOG, tag and push (closes #233)
@@ -64,8 +75,6 @@ This project uses famous football player names (A-Z) as release codenames:
 - DELETE test restructured: Armani (squad 1) → Lo Celso (squad 27) via POST+DELETE pattern (closes #227)
 - GET by squad number body assertion retargeted to Messi (squad 10) (closes #227)
 - `rest/players.rest` updated: `@newSquadNumber = 27`, `@existingSquadNumber = 23` (closes #227)
-
-### Fixed
 
 ### Removed
 
@@ -165,6 +174,7 @@ then push the annotated tag to trigger the CD workflow.
 
 ---
 
-[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.0.0-bobby...HEAD
+[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.0-cafu...HEAD
+[2.1.0 - Cafu]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.0.0-bobby...v2.1.0-cafu
 [2.0.0 - Bobby]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v1.0.0-ademir...v2.0.0-bobby
 [1.0.0 - Ademir]: https://github.com/nanotaboada/go-samples-gin-restful/releases/tag/v1.0.0-ademir
