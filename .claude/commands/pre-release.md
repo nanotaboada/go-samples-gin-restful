@@ -59,10 +59,10 @@ proceeding. Never create a branch, commit, tag, or push without approval.
 
    **Wait for explicit approval before committing.**
 
-4. Run `/precommit`, explicitly skipping Step 1 (CHANGELOG update — already
-   completed in step 2 above). Tell `/precommit` to skip Step 1 by opening
+4. Run `/pre-commit`, explicitly skipping Step 1 (CHANGELOG update — already
+   completed in step 2 above). Tell `/pre-commit` to skip Step 1 by opening
    with: "Skip Step 1 — CHANGELOG was already updated as part of this release
-   branch." `/precommit` Step 1 is optional when the CHANGELOG has been
+   branch." `/pre-commit` Step 1 is optional when the CHANGELOG has been
    updated by the release preparation step immediately prior.
 
 5. Propose opening a PR from `release/vX.Y.Z-{player}` into `master`.
@@ -78,7 +78,6 @@ proceeding. Never create a branch, commit, tag, or push without approval.
 
 1. Wait — do not proceed until the user confirms:
    - CI is green
-   - CodeRabbit has reviewed (if applicable)
    - The PR has been merged into `master`
 
 2. Once confirmed, run:
