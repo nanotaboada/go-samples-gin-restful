@@ -42,6 +42,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -190,7 +191,7 @@ func TestRequestPOSTPlayersExistingResponseStatusConflict(test *testing.T) {
 // returns a 201 Created status.
 func TestRequestPOSTPlayersNonExistingResponseStatusCreated(test *testing.T) {
 	// Arrange
-	player := MakeNonExistingPlayer()
+	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
@@ -242,7 +243,7 @@ func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *
 	}
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
-	player := MakeNonExistingPlayer()
+	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
@@ -276,7 +277,7 @@ func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *te
 	}
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
-	player := MakeNonExistingPlayer()
+	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
@@ -314,7 +315,7 @@ func TestRequestPOSTPlayersCreateErrorResponseStatusConflict(test *testing.T) {
 	}
 	controller := controller.NewPlayerController(mockService)
 	router := setupRouter(controller)
-	player := MakeNonExistingPlayer()
+	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
@@ -423,16 +424,15 @@ func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *t
 
 /* GET /players/:id --------------------------------------------------------- */
 
-// TestRequestGETPlayerByIDNonExistingResponseStatusNotFound tests that a
-// GET request to /players/:id when the UUID does not exist
+// TestRequestGETPlayerByIDUnknownResponseStatusNotFound tests that a
+// GET request to /players/:id when the UUID is absent from the database
 // returns a 404 Not Found status.
-func TestRequestGETPlayerByIDNonExistingResponseStatusNotFound(test *testing.T) {
+func TestRequestGETPlayerByIDUnknownResponseStatusNotFound(test *testing.T) {
 	// Arrange
-	// Any valid UUID v4 that doesn't exist in the seeded data
-	id := "00000000-0000-4000-8000-000000000000"
+	player := MakeUnknownPlayer()
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
-	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+id, nil)
+	request, err := http.NewRequest(http.MethodGet, route.PlayersPath+"/"+player.ID, nil)
 	if err != nil {
 		test.Fatalf(ErrNewRequest, err)
 	}
@@ -529,7 +529,7 @@ func TestRequestGETPlayerBySquadNumber(test *testing.T) {
 		squadNumber string
 		wantCode    int
 	}{
-		{"NonExistingResponseStatusNotFound", "999", http.StatusNotFound},
+		{"UnknownResponseStatusNotFound", fmt.Sprintf("%d", MakeUnknownPlayer().SquadNumber), http.StatusNotFound},
 		{"InvalidParamResponseStatusBadRequest", InvalidSquadNumber, http.StatusBadRequest},
 		{"ExistingResponseStatusOK", "10", http.StatusOK},
 	}
@@ -625,17 +625,13 @@ func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *te
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
-// TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound tests that a
-// PUT request to /players/squadnumber/:squadnumber when the squad number does not exist
+// TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound tests that a
+// PUT request to /players/squadnumber/:squadnumber when the squad number is absent from the database
 // returns a 404 Not Found status.
-func TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound(test *testing.T) {
+func TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound(test *testing.T) {
 	// Arrange
-	squadNumber := "999"
-	player := model.Player{
-		SquadNumber: 999,
-		FirstName:   "John",
-		LastName:    "Doe",
-	}
+	player := MakeUnknownPlayer()
+	squadNumber := fmt.Sprintf("%d", player.SquadNumber)
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)
@@ -817,7 +813,7 @@ func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 		squadNumber string
 		wantCode    int
 	}{
-		{"NonExistingResponseStatusNotFound", "999", http.StatusNotFound},
+		{"UnknownResponseStatusNotFound", fmt.Sprintf("%d", MakeUnknownPlayer().SquadNumber), http.StatusNotFound},
 		{"InvalidParamResponseStatusBadRequest", InvalidSquadNumber, http.StatusBadRequest},
 	}
 	for _, tc := range cases {
@@ -842,7 +838,7 @@ func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 // a prior test already inserted him) then DELETEs squad 27.
 func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
 	// Arrange
-	player := MakeNonExistingPlayer()
+	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
 	if err != nil {
 		test.Fatalf(ErrMarshal, err)

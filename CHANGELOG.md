@@ -44,7 +44,16 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+- `tests/player_fake.go`: added `MakeUnknownPlayer()` factory — valid UUID absent from the database, for 404-by-lookup scenarios (#244)
+- `tests/player_fake.go`: added package-level doc comment defining the three-term data-state vocabulary (`existing`, `nonexistent`, `unknown`) (#244)
+
 ### Changed
+
+- `tests/player_fake.go`: renamed `MakeNonExistingPlayer` → `MakeNonexistentPlayer` to align with canonical cross-repo spelling (#244)
+- `tests/main_test.go`: updated all `MakeNonExistingPlayer()` call sites to `MakeNonexistentPlayer()` (#244)
+- `tests/main_test.go`: renamed `TestRequestGETPlayerByIDNonExistingResponseStatusNotFound` → `TestRequestGETPlayerByIDUnknownResponseStatusNotFound`; now uses `MakeUnknownPlayer()` (#244)
+- `tests/main_test.go`: renamed `TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound` → `TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound`; now uses `MakeUnknownPlayer()` (#244)
+- `tests/main_test.go`: updated `NonExisting` table sub-cases to `Unknown` for GET/DELETE by squad number, driven by `MakeUnknownPlayer().SquadNumber` (#244)
 
 ### Fixed
 
