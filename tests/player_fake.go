@@ -1,6 +1,14 @@
 // Package tests provides integration and utility code to support automated
 // testing of the application.
 //
+// # Data-state vocabulary for fake factory functions
+//
+// Factory functions follow a shared three-term vocabulary across all comparison repos:
+//
+//   - existing    — player is present in the database
+//   - nonexistent — player is absent, valid shape for creation (POST scenarios)
+//   - unknown     — valid ID format, absent from database (404-by-lookup scenarios)
+//
 // # UUID strategy for test fixtures
 //
 // Production code generates player IDs using UUID v4 (random) via
@@ -49,13 +57,13 @@ func MakeExistingPlayer() model.Player {
 	}
 }
 
-// MakeNonExistingPlayer returns a Player that does not exist in the original collection.
+// MakeNonexistentPlayer returns a Player that does not exist in the original collection.
 // Giovani Lo Celso was selected for the preliminary squad but ruled out by a hamstring
 // injury during training camp and replaced by Thiago Almada. Squad 27 is outside the
 // seeded range, so POST never conflicts with seeded data and a failed cleanup never
 // corrupts seeded records.
 // ID is UUID v5 derived from "Giovani-Lo Celso" using the canonical namespace.
-func MakeNonExistingPlayer() model.Player {
+func MakeNonexistentPlayer() model.Player {
 	return model.Player{
 		ID:           "f8d13028-0d22-5513-8774-08a2332b5814",
 		FirstName:    "Giovani",
@@ -68,6 +76,17 @@ func MakeNonExistingPlayer() model.Player {
 		Team:         "Villarreal CF",
 		League:       "La Liga",
 		Starting11:   false,
+	}
+}
+
+// MakeUnknownPlayer returns a Player with a valid UUID that does not exist in the
+// database. Used for 404-by-lookup scenarios (GET by ID, PUT/DELETE by squad number).
+// Squad 99 is chosen to be outside the seeded range and distinct from the nonexistent
+// fixture (squad 27), so the two terms remain unambiguous in test output.
+func MakeUnknownPlayer() model.Player {
+	return model.Player{
+		ID:          "00000000-0000-4000-8000-000000000000",
+		SquadNumber: 99,
 	}
 }
 
