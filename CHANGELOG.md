@@ -46,6 +46,10 @@ This project uses famous football player names (A-Z) as release codenames:
 
 - `tests/player_fake.go`: added `MakeUnknownPlayer()` factory — valid UUID absent from the database, for 404-by-lookup scenarios (#244)
 - `tests/player_fake.go`: added package-level doc comment defining the three-term data-state vocabulary (`existing`, `nonexistent`, `unknown`) (#244)
+- `migrations/00001_create_players_table.sql`: schema migration — creates `players` table with `id TEXT PRIMARY KEY` (UUID string) and unique index on `squadNumber` (#194)
+- `migrations/00002_seed_starting11.sql`: seed migration — inserts 11 Starting XI players with deterministic UUID v5 values (#194)
+- `migrations/00003_seed_substitutes.sql`: seed migration — inserts 14 Substitute players with deterministic UUID v5 values (#194)
+- `migrations/embed.go`: embeds SQL migration files into the binary via `embed.FS` for path-independent deployment (#194)
 
 ### Changed
 
@@ -54,10 +58,20 @@ This project uses famous football player names (A-Z) as release codenames:
 - `tests/main_test.go`: renamed `TestRequestGETPlayerByIDNonExistingResponseStatusNotFound` → `TestRequestGETPlayerByIDUnknownResponseStatusNotFound`; now uses `MakeUnknownPlayer()` (#244)
 - `tests/main_test.go`: renamed `TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound` → `TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound`; now uses `MakeUnknownPlayer()` (#244)
 - `tests/main_test.go`: updated `NonExisting` table sub-cases to `Unknown` for GET/DELETE by squad number, driven by `MakeUnknownPlayer().SquadNumber` (#244)
+- `data/player_data.go`: replaced `AutoMigrate` with `goose.SetBaseFS` + `goose.Up` for versioned, reproducible schema and seed management (#194)
+- `tests/main_test.go`: removed `AutoMigrate` + JSON seeding from `TestMain`; the in-memory SQLite DB is now initialized via goose migrations, consistent with production (#194)
+- `scripts/entrypoint.sh`: removed pre-seeded DB copy logic; migrations run automatically at app startup (#194)
+- `Dockerfile`: removed `storage/hold/` copy; added `migrations/` to builder stage for embed compilation (#194)
+- `README.md`: replaced pre-seeded database notes with goose migration commands and updated tech stack table (#194)
+- `.gitignore`: added `storage/*.db` to exclude runtime-generated SQLite files (#194)
 
 ### Fixed
 
 ### Removed
+
+- `storage/players-sqlite3.db`: removed pre-seeded binary database file; replaced by versioned SQL migrations (#194)
+- `tests/player_fake.go`: removed `MakePlayersFromJSON()` — superseded by goose migrations as the seeding mechanism (#194)
+- `tests/players.json`: removed JSON fixture file — superseded by SQL seed migrations as the authoritative source of player data (#194)
 
 ---
 

@@ -24,6 +24,7 @@ COPY main.go            ./
 COPY controller/        ./controller/
 COPY data/              ./data/
 COPY docs/              ./docs/
+COPY migrations/        ./migrations/
 COPY model/             ./model/
 COPY route/             ./route/
 COPY service/           ./service/
@@ -54,7 +55,7 @@ LABEL org.sonarsource.docker.dockerfile="/Dockerfile"
 
 # https://rules.sonarsource.com/docker/RSPEC-6504/
 
-# Copy application binary and database file
+# Copy application binary
 COPY --from=builder     /app/app                    .
 
 # Copy metadata docs for container registries (e.g.: GitHub Container Registry)
@@ -63,11 +64,6 @@ COPY --chmod=444        README.md                   ./
 # Copy entrypoint and healthcheck scripts
 COPY --chmod=555        scripts/entrypoint.sh       ./entrypoint.sh
 COPY --chmod=555        scripts/healthcheck.sh      ./healthcheck.sh
-
-# The 'hold' is our storage compartment within the image. Here, we copy a
-# pre-seeded SQLite database file, which Compose will mount as a persistent
-# 'storage' volume when the container starts up.
-COPY --chmod=555        storage/                    ./hold/
 
 # Add system user and prepare volume mount point
 RUN addgroup -S gin && \

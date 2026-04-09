@@ -6,13 +6,15 @@ import (
 	"log"
 	"time"
 
-	"github.com/nanotaboada/go-samples-gin-restful/model"
+	"github.com/nanotaboada/go-samples-gin-restful/migrations"
+	"github.com/pressly/goose/v3"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-// Connect initializes and returns a GORM database connection backed by SQLite.
+// Connect initializes and returns a GORM database connection backed by SQLite,
+// then applies all pending versioned migrations via goose.
 //
 // dataSourceName is a SQLite DSN (Data Source Name).  Two forms are used in
 // this project:
@@ -23,14 +25,10 @@ import (
 //     the same process share the same in-memory database; without it each
 //     call to gorm.Open would get an empty, isolated database.
 //
-// AutoMigrate compares the current SQLite schema with the Player struct and
-// applies the minimum set of DDL changes (CREATE TABLE if absent, ADD COLUMN
-// for new fields, CREATE INDEX for new uniqueIndex tags).  It never drops
-// columns or changes column types, so it cannot handle breaking schema changes
-// such as the id column type changing from integer to text (UUID).  If the
-// on-disk schema is incompatible with the current Player struct, re-seed the
-// database using the tools/seed_001_starting_eleven.go and
-// tools/seed_002_substitutes.go scripts before starting the server.
+// Schema and seed migrations live in the /migrations directory and are
+// embedded into the binary at compile time.  goose tracks applied migrations
+// in a goose_db_version table and is idempotent: already-applied migrations
+// are skipped on subsequent startups.
 func Connect(dataSourceName string) *gorm.DB {
 	// GORM's built-in logger prints slow queries and all SQL statements.
 	// SlowThreshold defines when a query is considered "slow" and logged at
@@ -57,10 +55,18 @@ func Connect(dataSourceName string) *gorm.DB {
 		log.Fatal(err)
 	}
 
-	// AutoMigrate creates or updates the "players" table to match the Player
-	// struct.  GORM derives the table name from the struct name by
-	// pluralising it ("Player" → "players").
-	if err := db.AutoMigrate(&model.Player{}); err != nil {
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	goose.SetBaseFS(migrations.FS)
+
+	if err := goose.SetDialect("sqlite3"); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := goose.Up(sqlDB, "."); err != nil {
 		log.Fatal(err)
 	}
 

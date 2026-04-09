@@ -23,5 +23,8 @@ go-samples-gin-restful
 # Go workspace file
 go.work
 
+# SQLite database files (generated at runtime by goose migrations)
+storage/*.db
+
 # Claude Code local settings (machine-specific, not for version control)
 .claude/settings.local.json

@@ -21,7 +21,7 @@ Proof of Concept for a RESTful Web Service built with **Gin** and **Go 1.25**. T
 - 📚 **Interactive Documentation** - Auto-generated Swagger UI with VS Code and JetBrains REST Client support
 - ⚡ **Performance Caching** - In-memory response caching via gin-contrib/cache with GORM
 - 🚦 **Comprehensive Testing** - Full endpoint coverage with testify, race detector, and automated reporting to Codecov
-- 🐳 **Containerized Deployment** - Multi-stage Docker builds with pre-seeded database
+- 🐳 **Containerized Deployment** - Multi-stage Docker builds with migration-based database initialization
 - 🔄 **Automated Pipeline** - Continuous integration with race detector, Docker publishing, and GitHub releases
 
 ## Tech Stack
@@ -32,6 +32,7 @@ Proof of Concept for a RESTful Web Service built with **Gin** and **Go 1.25**. T
 | **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
 | **ORM** | [GORM](https://github.com/go-gorm/gorm) |
 | **Database** | [SQLite](https://github.com/sqlite/sqlite) |
+| **Migrations** | [goose](https://github.com/pressly/goose) |
 | **Caching** | [gin-contrib/cache](https://github.com/gin-contrib/cache) |
 | **API Documentation** | [Swagger/OpenAPI](https://github.com/swaggo/swag) |
 | **Testing** | [testify](https://github.com/stretchr/testify) |
@@ -182,7 +183,7 @@ Once the application is running, you can access:
 docker compose up
 ```
 
-> 💡 **Note:** On first run, the container copies a pre-seeded SQLite database into a persistent volume. On subsequent runs, that volume is reused and the data is preserved.
+> 💡 **Note:** On first run, the app applies all goose migrations (schema + seed data) to the persistent volume. On subsequent runs, already-applied migrations are skipped automatically.
 
 ### Stop
 
@@ -192,7 +193,7 @@ docker compose down
 
 ### Reset Database
 
-To remove the volume and reinitialize the database from the built-in seed file:
+To remove the volume and reinitialize the database from migrations:
 
 ```bash
 docker compose down -v
@@ -211,6 +212,21 @@ docker pull ghcr.io/nanotaboada/go-samples-gin-restful:ademir
 
 # Latest release
 docker pull ghcr.io/nanotaboada/go-samples-gin-restful:latest
+```
+
+## Database Migrations
+
+Schema and seed data are managed with [goose](https://github.com/pressly/goose) and are embedded into the binary. Migrations run automatically on startup. To inspect or manage migrations manually:
+
+```bash
+# Check migration status
+goose -dir migrations sqlite3 ./storage/players-sqlite3.db status
+
+# Apply all pending migrations
+goose -dir migrations sqlite3 ./storage/players-sqlite3.db up
+
+# Roll back the most recent migration
+goose -dir migrations sqlite3 ./storage/players-sqlite3.db down
 ```
 
 ## Environment Variables

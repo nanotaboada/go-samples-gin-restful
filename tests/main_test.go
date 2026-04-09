@@ -9,12 +9,12 @@
 //
 // The seeding flow is:
 //
-//	players.json → MakePlayersFromJSON() → testDB.Create() → in-memory SQLite
+//	goose migrations (embed.FS) → goose.Up() → in-memory SQLite
 //
-// After [TestMain] completes every test hits SQLite directly — the JSON file
-// is used exactly once as a human-readable fixture source and is then
-// discarded. This means schema constraints (e.g. the unique index on
-// squadNumber) are enforced for real, not mocked.
+// After [TestMain] completes every test hits SQLite directly — schema and
+// seed data are applied by the same goose migrations used in production,
+// so schema constraints (e.g. the unique index on squadNumber) are enforced
+// for real, not mocked.
 //
 // # Mock-assisted tests
 //
@@ -43,7 +43,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -74,16 +73,6 @@ var (
 func TestMain(main *testing.M) {
 	gin.SetMode(gin.TestMode)
 	testDB = data.Connect("file::memory:?cache=shared")
-	if err := testDB.AutoMigrate(&model.Player{}); err != nil {
-		log.Fatal(err)
-	}
-	players, err := MakePlayersFromJSON()
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := testDB.Create(&players).Error; err != nil {
-		log.Fatal(err)
-	}
 	// playerService is local - only used to initialize playerController,
 	// then garbage collected
 	playerService := service.NewPlayerService(testDB)
