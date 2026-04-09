@@ -59,11 +59,15 @@ This project uses famous football player names (A-Z) as release codenames:
 - `tests/main_test.go`: renamed `TestRequestPUTPlayerBySquadNumberNonExistingResponseStatusNotFound` → `TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound`; now uses `MakeUnknownPlayer()` (#244)
 - `tests/main_test.go`: updated `NonExisting` table sub-cases to `Unknown` for GET/DELETE by squad number, driven by `MakeUnknownPlayer().SquadNumber` (#244)
 - `data/player_data.go`: replaced `AutoMigrate` with `goose.SetBaseFS` + `goose.Up` for versioned, reproducible schema and seed management (#194)
+- `data/player_data.go`: set `SetMaxOpenConns(1)` and `SetMaxIdleConns(1)` to prevent SQLite write contention under concurrent load (#194)
+- `migrations/00001_create_players_table.sql`: changed `dateOfBirth` from `VARCHAR(20)` to `TEXT` (values are 24 chars; PostgreSQL enforces length) and `starting11` from `INTEGER` to `BOOLEAN` for cross-dialect correctness (#194)
+- `migrations/00003_seed_substitutes.sql`: corrected team name typos — `Villareal` → `Villarreal`, `Nottingham Forrest` → `Nottingham Forest` (#194)
+- `migrations/00002_seed_starting11.sql`, `migrations/00003_seed_substitutes.sql`: tightened Down migrations to delete by explicit UUID instead of broad `WHERE starting11 = 0/1` (#194)
 - `tests/main_test.go`: removed `AutoMigrate` + JSON seeding from `TestMain`; the in-memory SQLite DB is now initialized via goose migrations, consistent with production (#194)
 - `scripts/entrypoint.sh`: removed pre-seeded DB copy logic; migrations run automatically at app startup (#194)
 - `Dockerfile`: removed `storage/hold/` copy; added `migrations/` to builder stage for embed compilation (#194)
 - `README.md`: replaced pre-seeded database notes with goose migration commands and updated tech stack table (#194)
-- `.gitignore`: added `storage/*.db` to exclude runtime-generated SQLite files (#194)
+- `.gitignore`: added `storage/*.db` and SQLite sidecar patterns (`*.db-wal`, `*.db-shm`, `*.db-journal`) to exclude runtime-generated files (#194)
 
 ### Fixed
 

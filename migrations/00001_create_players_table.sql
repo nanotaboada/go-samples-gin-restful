@@ -4,13 +4,13 @@ CREATE TABLE IF NOT EXISTS players (
     firstName    VARCHAR(100),
     middleName   VARCHAR(100),
     lastName     VARCHAR(100),
-    dateOfBirth  VARCHAR(20),
+    dateOfBirth  TEXT,
     squadNumber  INTEGER     UNIQUE NOT NULL,
     position     VARCHAR(50),
     abbrPosition VARCHAR(10),
     team         VARCHAR(100),
     league       VARCHAR(100),
-    starting11   INTEGER
+    starting11   BOOLEAN
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_players_squad_number ON players (squadNumber);

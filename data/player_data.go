@@ -60,6 +60,11 @@ func Connect(dataSourceName string) *gorm.DB {
 		log.Fatal(err)
 	}
 
+	// SQLite does not support concurrent writes; a single open connection
+	// prevents "database is locked" errors under concurrent request load.
+	sqlDB.SetMaxOpenConns(1)
+	sqlDB.SetMaxIdleConns(1)
+
 	goose.SetBaseFS(migrations.FS)
 
 	if err := goose.SetDialect("sqlite3"); err != nil {

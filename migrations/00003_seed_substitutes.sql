@@ -3,8 +3,8 @@ INSERT INTO players (id, firstName, middleName, lastName, dateOfBirth, squadNumb
 VALUES
     ('5a9cd988-95e6-54c1-bc34-9aa08acca8d0', 'Franco',    'Daniel',    'Armani',   '1986-10-16T00:00:00.000Z',  1, 'Goalkeeper',       'GK', 'River Plate',            'Copa de la Liga',     0),
     ('c62f2ac1-41e8-5d34-b073-2ba0913d0e31', 'Gerónimo',  NULL,        'Rulli',    '1992-05-20T00:00:00.000Z', 12, 'Goalkeeper',       'GK', 'Ajax Amsterdam',         'Eredivisie',          0),
-    ('5fdb10e8-38c0-5084-9a3f-b369a960b9c2', 'Juan',      'Marcos',    'Foyth',    '1998-01-12T00:00:00.000Z',  2, 'Right-Back',       'RB', 'Villareal',              'La Liga',             0),
-    ('bbd441f7-fcfb-5834-8468-2a9004b64c8c', 'Gonzalo',   'Ariel',     'Montiel',  '1997-01-01T00:00:00.000Z',  4, 'Right-Back',       'RB', 'Nottingham Forrest',     'Premier League',      0),
+    ('5fdb10e8-38c0-5084-9a3f-b369a960b9c2', 'Juan',      'Marcos',    'Foyth',    '1998-01-12T00:00:00.000Z',  2, 'Right-Back',       'RB', 'Villarreal',             'La Liga',             0),
+    ('bbd441f7-fcfb-5834-8468-2a9004b64c8c', 'Gonzalo',   'Ariel',     'Montiel',  '1997-01-01T00:00:00.000Z',  4, 'Right-Back',       'RB', 'Nottingham Forest',      'Premier League',      0),
     ('d8bfea25-f189-5d5e-b3a5-ed89329b9f7c', 'Germán',    'Alejo',     'Pezzella', '1991-06-27T00:00:00.000Z',  6, 'Centre-Back',      'CB', 'Real Betis Balompié',    'La Liga',             0),
     ('dca343a8-12e5-53d6-89a8-916b120a5ee4', 'Marcos',    'Javier',    'Acuña',    '1991-10-28T00:00:00.000Z',  8, 'Left-Back',        'LB', 'Sevilla FC',             'La Liga',             0),
     ('98306555-a466-5d18-804e-dc82175e697b', 'Lisandro',  NULL,        'Martínez', '1998-01-18T00:00:00.000Z', 25, 'Centre-Back',      'CB', 'Manchester United',      'Premier League',      0),
