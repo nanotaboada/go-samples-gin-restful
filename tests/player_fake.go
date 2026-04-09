@@ -31,11 +31,6 @@
 package tests
 
 import (
-	"encoding/json"
-	"log"
-	"os"
-	"path/filepath"
-
 	"github.com/nanotaboada/go-samples-gin-restful/model"
 )
 
@@ -106,25 +101,4 @@ func MakeUpdatePlayer() model.Player {
 		League:       "Premier League",
 		Starting11:   true,
 	}
-}
-
-// MakePlayersFromJSON loads test players from a JSON file.
-func MakePlayersFromJSON() ([]model.Player, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-	log.Println("Current directory:", wd)
-	// Important: tests are run from the project root, so the path is relative
-	// to the root (not the tests folder).
-	name := filepath.Join(wd, "players.json")
-	file, err := os.ReadFile(name)
-	if err != nil {
-		return nil, err
-	}
-	var players []model.Player
-	if err := json.Unmarshal(file, &players); err != nil {
-		return nil, err
-	}
-	return players, nil
 }

@@ -107,7 +107,7 @@ Tags follow the format `v{SEMVER}-{PLAYER}` (e.g. `v2.0.0-bobby`). The CD workfl
 
 ### Ask before changing
 
-- Database schema (`Player` struct fields) — `AutoMigrate` cannot handle breaking changes (column type changes, column drops); re-seeding from the seed scripts is required and must be flagged explicitly
+- Database schema (`Player` struct fields) — schema changes require a new goose migration file; breaking changes (column type or column removal) also require updating the seed migrations and must be flagged explicitly
 - Dependencies (`go.mod`)
 - CI/CD configuration (`.github/workflows/`)
 - Docker setup
@@ -145,7 +145,7 @@ This project uses Spec-Driven Development (SDD): discuss in Plan mode first, cre
 
 **Add an endpoint**: Define model in `/model/` (if needed) → add service method in `/service/` → create controller handler in `/controller/` → register route in `/route/` → add Swagger comments → add tests → run `swag init` → run pre-commit checks.
 
-**Modify schema**: Update `Player` struct → update GORM queries in `/service/` → update controller handlers → update `/tests/players.json` → fix test assertions → run `swag init` → run `go test ./...`. If the change is breaking (column type or column removal), warn that `AutoMigrate` will not apply it automatically — the database must be re-created using the seed scripts.
+**Modify schema**: Update `Player` struct → add a new goose migration in `/migrations/` → update GORM queries in `/service/` → update controller handlers → fix test assertions → run `swag init` → run `go test ./...`. If the change is breaking (column type or column removal), also update the seed migrations and warn that the existing database must be re-created (`goose down` then `goose up`, or `docker compose down -v`).
 
 **After completing work**: Suggest a branch name (e.g. `feat/add-player-stats`) and a commit message following Conventional Commits including co-author line:
 

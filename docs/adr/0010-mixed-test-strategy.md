@@ -17,14 +17,14 @@ Testing strategies for a layered HTTP API:
 
 Two distinct categories of test scenario exist in this codebase:
 
-1. **Happy paths and expected branches** (200, 201, 204, 400, 404, 409): These can be exercised reliably with a real in-memory SQLite database seeded from `players.json`.
+1. **Happy paths and expected branches** (200, 201, 204, 400, 404, 409): These can be exercised reliably with a real in-memory SQLite database seeded via goose migrations.
 2. **Unreachable error branches** (500s from database failure): A healthy in-memory SQLite database cannot simulate a connection failure or a general query error. These branches require a controlled failure injection.
 
 ## Decision
 
 We will use two complementary approaches:
 
-1. **Integration tests with real in-memory SQLite** for all happy paths, validation errors (400), not-found cases (404), conflict detection (409), and business logic branches. `TestMain` seeds 23 players from `players.json` into a shared in-memory database before the test suite runs.
+1. **Integration tests with real in-memory SQLite** for all happy paths, validation errors (400), not-found cases (404), conflict detection (409), and business logic branches. `TestMain` calls `data.Connect` which applies all goose migrations (schema + 25 seed players) to a shared in-memory database before the test suite runs.
 
 2. **Mock injection via `MockPlayerService`** exclusively for error branches unreachable with a healthy database (e.g., simulating a 500 when `RetrieveAll` fails). `MockPlayerService` uses an opt-in function field pattern — each test overrides only the method relevant to the scenario; unset methods return safe zero-value defaults.
 
