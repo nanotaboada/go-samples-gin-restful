@@ -17,7 +17,6 @@ env:
 
 jobs:
   test:
-    name: Test before deployment
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -47,13 +46,14 @@ jobs:
             -covermode=atomic \
             -coverprofile=coverage.out
 
-  deploy:
-    name: Build and publish Docker image
+  release:
     needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -62,7 +62,7 @@ jobs:
 
       - name: Verify tag commit is reachable from master
         run: |
-          if ! git branch -r --contains "${{ github.sha }}" | grep -q "origin/master"; then
+          if ! git merge-base --is-ancestor "${{ github.sha }}" origin/master; then
             echo "❌ Error: Commit ${{ github.sha }} is not reachable from origin/master"
             echo "Ensure the PR is merged into master before pushing a release tag"
             exit 1
@@ -70,7 +70,7 @@ jobs:
           echo "✅ Commit ${{ github.sha }} is reachable from origin/master"
 
       - name: Extract version and player name from tag
-        id: extract_tag
+        id: version
         run: |
           # Tag format: v1.0.0-ademir
           TAG_NAME=${GITHUB_REF#refs/tags/}
@@ -124,18 +124,26 @@ jobs:
         uses: docker/setup-buildx-action@v4.0.0
 
       - name: Build and push Docker image to GitHub Container Registry
+        id: push
         uses: docker/build-push-action@v7.1.0
         with:
           context: .
           push: true
-          platforms: linux/amd64
-          provenance: false
+          platforms: linux/amd64,linux/arm64
+          provenance: mode=max
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
             ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.semver }}
-            ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.player }}
+            ghcr.io/${{ github.repository }}:${{ steps.version.outputs.semver }}
+            ghcr.io/${{ github.repository }}:${{ steps.version.outputs.player }}
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
 
       - name: Generate changelog
         id: changelog
@@ -145,15 +153,15 @@ jobs:
 
           if [ -z "$PREVIOUS_TAG" ]; then
             echo "📝 First release - no previous tag found"
-            CHANGELOG="Initial release"
+            CHANGELOG="No changes (first release)"
           else
-            echo "📝 Generating changelog from $PREVIOUS_TAG to ${{ steps.extract_tag.outputs.tag_name }}"
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" ${PREVIOUS_TAG}..${{ steps.extract_tag.outputs.tag_name }})
-          fi
+            echo "📝 Generating changelog from $PREVIOUS_TAG to ${{ steps.version.outputs.tag_name }}"
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges ${PREVIOUS_TAG}..${{ steps.version.outputs.tag_name }})
 
-          # Write changelog to file
-          echo "$CHANGELOG" > changelog.txt
-          cat changelog.txt
+            if [ -z "$CHANGELOG" ]; then
+              CHANGELOG="No new changes since $PREVIOUS_TAG"
+            fi
+          fi
 
           # Set output for use in release body
           {
@@ -165,10 +173,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2.6.1
         with:
-          name: "v${{ steps.extract_tag.outputs.semver }} - ${{ steps.extract_tag.outputs.player }} 🎖️"
-          tag_name: ${{ steps.extract_tag.outputs.tag_name }}
+          name: "v${{ steps.version.outputs.semver }} - ${{ steps.version.outputs.player }} 🎖️"
+          tag_name: ${{ steps.version.outputs.tag_name }}
           body: |
-            # Release ${{ steps.extract_tag.outputs.semver }} - ${{ steps.extract_tag.outputs.player }} 🎖️
+            # Release ${{ steps.version.outputs.semver }} - ${{ steps.version.outputs.player }} 🎖️
 
             ## Docker Images
 
@@ -176,22 +184,14 @@ jobs:
 
             ```bash
             # By semantic version (recommended)
-            docker pull ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.semver }}
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.version.outputs.semver }}
 
             # By player name
-            docker pull ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.player }}
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.version.outputs.player }}
 
             # Latest
             docker pull ghcr.io/${{ github.repository }}:latest
             ```
-
-            ## Quick Start
-
-            ```bash
-            docker run -p 9000:9000 ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.semver }}
-            ```
-
-            Visit http://localhost:9000/swagger/index.html for API documentation.
 
             ---
 
