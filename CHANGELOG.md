@@ -44,6 +44,18 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+### Changed
+
+### Removed
+
+### Fixed
+
+---
+
+## [2.1.1 - Di Stéfano] - 2026-04-12
+
+### Added
+
 - `tests/player_fake.go`: added `MakeUnknownPlayer()` factory — valid UUID absent from the database, for 404-by-lookup scenarios (#244)
 - `tests/player_fake.go`: added package-level doc comment defining the three-term data-state vocabulary (`existing`, `nonexistent`, `unknown`) (#244)
 - `migrations/00001_create_players_table.sql`: schema migration — creates `players` table with `id TEXT PRIMARY KEY` (UUID string) and unique index on `squadNumber` (#194)
@@ -69,13 +81,13 @@ This project uses famous football player names (A-Z) as release codenames:
 - `README.md`: replaced pre-seeded database notes with goose migration commands and updated tech stack table (#194)
 - `.gitignore`: added `storage/*.db` and SQLite sidecar patterns (`*.db-wal`, `*.db-shm`, `*.db-journal`) to exclude runtime-generated files (#194)
 
-### Fixed
-
 ### Removed
 
 - `storage/players-sqlite3.db`: removed pre-seeded binary database file; replaced by versioned SQL migrations (#194)
 - `tests/player_fake.go`: removed `MakePlayersFromJSON()` — superseded by goose migrations as the seeding mechanism (#194)
 - `tests/players.json`: removed JSON fixture file — superseded by SQL seed migrations as the authoritative source of player data (#194)
+
+### Fixed
 
 ---
 
@@ -201,7 +213,8 @@ then push the annotated tag to trigger the CD workflow.
 
 ---
 
-[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.0-cafu...HEAD
+[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.1-distefano...HEAD
+[2.1.1 - Di Stéfano]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.0-cafu...v2.1.1-distefano
 [2.1.0 - Cafu]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.0.0-bobby...v2.1.0-cafu
 [2.0.0 - Bobby]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v1.0.0-ademir...v2.0.0-bobby
 [1.0.0 - Ademir]: https://github.com/nanotaboada/go-samples-gin-restful/releases/tag/v1.0.0-ademir
