@@ -209,34 +209,31 @@ func TestRequestPOSTPlayersNonExistingResponseStatusCreated(test *testing.T) {
 // out-of-range squadNumber) returns a 422 Unprocessable Entity status.
 func TestRequestPOSTPlayersValidationResponseStatusUnprocessableEntity(test *testing.T) {
 	cases := []struct {
-		name string
-		body string
+		name   string
+		player model.Player
 	}{
 		{
 			"MissingRequiredFieldResponseStatusUnprocessableEntity",
-			func() string {
+			func() model.Player {
 				p := MakeNonexistentPlayer()
 				p.FirstName = ""
-				b, _ := json.Marshal(p)
-				return string(b)
+				return p
 			}(),
 		},
 		{
 			"SquadNumberBelowMinResponseStatusUnprocessableEntity",
-			func() string {
+			func() model.Player {
 				p := MakeNonexistentPlayer()
 				p.SquadNumber = 0
-				b, _ := json.Marshal(p)
-				return string(b)
+				return p
 			}(),
 		},
 		{
 			"SquadNumberAboveMaxResponseStatusUnprocessableEntity",
-			func() string {
+			func() model.Player {
 				p := MakeNonexistentPlayer()
 				p.SquadNumber = 100
-				b, _ := json.Marshal(p)
-				return string(b)
+				return p
 			}(),
 		},
 	}
@@ -244,9 +241,13 @@ func TestRequestPOSTPlayersValidationResponseStatusUnprocessableEntity(test *tes
 		test.Run(tc.name, func(t *testing.T) {
 
 			// Arrange
+			body, err := json.Marshal(tc.player)
+			if err != nil {
+				t.Fatalf(ErrMarshal, err)
+			}
 			router := setupRouter(playerController)
 			recorder := httptest.NewRecorder()
-			request, err := http.NewRequest(http.MethodPost, route.GetAllPath, strings.NewReader(tc.body))
+			request, err := http.NewRequest(http.MethodPost, route.GetAllPath, bytes.NewBuffer(body))
 			if err != nil {
 				t.Fatalf(ErrNewRequest, err)
 			}
@@ -814,36 +815,33 @@ func TestRequestPUTPlayerBySquadNumberValidationResponseStatusUnprocessableEntit
 	cases := []struct {
 		name        string
 		squadNumber string
-		body        string
+		player      model.Player
 	}{
 		{
 			"MissingRequiredFieldResponseStatusUnprocessableEntity",
 			"23",
-			func() string {
+			func() model.Player {
 				p := MakeUpdatePlayer()
 				p.FirstName = ""
-				b, _ := json.Marshal(p)
-				return string(b)
+				return p
 			}(),
 		},
 		{
 			"SquadNumberBelowMinResponseStatusUnprocessableEntity",
 			"23",
-			func() string {
+			func() model.Player {
 				p := MakeUpdatePlayer()
 				p.SquadNumber = 0
-				b, _ := json.Marshal(p)
-				return string(b)
+				return p
 			}(),
 		},
 		{
 			"SquadNumberAboveMaxResponseStatusUnprocessableEntity",
 			"23",
-			func() string {
+			func() model.Player {
 				p := MakeUpdatePlayer()
 				p.SquadNumber = 100
-				b, _ := json.Marshal(p)
-				return string(b)
+				return p
 			}(),
 		},
 	}
@@ -851,9 +849,13 @@ func TestRequestPUTPlayerBySquadNumberValidationResponseStatusUnprocessableEntit
 		test.Run(tc.name, func(t *testing.T) {
 
 			// Arrange
+			body, err := json.Marshal(tc.player)
+			if err != nil {
+				t.Fatalf(ErrMarshal, err)
+			}
 			router := setupRouter(playerController)
 			recorder := httptest.NewRecorder()
-			request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(tc.squadNumber), strings.NewReader(tc.body))
+			request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(tc.squadNumber), bytes.NewBuffer(body))
 			if err != nil {
 				t.Fatalf(ErrNewRequest, err)
 			}
