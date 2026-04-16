@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/nanotaboada/go-samples-gin-restful/model"
 	"github.com/nanotaboada/go-samples-gin-restful/service"
@@ -56,15 +57,22 @@ func isUniqueConstraintError(err error) bool {
 // @Success 201 "Created"
 // @Failure 400 "Bad Request"
 // @Failure 409 "Conflict"
+// @Failure 422 "Unprocessable Entity"
 // @Failure 500 "Internal Server Error"
 // @Router /players [post]
 func (c *PlayerController) Post(context *gin.Context) {
 	var player model.Player
-	// BindJSON deserialises the request body into the struct and validates
-	// required fields declared with the `binding:"required"` tag.  On failure
-	// it writes a 400 response automatically; we still return to stop execution.
-	if err := context.BindJSON(&player); err != nil {
-		context.Status(http.StatusBadRequest)
+	// ShouldBindJSON deserialises the request body without writing a response
+	// automatically, giving us full control over the status code.
+	// validator.ValidationErrors signals a field-level constraint failure → 422.
+	// Any other error (EOF, syntax) is a malformed request → 400.
+	if err := context.ShouldBindJSON(&player); err != nil {
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			context.Status(http.StatusUnprocessableEntity)
+		} else {
+			context.Status(http.StatusBadRequest)
+		}
 		return
 	}
 	// UUID is always generated server-side; any client-provided ID is overwritten.
@@ -183,6 +191,7 @@ func (c *PlayerController) GetBySquadNumber(context *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 400 "Bad Request"
 // @Failure 404 "Not Found"
+// @Failure 422 "Unprocessable Entity"
 // @Failure 500 "Internal Server Error"
 // @Router /players/squadnumber/{squadnumber} [put]
 func (c *PlayerController) Put(context *gin.Context) {
@@ -192,9 +201,20 @@ func (c *PlayerController) Put(context *gin.Context) {
 		return
 	}
 	var player model.Player
+	// ShouldBindJSON gives us control over the response code.
+	// validator.ValidationErrors → 422; parse/syntax errors → 400.
+	if err = context.ShouldBindJSON(&player); err != nil {
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			context.Status(http.StatusUnprocessableEntity)
+		} else {
+			context.Status(http.StatusBadRequest)
+		}
+		return
+	}
 	// Guard against mismatched URL and body: the squad number in the URL must
 	// equal the one in the JSON body, otherwise the request is ambiguous → 400.
-	if err = context.BindJSON(&player); err != nil || player.SquadNumber != squadNumber {
+	if player.SquadNumber != squadNumber {
 		context.Status(http.StatusBadRequest)
 		return
 	}

@@ -27,6 +27,8 @@ definitions:
         type: string
       squadNumber:
         description: User-facing unique identifier; DB-enforced uniqueness
+        maximum: 99
+        minimum: 1
         type: integer
       starting11:
         description: Indicates whether the Player is in the starting 11
@@ -34,6 +36,14 @@ definitions:
       team:
         description: The team to which the Player belongs
         type: string
+    required:
+    - abbrPosition
+    - dateOfBirth
+    - firstName
+    - lastName
+    - league
+    - position
+    - team
     type: object
 info:
   contact: {}
@@ -71,6 +81,8 @@ paths:
           description: Bad Request
         "409":
           description: Conflict
+        "422":
+          description: Unprocessable Entity
         "500":
           description: Internal Server Error
       summary: Creates a Player
@@ -163,6 +175,8 @@ paths:
           description: Bad Request
         "404":
           description: Not Found
+        "422":
+          description: Unprocessable Entity
         "500":
           description: Internal Server Error
       summary: Updates (entirely) a Player by its Squad Number

@@ -68,6 +68,9 @@ const docTemplate = `{
                     "409": {
                         "description": "Conflict"
                     },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
                     "500": {
                         "description": "Internal Server Error"
                     }
@@ -146,6 +149,9 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found"
                     },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
                     "500": {
                         "description": "Internal Server Error"
                     }
@@ -219,6 +225,15 @@ const docTemplate = `{
     "definitions": {
         "model.Player": {
             "type": "object",
+            "required": [
+                "abbrPosition",
+                "dateOfBirth",
+                "firstName",
+                "lastName",
+                "league",
+                "position",
+                "team"
+            ],
             "properties": {
                 "abbrPosition": {
                     "description": "The abbreviated form of the Player's position",
@@ -254,7 +269,9 @@ const docTemplate = `{
                 },
                 "squadNumber": {
                     "description": "User-facing unique identifier; DB-enforced uniqueness",
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 99,
+                    "minimum": 1
                 },
                 "starting11": {
                     "description": "Indicates whether the Player is in the starting 11",

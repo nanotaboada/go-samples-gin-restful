@@ -113,6 +113,7 @@ func buildSquadNumberPath(squadNumber string) string {
 // GET request to /health
 // returns a 200 OK status, indicating the server is running and healthy.
 func TestRequestGETHealthResponseStatusOK(test *testing.T) {
+
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -134,6 +135,7 @@ func TestRequestGETHealthResponseStatusOK(test *testing.T) {
 // POST request to /players with an empty body
 // returns a 400 Bad Request status.
 func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
+
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -154,6 +156,7 @@ func TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest(test *testing.T) {
 // POST request to /players with an existing player
 // returns a 409 Conflict status.
 func TestRequestPOSTPlayersExistingResponseStatusConflict(test *testing.T) {
+
 	// Arrange
 	player := MakeExistingPlayer()
 	body, err := json.Marshal(player)
@@ -179,6 +182,7 @@ func TestRequestPOSTPlayersExistingResponseStatusConflict(test *testing.T) {
 // POST request to /players with a non-existing player
 // returns a 201 Created status.
 func TestRequestPOSTPlayersNonExistingResponseStatusCreated(test *testing.T) {
+
 	// Arrange
 	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
@@ -200,10 +204,68 @@ func TestRequestPOSTPlayersNonExistingResponseStatusCreated(test *testing.T) {
 	assert.Equal(test, http.StatusCreated, recorder.Code)
 }
 
+// TestRequestPOSTPlayersValidationResponseStatusUnprocessableEntity tests that a
+// POST request to /players with an invalid payload (missing required fields or
+// out-of-range squadNumber) returns a 422 Unprocessable Entity status.
+func TestRequestPOSTPlayersValidationResponseStatusUnprocessableEntity(test *testing.T) {
+	cases := []struct {
+		name string
+		body string
+	}{
+		{
+			"MissingRequiredFieldResponseStatusUnprocessableEntity",
+			func() string {
+				p := MakeNonexistentPlayer()
+				p.FirstName = ""
+				b, _ := json.Marshal(p)
+				return string(b)
+			}(),
+		},
+		{
+			"SquadNumberBelowMinResponseStatusUnprocessableEntity",
+			func() string {
+				p := MakeNonexistentPlayer()
+				p.SquadNumber = 0
+				b, _ := json.Marshal(p)
+				return string(b)
+			}(),
+		},
+		{
+			"SquadNumberAboveMaxResponseStatusUnprocessableEntity",
+			func() string {
+				p := MakeNonexistentPlayer()
+				p.SquadNumber = 100
+				b, _ := json.Marshal(p)
+				return string(b)
+			}(),
+		},
+	}
+	for _, tc := range cases {
+		test.Run(tc.name, func(t *testing.T) {
+
+			// Arrange
+			router := setupRouter(playerController)
+			recorder := httptest.NewRecorder()
+			request, err := http.NewRequest(http.MethodPost, route.GetAllPath, strings.NewReader(tc.body))
+			if err != nil {
+				t.Fatalf(ErrNewRequest, err)
+			}
+			request.Header.Set(ContentType, ApplicationJSON)
+
+			// Act
+			router.ServeHTTP(recorder, request)
+
+			// Assert
+			assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
+		})
+	}
+}
+
 // TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest tests that a
 // POST request to /players/ (with trailing slash) and an empty body
 // returns a 400 Bad Request status.
 func TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest(test *testing.T) {
+
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -224,6 +286,7 @@ func TestRequestPOSTPlayersTrailingSlashEmptyBodyResponseStatusBadRequest(test *
 // POST request to /players when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -255,6 +318,7 @@ func TestRequestPOSTPlayersRetrieveErrorResponseStatusInternalServerError(test *
 // POST request to /players when service.Create() returns an error
 // returns a 500 Internal Server Error status.
 func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -289,6 +353,7 @@ func TestRequestPOSTPlayersCreateErrorResponseStatusInternalServerError(test *te
 // POST request to /players when service.Create() returns a unique constraint
 // error (concurrent insert race) returns a 409 Conflict status.
 func TestRequestPOSTPlayersCreateErrorResponseStatusConflict(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -329,6 +394,7 @@ func TestRequestPOSTPlayersCreateErrorResponseStatusConflict(test *testing.T) {
 // GET request to /players/ (with trailing slash)
 // returns a 200 OK status.
 func TestRequestGETPlayersTrailingSlashResponseStatusOK(test *testing.T) {
+
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -348,6 +414,7 @@ func TestRequestGETPlayersTrailingSlashResponseStatusOK(test *testing.T) {
 // GET request to /players
 // returns a 200 OK status.
 func TestRequestGETPlayersResponseStatusOK(test *testing.T) {
+
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -367,6 +434,7 @@ func TestRequestGETPlayersResponseStatusOK(test *testing.T) {
 // GET request to /players
 // returns a collection of Players.
 func TestRequestGETPlayersResponsePlayers(test *testing.T) {
+
 	// Arrange
 	router := setupRouter(playerController)
 	recorder := httptest.NewRecorder()
@@ -390,6 +458,7 @@ func TestRequestGETPlayersResponsePlayers(test *testing.T) {
 // GET request to /players when service.RetrieveAll() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveAllFunc: func() ([]model.Player, error) {
@@ -417,6 +486,7 @@ func TestRequestGETPlayersRetrieveErrorResponseStatusInternalServerError(test *t
 // GET request to /players/:id when the UUID is absent from the database
 // returns a 404 Not Found status.
 func TestRequestGETPlayerByIDUnknownResponseStatusNotFound(test *testing.T) {
+
 	// Arrange
 	player := MakeUnknownPlayer()
 	router := setupRouter(playerController)
@@ -437,6 +507,7 @@ func TestRequestGETPlayerByIDUnknownResponseStatusNotFound(test *testing.T) {
 // GET request to /players/:id when the UUID exists
 // returns a 200 OK status.
 func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
+
 	// Arrange
 	// Squad #10 = Lionel Messi → UUID v5 derived from "Lionel-Messi" using canonical namespace
 	id := "acc433bf-d505-51fe-831e-45eb44c4d43c"
@@ -458,6 +529,7 @@ func TestRequestGETPlayerByIDExistingResponseStatusOK(test *testing.T) {
 // GET request to /players/:id when the UUID exists
 // returns a matching Player.
 func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
+
 	// Arrange
 	// Squad #10 = Lionel Messi → UUID v5 derived from "Lionel-Messi" using canonical namespace
 	id := "acc433bf-d505-51fe-831e-45eb44c4d43c"
@@ -486,6 +558,7 @@ func TestRequestGETPlayerByIDExistingResponsePlayer(test *testing.T) {
 // GET request to /players/:id when service.RetrieveByID() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestGETPlayerByIDRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveByIDFunc: func(id string) (model.Player, error) {
@@ -540,6 +613,7 @@ func TestRequestGETPlayerBySquadNumber(test *testing.T) {
 // GET request to /players/squadnumber/:squadnumber when the squad number exists
 // returns a matching Player.
 func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
+
 	// Arrange
 	squadNumber := "10"
 	router := setupRouter(playerController)
@@ -570,6 +644,7 @@ func TestRequestGETPlayerBySquadNumberExistingResponsePlayer(test *testing.T) {
 // GET request to /players/squadnumber/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -597,6 +672,7 @@ func TestRequestGETPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 // PUT request to /players/squadnumber/:squadnumber with an empty body
 // returns a 400 Bad Request status.
 func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *testing.T) {
+
 	// Arrange
 	squadNumber := "23"
 	router := setupRouter(playerController)
@@ -618,6 +694,7 @@ func TestRequestPUTPlayerBySquadNumberEmptyBodyResponseStatusBadRequest(test *te
 // PUT request to /players/squadnumber/:squadnumber when the squad number is absent from the database
 // returns a 404 Not Found status.
 func TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound(test *testing.T) {
+
 	// Arrange
 	player := MakeUnknownPlayer()
 	squadNumber := fmt.Sprintf("%d", player.SquadNumber)
@@ -644,6 +721,7 @@ func TestRequestPUTPlayerBySquadNumberUnknownResponseStatusNotFound(test *testin
 // PUT request to /players/squadnumber/:squadnumber when the squad number is invalid (non-numeric)
 // returns a 400 Bad Request status.
 func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test *testing.T) {
+
 	// Arrange
 	squadNumber := InvalidSquadNumber
 	player := MakeExistingPlayer()
@@ -670,6 +748,7 @@ func TestRequestPUTPlayerBySquadNumberInvalidParamResponseStatusBadRequest(test 
 // PUT request to /players/squadnumber/:squadnumber with an existing player
 // returns a 204 No Content status.
 func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
+
 	// Arrange
 	squadNumber := "23"
 	player := MakeUpdatePlayer()
@@ -704,6 +783,7 @@ func TestRequestPUTPlayerBySquadNumberExistingResponseStatusNoContent(test *test
 // PUT request to /players/squadnumber/:squadnumber when the squad number in the URL
 // does not match the one in the request body returns a 400 Bad Request status.
 func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadRequest(test *testing.T) {
+
 	// Arrange
 	player := MakeExistingPlayer() // SquadNumber == 23
 	player.SquadNumber = 99        // mismatch: URL targets /players/squadnumber/23, body carries 99
@@ -726,10 +806,73 @@ func TestRequestPUTPlayerBySquadNumberMismatchSquadNumberResponseStatusBadReques
 	assert.Equal(test, http.StatusBadRequest, recorder.Code)
 }
 
+// TestRequestPUTPlayerBySquadNumberValidationResponseStatusUnprocessableEntity tests that a
+// PUT request to /players/squadnumber/:squadnumber with an invalid payload
+// (missing required fields or out-of-range squadNumber) returns a
+// 422 Unprocessable Entity status.
+func TestRequestPUTPlayerBySquadNumberValidationResponseStatusUnprocessableEntity(test *testing.T) {
+	cases := []struct {
+		name        string
+		squadNumber string
+		body        string
+	}{
+		{
+			"MissingRequiredFieldResponseStatusUnprocessableEntity",
+			"23",
+			func() string {
+				p := MakeUpdatePlayer()
+				p.FirstName = ""
+				b, _ := json.Marshal(p)
+				return string(b)
+			}(),
+		},
+		{
+			"SquadNumberBelowMinResponseStatusUnprocessableEntity",
+			"23",
+			func() string {
+				p := MakeUpdatePlayer()
+				p.SquadNumber = 0
+				b, _ := json.Marshal(p)
+				return string(b)
+			}(),
+		},
+		{
+			"SquadNumberAboveMaxResponseStatusUnprocessableEntity",
+			"23",
+			func() string {
+				p := MakeUpdatePlayer()
+				p.SquadNumber = 100
+				b, _ := json.Marshal(p)
+				return string(b)
+			}(),
+		},
+	}
+	for _, tc := range cases {
+		test.Run(tc.name, func(t *testing.T) {
+
+			// Arrange
+			router := setupRouter(playerController)
+			recorder := httptest.NewRecorder()
+			request, err := http.NewRequest(http.MethodPut, buildSquadNumberPath(tc.squadNumber), strings.NewReader(tc.body))
+			if err != nil {
+				t.Fatalf(ErrNewRequest, err)
+			}
+			request.Header.Set(ContentType, ApplicationJSON)
+
+			// Act
+			router.ServeHTTP(recorder, request)
+
+			// Assert
+			assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
+		})
+	}
+}
+
 // TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError tests that a
 // PUT request to /players/squadnumber/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -761,6 +904,7 @@ func TestRequestPUTPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerE
 // PUT request to /players/squadnumber/:squadnumber when service.Update() returns an error
 // returns a 500 Internal Server Error status.
 func TestRequestPUTPlayerBySquadNumberUpdateErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -826,6 +970,7 @@ func TestRequestDELETEPlayerBySquadNumber(test *testing.T) {
 // shared in-memory DB. The test first POSTs Lo Celso (accepting 201 or 409 in case
 // a prior test already inserted him) then DELETEs squad 27.
 func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *testing.T) {
+
 	// Arrange
 	player := MakeNonexistentPlayer()
 	body, err := json.Marshal(player)
@@ -861,6 +1006,7 @@ func TestRequestDELETEPlayerBySquadNumberExistingResponseStatusNoContent(test *t
 // DELETE request to /players/squadnumber/:squadnumber when service.RetrieveBySquadNumber() returns an unexpected error
 // returns a 500 Internal Server Error status.
 func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {
@@ -886,6 +1032,7 @@ func TestRequestDELETEPlayerBySquadNumberRetrieveErrorResponseStatusInternalServ
 // DELETE request to /players/squadnumber/:squadnumber when service.Delete() returns an error
 // returns a 500 Internal Server Error status.
 func TestRequestDELETEPlayerBySquadNumberDeleteErrorResponseStatusInternalServerError(test *testing.T) {
+
 	// Arrange
 	mockService := &MockPlayerService{
 		RetrieveBySquadNumberFunc: func(squadNumber int) (model.Player, error) {

@@ -6,7 +6,7 @@ package model
 //
 // # Struct tags
 //
-// Each field carries two sets of struct tags that Go reads at runtime via
+// Each field carries three sets of struct tags that Go reads at runtime via
 // reflection:
 //
 //   - `json:"..."` — controls marshalling to/from JSON.
@@ -19,6 +19,11 @@ package model
 //     the type is string — UUIDs are assigned by the application, not the DB).
 //     `uniqueIndex` creates a unique index in SQLite, enforced at the DB level.
 //
+//   - `binding:"..."` — controls Gin's request binding validation (backed by
+//     go-playground/validator).  `required` rejects zero/empty values; `min`
+//     and `max` enforce numeric ranges; `omitempty` skips validation when the
+//     field is absent; `-` excludes the field from binding entirely.
+//
 // # ID design
 //
 // ID is a string (not an integer auto-increment) because it stores a UUID v4,
@@ -26,15 +31,15 @@ package model
 // across environments.  Clients use squadNumber to identify players in PUT and
 // DELETE requests; the UUID is available via the UUID lookup endpoint.
 type Player struct {
-	ID           string `json:"id" gorm:"column:id;primaryKey"`                    // Internal UUID (server-generated, opaque to clients)
-	FirstName    string `json:"firstName" gorm:"column:firstName"`                 // The first name of the Player
-	MiddleName   string `json:"middleName" gorm:"column:middleName"`               // The middle name of the Player, if any
-	LastName     string `json:"lastName" gorm:"column:lastName"`                   // The last name of the Player
-	DateOfBirth  string `json:"dateOfBirth" gorm:"column:dateOfBirth"`             // The date of birth of the Player
-	SquadNumber  int    `json:"squadNumber" gorm:"column:squadNumber;uniqueIndex"` // User-facing unique identifier; DB-enforced uniqueness
-	Position     string `json:"position" gorm:"column:position"`                   // The playing position of the Player
-	AbbrPosition string `json:"abbrPosition" gorm:"column:abbrPosition"`           // The abbreviated form of the Player's position
-	Team         string `json:"team" gorm:"column:team"`                           // The team to which the Player belongs
-	League       string `json:"league" gorm:"column:league"`                       // The league where the team plays
-	Starting11   bool   `json:"starting11" gorm:"column:starting11"`               // Indicates whether the Player is in the starting 11
+	ID           string `json:"id" gorm:"column:id;primaryKey" binding:"-"`                               // Internal UUID (server-generated, opaque to clients)
+	FirstName    string `json:"firstName" gorm:"column:firstName" binding:"required"`                     // The first name of the Player
+	MiddleName   string `json:"middleName" gorm:"column:middleName" binding:"omitempty"`                  // The middle name of the Player, if any
+	LastName     string `json:"lastName" gorm:"column:lastName" binding:"required"`                       // The last name of the Player
+	DateOfBirth  string `json:"dateOfBirth" gorm:"column:dateOfBirth" binding:"required"`                 // The date of birth of the Player
+	SquadNumber  int    `json:"squadNumber" gorm:"column:squadNumber;uniqueIndex" binding:"min=1,max=99"` // User-facing unique identifier; DB-enforced uniqueness
+	Position     string `json:"position" gorm:"column:position" binding:"required"`                       // The playing position of the Player
+	AbbrPosition string `json:"abbrPosition" gorm:"column:abbrPosition" binding:"required"`               // The abbreviated form of the Player's position
+	Team         string `json:"team" gorm:"column:team" binding:"required"`                               // The team to which the Player belongs
+	League       string `json:"league" gorm:"column:league" binding:"required"`                           // The league where the team plays
+	Starting11   bool   `json:"starting11" gorm:"column:starting11"`                                      // Indicates whether the Player is in the starting 11
 }
