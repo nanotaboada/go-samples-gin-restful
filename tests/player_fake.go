@@ -78,10 +78,20 @@ func MakeNonexistentPlayer() model.Player {
 // database. Used for 404-by-lookup scenarios (GET by ID, PUT/DELETE by squad number).
 // Squad 99 is chosen to be outside the seeded range and distinct from the nonexistent
 // fixture (squad 27), so the two terms remain unambiguous in test output.
+// All required fields are populated so the payload passes binding validation before
+// reaching the 404 lookup.
 func MakeUnknownPlayer() model.Player {
 	return model.Player{
-		ID:          "00000000-0000-4000-8000-000000000000",
-		SquadNumber: 99,
+		ID:           "00000000-0000-4000-8000-000000000000",
+		FirstName:    "Unknown",
+		LastName:     "Player",
+		DateOfBirth:  "2000-01-01T00:00:00.000Z",
+		SquadNumber:  99,
+		Position:     "Forward",
+		AbbrPosition: "FW",
+		Team:         "Unknown FC",
+		League:       "Unknown League",
+		Starting11:   false,
 	}
 }
 
