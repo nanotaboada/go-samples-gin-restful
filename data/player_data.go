@@ -6,9 +6,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/glebarez/sqlite"
 	"github.com/nanotaboada/go-samples-gin-restful/migrations"
 	"github.com/pressly/goose/v3"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )

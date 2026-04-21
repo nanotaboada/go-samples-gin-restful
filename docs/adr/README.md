@@ -37,3 +37,4 @@ See [template.md](template.md) for the standard format (Michael Nygard).
 | [0009](0009-in-memory-cache-strategy.md) | In-Memory Page Cache for GET Endpoints | Accepted | 2026-03-21 |
 | [0010](0010-mixed-test-strategy.md) | Mixed Test Strategy | Accepted | 2026-03-21 |
 | [0011](0011-docker-and-compose-strategy.md) | Docker and Compose Strategy | Accepted | 2026-04-02 |
+| [0012](0012-pure-go-sqlite-driver.md) | Pure-Go SQLite Driver | Accepted | 2026-04-20 |
