@@ -4,11 +4,7 @@
 # ------------------------------------------------------------------------------
 FROM golang:1.25-alpine3.23 AS builder
 
-# Enable CGO for SQLite support
-ENV CGO_ENABLED=1
-
-# Install build dependencies
-RUN apk add --no-cache gcc musl-dev sqlite-dev
+ENV CGO_ENABLED=0
 
 WORKDIR /app
 

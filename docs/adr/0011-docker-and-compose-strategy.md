@@ -85,8 +85,10 @@ Docker Compose to orchestrate the application locally.
 
 **When to revisit:**
 
-- If the SQLite driver is replaced with a pure-Go alternative
+- ~~If the SQLite driver is replaced with a pure-Go alternative
   (`modernc.org/sqlite`), CGO can be disabled and the builder stage
-  simplified significantly.
+  simplified significantly.~~ Resolved by ADR-0012: the driver was replaced
+  with `github.com/glebarez/sqlite`; `CGO_ENABLED=0` is now set and the C
+  toolchain packages have been removed from the builder stage.
 - If a second service (e.g. PostgreSQL) is added, Compose will need a
   dedicated network and dependency ordering.

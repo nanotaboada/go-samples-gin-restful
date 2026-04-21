@@ -47,14 +47,20 @@ This project uses famous football player names (A-Z) as release codenames:
 - `model/player_model.go`: added `binding` struct tags to `Player` for field-level validation via Gin's built-in validator (`go-playground/validator`) — required fields: `firstName`, `lastName`, `dateOfBirth`, `position`, `abbrPosition`, `team`, `league`; range constraint on `squadNumber` (`min=1,max=99`); `omitempty` on `middleName`; `binding:"-"` on `ID` (#257)
 - `controller/player_controller.go`: POST and PUT handlers now return `422 Unprocessable Entity` for validation failures and `400 Bad Request` for malformed JSON, distinguished via `errors.As(err, &validator.ValidationErrors{})` (#257)
 - `tests/main_test.go`: added `TestRequestPOSTPlayersValidationResponseStatusUnprocessableEntity` and `TestRequestPUTPlayerBySquadNumberValidationResponseStatusUnprocessableEntity` table-driven tests covering missing required fields and out-of-range `squadNumber` (#257)
+- `docs/adr/0012-pure-go-sqlite-driver.md`: ADR documenting the migration from the CGO-based `mattn/go-sqlite3` driver to the pure-Go `github.com/glebarez/sqlite` wrapper backed by `modernc.org/sqlite` (#237)
 
 ### Changed
 
 - `tests/player_fake.go`: `MakeUnknownPlayer()` now returns a fully populated player so PUT 404-by-lookup tests pass binding validation before reaching the service layer (#257)
 - `controller/player_controller.go`: replaced `BindJSON` with `ShouldBindJSON` in Post and Put handlers to take full control over error responses (#257)
 - `docs/`: regenerated Swagger docs (`swag init`) to include `@Failure 422 "Unprocessable Entity"` on POST and PUT endpoints (#257)
+- `data/player_data.go`: replaced `gorm.io/driver/sqlite` import with `github.com/glebarez/sqlite`; driver swap is a one-line change — `gorm.Open(sqlite.Open(...))` call and DSN formats are unchanged (#237)
+- `Dockerfile`: removed `gcc`, `musl-dev`, `sqlite-dev` from the builder stage; set `CGO_ENABLED=0` — builder no longer requires a C toolchain (#237)
+- `docs/adr/0011-docker-and-compose-strategy.md`: marked the CGO revisit trigger as resolved, cross-referencing ADR-0012 (#237)
 
 ### Removed
+
+- `gorm.io/driver/sqlite` and `github.com/mattn/go-sqlite3` removed from the dependency graph (`go mod tidy`) (#237)
 
 ### Fixed
 
