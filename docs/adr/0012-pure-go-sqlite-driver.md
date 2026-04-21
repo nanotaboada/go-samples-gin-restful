@@ -59,7 +59,8 @@ from the dependency graph entirely. The Docker builder stage drops `gcc`,
 
 **Negative:**
 
-- `modernc.org/sqlite` is a transpiled C codebase; its binary footprint is
+- `modernc.org/sqlite` is transpiled from the upstream SQLite C source to Go
+  using the ccgo C-to-Go transpiler; its binary footprint is
   larger than the dynamically linked CGO equivalent.
 - Performance characteristics differ slightly from the native CGO driver under
   write-heavy workloads; this is acceptable for this project's CRUD workload.

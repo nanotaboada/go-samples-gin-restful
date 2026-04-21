@@ -73,9 +73,9 @@ Docker Compose to orchestrate the application locally.
 
 **Negative:**
 
-- CGO requires `gcc` and `musl-dev` in the builder stage, making the
+- ~~CGO requires `gcc` and `musl-dev` in the builder stage, making the
   builder heavier than a pure-Go project and coupling the build to a
-  libc implementation (musl).
+  libc implementation (musl).~~ Resolved by ADR-0012.
 - Multi-stage builds are more complex to read and maintain than
   single-stage builds.
 - The SQLite database file is versioned and bundled, meaning schema changes
