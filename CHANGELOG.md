@@ -61,6 +61,7 @@ This project uses famous football player names (A-Z) as release codenames:
 ### Removed
 
 - `gorm.io/driver/sqlite` and `github.com/mattn/go-sqlite3` removed from the dependency graph (`go mod tidy`) (#237)
+- `CHANGELOG.md`: removed `## How to Release` prose section — release procedure belongs in `RELEASES.md`, not the changelog (#252)
 
 ### Fixed
 
@@ -187,17 +188,6 @@ Run them only when you need to recreate the local SQLite database.
 ## [1.0.0 - Ademir] - 2026-02-06
 
 Initial release. See [README.md](README.md) for complete feature list and documentation.
-
----
-
-## How to Release
-
-The full release procedure — branch, PR, tag, and CD workflow — is documented in
-[README.md § Create a Release](README.md#create-a-release).
-
-In summary: move items from `[Unreleased]` to a new `[X.Y.Z - Player]` section
-(see template below), open a `release/vX.Y.Z-player` PR, merge it into `master`,
-then push the annotated tag to trigger the CD workflow.
 
 ---
 
