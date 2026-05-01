@@ -25,8 +25,11 @@ proceeding. Never create a branch, commit, tag, or push without approval.
    - Any entry contains the word **BREAKING** (case-insensitive), a
      `BREAKING CHANGE:` token in a commit footer, or a `!` suffix after
      the commit type/scope (e.g. `feat!:` or `feat(scope)!:`) → **major** bump
-   - Any `### Added` subsection has entries → **minor** bump
-   - Otherwise (only `### Changed`, `### Fixed`, `### Removed`) → **patch** bump
+   - Any `### Added` entry introduces a **new endpoint, request parameter, or
+     client-visible API response** → **minor** bump. Test additions, documentation
+     (ADRs, README, Swagger regen), and internal tooling do **not** qualify.
+   - Otherwise (only `### Changed`, `### Fixed`, `### Removed`, or non-API
+     additions) → **patch** bump
 
 5. Compute the next version by applying the bump to the current latest tag's
    semver (e.g. `v2.0.0-bobby` + minor → `2.1.0`).
@@ -66,10 +69,23 @@ proceeding. Never create a branch, commit, tag, or push without approval.
 
    **Wait for explicit approval before committing.**
 
-4. Run `/pre-commit`, manually skipping step 1 — do not re-run or re-attempt
-   the CHANGELOG update; it was already completed above. Open with: "Skip
-   step 1 — CHANGELOG was already updated as part of this release branch."
-   Proceed directly with steps 2–7.
+4. Run the following checks. Run steps a–c and e in parallel; step d depends
+   on the answer to the Swagger question so ask first then run if needed:
+
+   a. `go fmt ./...`
+   b. `go vet ./...` — must pass.
+   c. `go build -v ./...` — must succeed.
+   d. Ask: were any Swagger annotations modified? If yes, run `swag init`.
+   e. `go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out`
+      — all tests must pass; target 80%+ coverage for service, controller, route.
+   f. Run `golangci-lint run` — must pass with 0 issues before continuing.
+   g. If Docker is running, run `docker compose build` — must succeed. Skip with
+      a note if Docker Desktop is not running.
+   h. If `coderabbit` CLI is installed, run
+      `coderabbit review --type uncommitted --prompt-only`:
+      - Actionable/serious findings → stop and address before continuing.
+      - Nitpick-level findings → report and continue.
+      - Not installed → skip with a note.
 
 5. Propose opening a PR from `release/vX.Y.Z-{player}` into `master`.
    **Wait for explicit approval before opening.**

@@ -44,6 +44,18 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Removed
+
+---
+
+## [2.1.2 - Eusébio] - 2026-04-27
+
+### Added
+
 - `model/player_model.go`: added `binding` struct tags to `Player` for field-level validation via Gin's built-in validator (`go-playground/validator`) — required fields: `firstName`, `lastName`, `dateOfBirth`, `position`, `abbrPosition`, `team`, `league`; range constraint on `squadNumber` (`min=1,max=99`); `omitempty` on `middleName`; `binding:"-"` on `ID` (#257)
 - `controller/player_controller.go`: POST and PUT handlers now return `422 Unprocessable Entity` for validation failures and `400 Bad Request` for malformed JSON, distinguished via `errors.As(err, &validator.ValidationErrors{})` (#257)
 - `tests/main_test.go`: added `TestRequestPOSTPlayersValidationResponseStatusUnprocessableEntity` and `TestRequestPUTPlayerBySquadNumberValidationResponseStatusUnprocessableEntity` table-driven tests covering missing required fields and out-of-range `squadNumber` (#257)
@@ -62,8 +74,6 @@ This project uses famous football player names (A-Z) as release codenames:
 
 - `gorm.io/driver/sqlite` and `github.com/mattn/go-sqlite3` removed from the dependency graph (`go mod tidy`) (#237)
 - `CHANGELOG.md`: removed `## How to Release` prose section — release procedure belongs in `RELEASES.md`, not the changelog (#252)
-
-### Fixed
 
 ---
 
@@ -217,7 +227,8 @@ Initial release. See [README.md](README.md) for complete feature list and docume
 
 ---
 
-[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.1-distefano...HEAD
+[unreleased]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.2-eusebio...HEAD
+[2.1.2 - Eusébio]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.1-distefano...v2.1.2-eusebio
 [2.1.1 - Di Stéfano]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.1.0-cafu...v2.1.1-distefano
 [2.1.0 - Cafu]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v2.0.0-bobby...v2.1.0-cafu
 [2.0.0 - Bobby]: https://github.com/nanotaboada/go-samples-gin-restful/compare/v1.0.0-ademir...v2.0.0-bobby
