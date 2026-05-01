@@ -78,9 +78,10 @@ proceeding. Never create a branch, commit, tag, or push without approval.
    d. Ask: were any Swagger annotations modified? If yes, run `swag init`.
    e. `go test -v ./... -coverpkg=github.com/nanotaboada/go-samples-gin-restful/service,github.com/nanotaboada/go-samples-gin-restful/controller,github.com/nanotaboada/go-samples-gin-restful/route -covermode=atomic -coverprofile=coverage.out`
       — all tests must pass; target 80%+ coverage for service, controller, route.
-   f. If Docker is running, run `docker compose build` — must succeed. Skip with
+   f. Run `golangci-lint run` — must pass with 0 issues before continuing.
+   g. If Docker is running, run `docker compose build` — must succeed. Skip with
       a note if Docker Desktop is not running.
-   g. If `coderabbit` CLI is installed, run
+   h. If `coderabbit` CLI is installed, run
       `coderabbit review --type uncommitted --prompt-only`:
       - Actionable/serious findings → stop and address before continuing.
       - Nitpick-level findings → report and continue.
