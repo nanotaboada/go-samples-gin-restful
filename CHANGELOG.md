@@ -46,7 +46,7 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Changed
 
-- Upgraded Go from `1.25.0` to `1.26.2` in `go.mod`, CI/CD workflows, and `Dockerfile` (#266)
+- Upgraded Go from `1.25.0` to `1.26.2` in `go.mod`, CI/CD workflows, `Dockerfile`, and all documentation references (#266)
 
 ### Fixed
 

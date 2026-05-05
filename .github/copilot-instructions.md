@@ -6,7 +6,7 @@ REST API for managing football players built with Go and Gin Web Framework. Impl
 
 ## Tech Stack
 
-- **Language**: Go 1.25+
+- **Language**: Go 1.26+
 - **Framework**: Gin Web Framework
 - **ORM**: GORM
 - **Database**: SQLite

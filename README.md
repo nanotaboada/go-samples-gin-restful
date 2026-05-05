@@ -13,7 +13,7 @@
 ![Claude](https://img.shields.io/badge/Claude-contributing-D97757?logo=claude&logoColor=white&labelColor=181818)
 ![CodeRabbit](https://img.shields.io/badge/CodeRabbit-reviewing-FF570A?logo=coderabbit&logoColor=white&labelColor=181818)
 
-Proof of Concept for a RESTful Web Service built with **Gin** and **Go 1.25**. This project demonstrates best practices for building a layered, testable, and maintainable API implementing CRUD operations for a Players resource (Argentina 2022 FIFA World Cup squad).
+Proof of Concept for a RESTful Web Service built with **Gin** and **Go 1.26**. This project demonstrates best practices for building a layered, testable, and maintainable API implementing CRUD operations for a Players resource (Argentina 2022 FIFA World Cup squad).
 
 ## Features
 
@@ -28,7 +28,7 @@ Proof of Concept for a RESTful Web Service built with **Gin** and **Go 1.25**. T
 
 | Category | Technology |
 | -------- | ---------- |
-| **Language** | [Go 1.25](https://github.com/golang/go) |
+| **Language** | [Go 1.26](https://github.com/golang/go) |
 | **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
 | **ORM** | [GORM](https://github.com/go-gorm/gorm) |
 | **Database** | [SQLite](https://github.com/sqlite/sqlite) |
@@ -143,7 +143,7 @@ Alternatively, use [`rest/players.rest`](rest/players.rest) with the [REST Clien
 
 Before you begin, ensure you have the following installed:
 
-- **Go 1.25 or higher**
+- **Go 1.26 or higher**
 - **Docker & Docker Compose** (optional, for containerized deployment)
 
 ## Quick Start
