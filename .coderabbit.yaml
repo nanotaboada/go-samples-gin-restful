@@ -2,7 +2,7 @@
 # https://docs.coderabbit.ai/getting-started/configure-coderabbit
 
 # CodeRabbit Configuration
-# Optimized for Go 1.25 / Gin RESTful API project
+# Optimized for Go 1.26 / Gin RESTful API project
 
 language: en-US
 early_access: true
@@ -120,7 +120,7 @@ reviews:
     - path: "**/Dockerfile"
       instructions: |
         - Verify multi-stage build (builder + runtime)
-        - Check Go version matches project (1.25)
+        - Check Go version matches project (1.26)
         - Ensure CGO dependencies are installed (gcc, musl-dev, sqlite-dev)
         - Validate non-root user is used for security
         - Check HEALTHCHECK instruction is present
@@ -128,7 +128,7 @@ reviews:
 
     - path: "go.mod"
       instructions: |
-        - Verify Go version is 1.25
+        - Verify Go version is 1.26
         - Check dependencies are up to date
         - Ensure replace directives are justified
         - Validate module path is correct

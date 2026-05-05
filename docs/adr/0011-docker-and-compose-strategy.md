@@ -40,7 +40,7 @@ Available approaches:
 We will use a multi-stage Docker build with an Alpine-based runtime, and
 Docker Compose to orchestrate the application locally.
 
-- **Builder stage** (`golang:1.25-alpine3.23`): installs `gcc`,
+- **Builder stage** (`golang:1.26-alpine3.23`): installs `gcc`,
   `musl-dev`, and `sqlite-dev` to satisfy CGO dependencies; builds the
   binary with `-trimpath -ldflags="-s -w"` to strip debug symbols and
   reduce size; uses `--mount=type=cache` for the Go module and build caches
