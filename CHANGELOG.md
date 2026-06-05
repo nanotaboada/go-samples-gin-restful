@@ -47,6 +47,8 @@ This project uses famous football player names (A-Z) as release codenames:
 ### Changed
 
 - Upgraded Go from `1.25.0` to `1.26.2` in `go.mod`, CI/CD workflows, `Dockerfile`, and all documentation references (#266)
+- Consolidated project documentation into `CLAUDE.md` as the single source of truth; deleted `.github/copilot-instructions.md` (#272)
+- Updated `.coderabbit.yaml`: added pure-Go SQLite constraint to `go.mod` path instruction (ADR-0012), strengthened mock policy in `tests/**/*.go` instruction (ADR-0010), corrected controller HTTP status code list to include 400 and 500, and updated `knowledge_base` file reference to `CLAUDE.md` (#272)
 
 ### Fixed
 
