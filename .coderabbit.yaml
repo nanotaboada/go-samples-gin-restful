@@ -43,7 +43,7 @@ reviews:
       instructions: |
         - Controllers should be thin - delegate to services
         - Verify Swagger/OpenAPI annotations are present and complete
-        - Check proper HTTP status codes (200, 201, 204, 404, 409)
+        - Check proper HTTP status codes (200, 201, 204, 400, 404, 409, 500)
         - Ensure functions use Go's (T, error) multiple-return pattern for fallible operations and errors are handled by callers
         - Validate that request/response models are used (not internal entities)
         - Check that Gin context is used properly (c.JSON, c.Status, etc.)
@@ -86,7 +86,10 @@ reviews:
         - Check Given-When-Then/AAA structure
         - Ensure test database uses in-memory SQLite
         - Validate test data is loaded from tests/players.json
-        - Use MockPlayerService only for error branches unreachable with a healthy database
+        - MockPlayerService is permitted ONLY for error branches that cannot be triggered
+          against a healthy real database (e.g. simulated connection failures). See ADR-0010.
+          All happy paths and expected error branches must use real in-memory SQLite.
+          Flag any mock usage that replaces a real-database test.
         - Check coverage targets (80% for services, controllers, routes)
 
     - path: "**/*_test.go"
@@ -132,6 +135,9 @@ reviews:
         - Check dependencies are up to date
         - Ensure replace directives are justified
         - Validate module path is correct
+        - The SQLite driver must remain a pure-Go implementation with no CGO dependency on
+          libsqlite3. See ADR-0012. Flag any dependency that introduces CGO-linked SQLite
+          access (e.g. github.com/mattn/go-sqlite3).
 
   path_filters:
     - "!**/vendor/**"
@@ -182,10 +188,10 @@ reviews:
           If so, update the relevant sections of README.md to reflect the current state.
           Do not rewrite sections unrelated to the changes.
 
-          ## 3. .github/copilot-instructions.md
+          ## 3. CLAUDE.md
           If the PR introduces patterns, conventions, or architectural decisions that
           should guide future AI-assisted contributions, add or update the relevant
-          instructions in .github/copilot-instructions.md.
+          instructions in CLAUDE.md.
           Focus on things a developer (or AI assistant) unfamiliar with this specific
           stack implementation should know before writing code here.
 
@@ -346,7 +352,7 @@ knowledge_base:
   code_guidelines:
     enabled: true
     filePatterns:
-      - ".github/copilot-instructions.md"
+      - "CLAUDE.md"
   learnings:
     scope: auto
   issues:

@@ -254,7 +254,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for det
 - Ensure all tests pass (`go test ./...`)
 - Run `go fmt ./...` before committing
 - Keep changes small and focused
-- Review `.github/copilot-instructions.md` for architectural patterns
+- Review `CLAUDE.md` for architectural patterns and contribution guidelines
 
 **Testing:**
 
