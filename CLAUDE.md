@@ -26,11 +26,15 @@ go.mod          — module dependencies
 /service        — business logic + GORM interactions            [business layer]
 /data           — database connection setup                     [data layer]
 /model          — Player struct (domain model)
-/storage        — SQLite database file (players-sqlite3.db, pre-seeded)
+/migrations     — embedded SQL migration files (goose); applied at startup via embed.FS  [data layer]
+/swagger        — Swagger configuration: sets SwaggerInfo metadata (not auto-generated)
 /docs/adr       — Architecture Decision Records (read before proposing structural changes)
 /docs           — auto-generated Swagger docs (DO NOT EDIT manually)
 /tests          — integration tests with testify assertions
+/tools          — developer-only seed scripts (//go:build ignore; not in normal builds)
+/rest           — HTTP client file (players.rest) for VS Code REST Client / JetBrains IDE
 /scripts        — Docker entrypoint and healthcheck scripts
+(no /storage in repo — DB created at runtime; path controlled by STORAGE_PATH env var)
 ```
 
 **Layer rule**: `Routes → Controllers → Services → Data`. Never skip a layer. Controllers must not contain business logic.
@@ -42,13 +46,15 @@ go.mod          — module dependencies
 - **Errors**: Always check errors immediately after function calls; never discard with `_`
 - **Pointers**: Use pointers for structs in function signatures to avoid copying
 - **Logging**: Standard `log` package (structured `slog` for new code)
+- **Migrations**: `migrations/embed.go` embeds all `.sql` files into the binary at compile time (`//go:embed *.sql`). No migration files are needed on the filesystem at runtime. Migration files use 5-digit zero-padded names (`00001_`, `00002_`).
+- **Seed tools**: scripts in `tools/` use `//go:build ignore` and are excluded from normal builds. Run individually with `go run ./tools/seed_001_starting_eleven.go` (recreates the DB from scratch).
 - **Tests**: Table-driven tests for multiple cases; target 80%+ coverage for service, controller, route packages
 - **Test strategy**: Integration tests with real in-memory SQLite for all happy paths and expected branches. Use `MockPlayerService` only for error branches that cannot be triggered with a healthy database (e.g. simulated connection failures). If a scenario can be exercised with a real database, it must use a real database.
 - **Mock pattern**: `MockPlayerService` uses opt-in function fields — only set the `Func` relevant to the test scenario; unset methods return safe zero-value defaults. Never create a new mock type per test.
 - **Test naming**: `TestRequest{METHOD}{Resource}{Condition}Response{Outcome}`:
   - **Resource**: explicit endpoint target — `Players`, `PlayerByID`, `PlayerBySquadNumber`
-  - **Condition**: `Existing`, `NonExisting`, `InvalidParam`, `EmptyBody`, `TrailingSlash`, `RetrieveError`, `CreateError`, `UpdateError`, `DeleteError`
-  - **Outcome**: `StatusOK`, `StatusCreated`, `StatusNoContent`, `StatusBadRequest`, `StatusNotFound`, `StatusConflict`, `StatusInternalServerError`, or `Players` / `Player` for body assertions
+  - **Condition**: `Existing`, `NonExisting`, `Unknown`, `InvalidParam`, `Mismatch`, `EmptyBody`, `TrailingSlash`, `Validation`, `RetrieveError`, `CreateError`, `UpdateError`, `DeleteError`
+  - **Outcome**: `StatusOK`, `StatusCreated`, `StatusNoContent`, `StatusBadRequest`, `StatusNotFound`, `StatusConflict`, `StatusUnprocessableEntity`, `StatusInternalServerError`, or `Players` / `Player` for body assertions
   - Examples: `TestRequestGETPlayerByIDExistingResponseStatusOK`, `TestRequestPOSTPlayersEmptyBodyResponseStatusBadRequest`, `TestRequestDELETEPlayerByIDDeleteErrorResponseStatusInternalServerError`
 - **Test godoc**: Each `Test*` function must open with: `// TestFuncName tests that a\n// {METHOD} request to {/path} {condition}\n// returns a {outcome}.`
 - **Avoid**: ignoring errors, `panic` in library code, global mutable state, `interface{}` without type assertions, complex goroutines for simple CRUD
@@ -171,3 +177,4 @@ Significant architectural decisions are documented in `docs/adr/` (ADR-0001–AD
 ## Claude Code
 
 - Run `/pre-commit` to execute the full pre-commit checklist for this project.
+- CLAUDE.md is maintained with the [CLAUDE.md Management plugin](https://claude.com/plugins/claude-md-management).
