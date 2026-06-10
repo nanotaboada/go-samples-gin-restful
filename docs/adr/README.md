@@ -38,3 +38,6 @@ See [template.md](template.md) for the standard format (Michael Nygard).
 | [0010](0010-mixed-test-strategy.md) | Mixed Test Strategy | Accepted | 2026-03-21 |
 | [0011](0011-docker-and-compose-strategy.md) | Docker and Compose Strategy | Accepted | 2026-04-02 |
 | [0012](0012-pure-go-sqlite-driver.md) | Pure-Go SQLite Driver | Accepted | 2026-04-20 |
+| [0013](0013-player-themed-versioning.md) | Use Player-Themed Semantic Versioning | Accepted | 2026-06-10 |
+| [0014](0014-ai-assisted-development-workflow.md) | Adopt AI-Assisted Development Workflow | Accepted | 2026-06-10 |
+| [0015](0015-spec-driven-development.md) | Adopt Spec-Driven Development (SDD) | Accepted | 2026-06-10 |

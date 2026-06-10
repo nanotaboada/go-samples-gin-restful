@@ -44,9 +44,14 @@ This project uses famous football player names (A-Z) as release codenames:
 
 ### Added
 
+- ADR-0013: Use Player-Themed Semantic Versioning
+- ADR-0014: Adopt AI-Assisted Development Workflow
+- ADR-0015: Adopt Spec-Driven Development (SDD)
+
 ### Changed
 
 - Updated `CLAUDE.md`: added missing directories (`/migrations`, `/swagger`, `/tools`, `/rest`) to the structure map, corrected `/storage` entry, expanded test naming condition/outcome lists, and documented the `embed.FS` migration pattern and `//go:build ignore` seed tools
+- Added `go mod tidy` as a sequential pre-build gate in the `/pre-commit` checklist to catch dependency drift before push
 - Upgraded Go from `1.25.0` to `1.26.2` in `go.mod`, CI/CD workflows, `Dockerfile`, and all documentation references (#266)
 - Consolidated project documentation into `CLAUDE.md` as the single source of truth; deleted `.github/copilot-instructions.md`; updated `README.md` Contributing section to reference `CLAUDE.md` (#272)
 - Updated `.coderabbit.yaml`: added pure-Go SQLite constraint to `go.mod` path instruction (ADR-0012), strengthened mock policy in `tests/**/*.go` instruction (ADR-0010), corrected controller HTTP status code list to include 400 and 500, and updated `knowledge_base` file reference to `CLAUDE.md` (#272)
