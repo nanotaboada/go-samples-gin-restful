@@ -172,7 +172,7 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 
 ## Architecture Decision Records
 
-Significant architectural decisions are documented in `docs/adr/` (ADR-0001–ADR-0012). Load these before proposing structural changes. When a proposal would change an accepted decision, create a new ADR rather than editing the existing one.
+Significant architectural decisions are documented in `docs/adr/` (ADR-0001–ADR-0015). Load these before proposing structural changes. When a proposal would change an accepted decision, create a new ADR rather than editing the existing one.
 
 ## Claude Code
 
