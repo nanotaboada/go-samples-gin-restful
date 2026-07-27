@@ -114,18 +114,18 @@ jobs:
           echo "🎖️ Player name: $PLAYER"
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v4.2.0
+        uses: docker/login-action@v4.5.1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4.1.0
+        uses: docker/setup-buildx-action@v4.2.0
 
       - name: Build and push Docker image to GitHub Container Registry
         id: push
-        uses: docker/build-push-action@v7.2.0
+        uses: docker/build-push-action@v7.3.0
         with:
           context: .
           push: true
@@ -139,7 +139,7 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ steps.version.outputs.player }}
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v4.1.0
+        uses: actions/attest-build-provenance@v4.1.1
         with:
           subject-name: ghcr.io/${{ github.repository }}
           subject-digest: ${{ steps.push.outputs.digest }}
@@ -171,7 +171,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v3.0.1
+        uses: softprops/action-gh-release@v3.0.2
         with:
           name: "v${{ steps.version.outputs.semver }} - ${{ steps.version.outputs.player }} 🎖️"
           tag_name: ${{ steps.version.outputs.tag_name }}
