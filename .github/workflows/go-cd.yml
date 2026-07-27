@@ -139,7 +139,7 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ steps.version.outputs.player }}
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v4.1.0
+        uses: actions/attest-build-provenance@v4.1.1
         with:
           subject-name: ghcr.io/${{ github.repository }}
           subject-digest: ${{ steps.push.outputs.digest }}
