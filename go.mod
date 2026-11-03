@@ -1,6 +1,6 @@
 module github.com/nanotaboada/go-samples-gin-restful
 
-go 1.26.2
+go 1.26.10
 
 require (
 	github.com/gin-gonic/gin v1.12.0
@@ -41,7 +41,7 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20260422231931-4d751bb6e37c // indirect
 	github.com/bytedance/sonic/loader v0.5.1 // indirect
 	github.com/cloudwego/base64x v0.1.7 // indirect
-	github.com/gin-contrib/cache v1.4.6
+	github.com/gin-contrib/cache v1.4.7
 	github.com/go-openapi/jsonpointer v0.21.1 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect

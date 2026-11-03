@@ -47,8 +47,8 @@ github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeO
 github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
 github.com/gabriel-vasile/mimetype v1.4.15 h1:05iP/CYtZ/w455R/KZM6rZ5ieAdh99UPtd+d3YzLmaI=
 github.com/gabriel-vasile/mimetype v1.4.15/go.mod h1:azpTcoLcDZRNgFou5j+APrqQx9HqVPWa6ijYQIIVswQ=
-github.com/gin-contrib/cache v1.4.6 h1:G5Ji0fJfRzCrtpf/ahCZE6eYf2Lidd7L4kjMXOZ+EFw=
-github.com/gin-contrib/cache v1.4.6/go.mod h1:dKd+u7c7cbwFF6saJBtJowQqORrEQTSZ4RqXlhCzazM=
+github.com/gin-contrib/cache v1.4.7 h1:TUrynKD4i6aNfgs5Q5Gm1kCVAC8WWZk7fnQZQXepGb0=
+github.com/gin-contrib/cache v1.4.7/go.mod h1:C6id6ywhZD5OqfMg/aMW2onTOMsp6f6Px3BI6cYCFPU=
 github.com/gin-contrib/gzip v0.0.6 h1:NjcunTcGAj5CO1gn4N8jHOSIeRFHIbn51z6K+xaN4d4=
 github.com/gin-contrib/gzip v0.0.6/go.mod h1:QOJlmV2xmayAjkNS2Y8NQsMneuRShOU/kjovCXNuzzk=
 github.com/gin-contrib/sse v1.1.1 h1:uGYpNwTacv5R68bSGMapo62iLTRa9l5zxGCps4hK6ko=
